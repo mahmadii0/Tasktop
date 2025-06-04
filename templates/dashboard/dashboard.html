@@ -1,0 +1,59 @@
+{{define "Title"}} Dashboard {{end}}
+{{define "Head"}}  <script src="https://cdn.tailwindcss.com"></script>{{end}}
+{{define "Content"}}
+<!-- Sidebar -->
+<aside class="w-56 bg-[#0D0F2A] text-white flex flex-col items-center py-6">
+    <div class="w-20 h-20 bg-gray-300 rounded-full mb-2"></div>
+    <p class="mb-6">Mohammad</p>
+    <nav class="w-full space-y-2">
+        <a href="/dashboard/daily-plan" class="block py-3 px-4 border-t border-b border-white text-sm hover:bg-white hover:text-black transition">Daily Plans</a>
+        <a href="/dashboard/monthly-plan" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Monthly Plans</a>
+        <a href="/dashboard/annually-plan" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Annually Plans</a>
+        <a href="/dashboard/report" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Report</a>
+        <a href="/logout" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Log out</a>
+    </nav>
+</aside>
+
+<!-- Main content -->
+<main class="flex-1 p-10 bg-white">
+
+    <!-- Status Bar -->
+    <div class="text-center mb-10">
+        <h2 class="text-lg font-medium">Today Status Bar</h2>
+        <p class="font-bold text-lg">50%</p>
+        <div class="w-full max-w-xl mx-auto h-6 bg-gray-300 rounded-full overflow-hidden">
+            <div class="bg-[#0D0F2A] h-full w-1/2"></div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="grid grid-cols-3 gap-10">
+        <!-- Daily Goals -->
+        <div class="bg-gray-300 p-6 rounded">
+            <h3 class="text-lg font-medium mb-4">Your Daily Goals</h3>
+            <div class="space-y-4 mb-6">
+                <div class="bg-[#2F314C] h-10 rounded-md"></div>
+                <div class="bg-[#2F314C] h-10 rounded-md"></div>
+                <div class="bg-[#2F314C] h-10 rounded-md"></div>
+            </div>
+            <button class="bg-black text-white px-4 py-2 rounded">Show Plan</button>
+        </div>
+
+        <!-- AI Suggest -->
+        <div>
+            <h3 class="text-lg font-medium mb-4">AI Suggest</h3>
+            <div class="bg-gray-300 p-4 rounded">
+                <p class="font-semibold">lorem ipsum lorem ipsum lorem ipsum</p>
+                <p class="font-semibold">lorem ipsum lorem ipsum lorem ipsum</p>
+            </div>
+        </div>
+
+        <!-- Your Note -->
+        <div>
+            <h3 class="text-lg font-medium mb-4">Your Note</h3>
+            <div class="bg-gray-300 h-48 rounded p-4"></div>
+        </div>
+    </div>
+</main>
+
+{{end}}

@@ -1,0 +1,22 @@
+{{define "Title"}}
+{{if .}}Update Annually Goal{{else}}Create Annually Goal{{end}}
+{{end}}
+{{define "Head"}}{{end}}
+{{define "Content"}}
+<form method="post">
+    {{if .}}
+    <div class="mb-3" hidden="hidden">
+        <input name="id" type="hidden" class="form-control" id="id">
+    </div>
+    {{end}}
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input name="title" type="text" class="form-control" id="title" value="{{if .}}{{.Title}}{{end}}" placeholder="reading 30 book">
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea name="description" class="form-control" id="description" value="{{if .}}{{.Desc}}{{end}}" rows="3"></textarea>
+    </div>
+    <button type="submit" value="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

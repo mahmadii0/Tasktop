@@ -1,0 +1,31 @@
+{{define "Title"}}
+{{if .}}Update Annually Goals{{else}}Create Annually Goals{{end}}
+{{end}}
+{{define "Head"}}{{end}}
+{{define "Content"}}
+<form method="post">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="reading 30 book">
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="monthlyPlans" class="form-label">Monthly Plans</label>
+        <select id="monthlyPlans" class="form-select">
+            <option selected>Choose...</option>
+            <option>...</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="annuallyGoals" class="form-label">Annually Goals</label>
+        <select id="annuallyGoals" class="form-select">
+            <option selected>Choose...</option>
+            <option>...</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}
