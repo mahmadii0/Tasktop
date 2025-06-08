@@ -1,6 +1,7 @@
 package configure
 
 import (
+	"Tasktop"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -20,7 +21,8 @@ func init() {
 }
 
 func CreateTables() {
-	d, err := sql.Open("mysql", "root:138313551360mA@@tcp(127.0.0.1:3306)/tasktop?charset=utf8&parseTime=True&loc=Local")
+	source := Tasktop.DATABASE_SOURCE
+	d, err := sql.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
 	}
