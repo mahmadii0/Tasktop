@@ -1,62 +1,6 @@
 {{define "Title"}} Dashboard {{end}}
-{{define "Head"}}  <script src="https://cdn.tailwindcss.com"></script>{{end}}
+{{define "Head"}}<link rel="stylesheet" href="css/dashboard.css" />{{end}}
 {{define "Content"}}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasktop - Your Planning Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/dashboard.css" />
-    <link rel="shortcut icon" href="pic/pic1.png" type="image/x-icon">
-    <script src="script/script.js" defer></script>
-    <script src="script/script2.js" defer></script>
-</head>
-<body>
-    <!-- Header -->
-    <header class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-                <h1 class="text-2xl font-bold text-gray-800">Tasktop</h1>
-            </div>
-            <div class="flex items-center space-x-4">
-                <div class="hidden md:flex items-center bg-white bg-opacity-20 rounded-full px-3 py-1">
-                    <span id="current-date" class="text-sm"></span>
-                </div>
-            <div class="flex items-center space-x-6">
-                <nav class="hidden md:flex space-x-6">
-                    <a href="#" class="text-gray-700 hover:text-indigo-600 font-medium dashboard-link active-nav">Dashboard</a>
-                    <a href="#" class="text-gray-700 hover:text-indigo-600 font-medium sign-in-link">Sign In</a>
-                </nav>
-                
-                <div class="relative" id="profile-dropdown">
-                    <button class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 focus:outline-none">
-                        <i class="fas fa-user"></i>
-                    </button>
-                    <div class="dropdown bg-white shadow-lg rounded-md w-48 py-2 mt-2">
-                        <div class="px-4 py-2 border-b border-gray-200">
-                            <p class="text-sm font-medium text-gray-700">John Doe</p>
-                            <p class="text-xs text-gray-500">john.doe@example.com</p>
-                        </div>
-                        <button><a href="#daily-view" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-view="daily">Daily Plan</a></button>
-                        <button><a href="#monthly-view" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-view="monthly">Monthly Plan</a></button>
-                        <button><a href="#yearly-view" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-view="yearly">Annual Plan</a></button>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Report</a>
-                        <div class="border-t border-gray-200 mt-1"></div>
-                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
         <div class="flex flex-col md:flex-row gap-6">
@@ -394,10 +338,5 @@
       </div>
     </div>
   </div>
-
-
-</body>
-
-</html>
 
 {{end}}
