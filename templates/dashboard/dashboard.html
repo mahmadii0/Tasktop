@@ -1,59 +1,403 @@
 {{define "Title"}} Dashboard {{end}}
 {{define "Head"}}  <script src="https://cdn.tailwindcss.com"></script>{{end}}
 {{define "Content"}}
-<!-- Sidebar -->
-<aside class="w-56 bg-[#0D0F2A] text-white flex flex-col items-center py-6">
-    <div class="w-20 h-20 bg-gray-300 rounded-full mb-2"></div>
-    <p class="mb-6">Mohammad</p>
-    <nav class="w-full space-y-2">
-        <a href="/dashboard/daily-plan" class="block py-3 px-4 border-t border-b border-white text-sm hover:bg-white hover:text-black transition">Daily Plans</a>
-        <a href="/dashboard/monthly-plan" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Monthly Plans</a>
-        <a href="/dashboard/annually-plan" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Annually Plans</a>
-        <a href="/dashboard/report" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Report</a>
-        <a href="/logout" class="block py-3 px-4 border-b border-white text-sm hover:bg-white hover:text-black transition">Log out</a>
-    </nav>
-</aside>
 
-<!-- Main content -->
-<main class="flex-1 p-10 bg-white">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasktop - Your Planning Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="shortcut icon" href="pic/pic1.png" type="image/x-icon">
+    <script src="script/script.js" defer></script>
+    <script src="script/script2.js" defer></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                <h1 class="text-2xl font-bold text-gray-800">Tasktop</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex items-center bg-white bg-opacity-20 rounded-full px-3 py-1">
+                    <span id="current-date" class="text-sm"></span>
+                </div>
+            <div class="flex items-center space-x-6">
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#" class="text-gray-700 hover:text-indigo-600 font-medium dashboard-link active-nav">Dashboard</a>
+                    <a href="#" class="text-gray-700 hover:text-indigo-600 font-medium sign-in-link">Sign In</a>
+                </nav>
+                
+                <div class="relative" id="profile-dropdown">
+                    <button class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 focus:outline-none">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <div class="dropdown bg-white shadow-lg rounded-md w-48 py-2 mt-2">
+                        <div class="px-4 py-2 border-b border-gray-200">
+                            <p class="text-sm font-medium text-gray-700">John Doe</p>
+                            <p class="text-xs text-gray-500">john.doe@example.com</p>
+                        </div>
+                        <button><a href="#daily-view" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-view="daily">Daily Plan</a></button>
+                        <button><a href="#monthly-view" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-view="monthly">Monthly Plan</a></button>
+                        <button><a href="#yearly-view" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-view="yearly">Annual Plan</a></button>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Report</a>
+                        <div class="border-t border-gray-200 mt-1"></div>
+                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-    <!-- Status Bar -->
-    <div class="text-center mb-10">
-        <h2 class="text-lg font-medium">Today Status Bar</h2>
-        <p class="font-bold text-lg">50%</p>
-        <div class="w-full max-w-xl mx-auto h-6 bg-gray-300 rounded-full overflow-hidden">
-            <div class="bg-[#0D0F2A] h-full w-1/2"></div>
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Sidebar -->
+            <div class="w-full md:w-64 bg-white rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="relative h-20 w-20">
+                        <svg class="progress-ring" width="80" height="80">
+                            <circle class="progress-ring-circle-bg" stroke="#e5e7eb" stroke-width="8" fill="transparent" r="34" cx="40" cy="40"/>
+                            <circle class="progress-ring-circle" stroke="#4f46e5" stroke-width="8" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.52" stroke-dashoffset="53.38"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-lg font-bold text-gray-800">75%</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-gray-600 mb-6">Today's Progress</p>
+                
+                <div class="space-y-2">
+                    <a href="#" class="sidebar-item flex items-center p-3 rounded-md pointer-events-none opacity-50 cursor-not-allowed">
+                        <i class="fas fa-chart-line w-5 h-5 mr-3"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#daily-view" class="sidebar-item active flex items-center p-3 rounded-md text-gray-700">
+                        <i class="fas fa-calendar-day w-5 h-5 mr-3"></i>
+                        <span>Daily Plan</span>
+                    </a>
+                    <a href="#monthly-view" class="sidebar-item flex items-center p-3 rounded-md text-gray-700">
+                        <i class="fas fa-calendar-week w-5 h-5 mr-3"></i>
+                        <span>Monthly Plan</span>
+                    </a>
+                    <a href="#yearly-view" class="sidebar-item flex items-center p-3 rounded-md text-gray-700">
+                        <i class="fas fa-calendar w-5 h-5 mr-3"></i>
+                        <span>Yearly Plan</span>
+                    </a>
+                    <a href="#Note" class="sidebar-item flex items-center p-3 rounded-md text-gray-700">
+                        <i class="fas fa-sticky-note w-5 h-5 mr-3"></i>
+                        <span>Notes</span>
+                    </a>
+                    <a href="#" class="sidebar-item flex items-center p-3 rounded-md text-gray-700">
+                        <i class="fas fa-chart-pie w-5 h-5 mr-3"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Main Dashboard Area -->
+            <div class="flex-1">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Dashboard Overview</h2>
+                        <div class="flex space-x-2">
+                            <button class="view-tab tab-active flex-1 py-3 text-center" data-view="daily" >Daily</button>
+                            <button class="view-tab flex-1 py-3 text-center " data-view="monthly">Monthly</button>
+                            <button class="view-tab flex-1 py-3 text-center" data-view="yearly">Yearly</button>
+                        </div>
+                    </div>
+
+                   <!-- Calendar -->
+                   <div class="bg-white rounded-xl shadow-md p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Calendar</h2>
+                        <div class="flex space-x-2">
+                            <button id="prev-month" class="text-gray-500 hover:text-indigo-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <button id="next-month" class="text-gray-500 hover:text-indigo-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <h3 id="calendar-month" class="text-md font-medium text-gray-700 mb-2">June 2023</h3>
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-500 mb-1">
+                        <div>Su</div>
+                        <div>Mo</div>
+                        <div>Tu</div>
+                        <div>We</div>
+                        <div>Th</div>
+                        <div>Fr</div>
+                        <div>Sa</div>
+                    </div>
+                    <div id="calendar-days" class="grid grid-cols-7 gap-1 text-center">
+                        <!-- Calendar days will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+                       <!-- Daily View -->
+                       <div id="daily-view" class="view-content p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-gray-800">Today's Tasks</h2>
+                            <button id="add-daily-task" class="bg-indigo-600 text-white rounded-full p-1 hover:bg-indigo-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="daily-tasks" class="space-y-2">
+                            
+                        </div>
+                    </div>
+
+
+                     <!-- Monthly View -->
+                     <div id="monthly-view" class="view-content p-5 hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-gray-800">Monthly Goals</h2>
+                            <button id="add-monthly-goal" class="bg-indigo-600 text-white rounded-full p-1 hover:bg-indigo-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="monthly-goals" class="space-y-4">
+                            
+                        </div>
+                    </div>
+          
+                      <!-- Yearly View -->
+                      <div id="yearly-view" class="view-content p-5 hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-gray-800">Yearly Objectives</h2>
+                            <button id="add-yearly-objective" class="bg-indigo-600 text-white rounded-full p-1 hover:bg-indigo-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="yearly-objectives" class="space-y-6">
+                          
+                        </div>
+                    </div>
+                </div>
+</div>
+                    <!-- Notes Section -->
+                    <div id="Note" class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Notes</h3>
+                            <button id="add-note" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                                <i class="fas fa-plus mr-1"></i> New Note
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="note p-4 rounded-lg">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-medium text-gray-800">Project Ideas</h4>
+                                    <div class="flex space-x-2">
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600">Brainstorm new features for the dashboard. Consider adding data visualization and export options.</p>
+                                <div class="mt-2 text-xs text-gray-500">Updated 2 hours ago</div>
+                            </div>
+                            
+                            <div class="note p-4 rounded-lg">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-medium text-gray-800">Meeting Notes</h4>
+                                    <div class="flex space-x-2">
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600">Discuss timeline for Q3 goals. Follow up with marketing team about campaign launch.</p>
+                                <div class="mt-2 text-xs text-gray-500">Updated yesterday</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- AI Assistant Section -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">AI Assistant</h3>
+                        
+                        <div class="h-64 overflow-y-auto mb-4 space-y-3 p-2 border border-gray-200 rounded-lg">
+                            <div class="ai-message p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">Hello! I'm your AI planning assistant. How can I help you today with your tasks and planning?</p>
+                            </div>
+                            
+                            <div class="user-message p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">I need help prioritizing my tasks for today.</p>
+                            </div>
+                            
+                            <div class="ai-message p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">I'd be happy to help you prioritize your tasks! Looking at your schedule, I recommend focusing on the project proposal first since it's due today. Then attend your team meeting at 2 PM, and if you have time afterward, review the client feedback which is less urgent.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="text" placeholder="Ask your AI assistant..." class="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <button class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-r-lg">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Content -->
-    <div class="grid grid-cols-3 gap-10">
-        <!-- Daily Goals -->
-        <div class="bg-gray-300 p-6 rounded">
-            <h3 class="text-lg font-medium mb-4">Your Daily Goals</h3>
-            <div class="space-y-4 mb-6">
-                <div class="bg-[#2F314C] h-10 rounded-md"></div>
-                <div class="bg-[#2F314C] h-10 rounded-md"></div>
-                <div class="bg-[#2F314C] h-10 rounded-md"></div>
+ <!-- Add Task Modal -->
+ <div id="add-task-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Add New Task</h2>
+            <button id="close-task-modal" class="text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <form id="task-form" class="space-y-4">
+            <div>
+                <label for="task-type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select id="task-type" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option value="daily">Daily</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>              
+            <div>
+                <label for="task-title" class="block text-sm font-medium text-gray-700 mb-1">Task Title</label>
+                <input type="text" id="task-title" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter task title">
             </div>
-            <button class="bg-black text-white px-4 py-2 rounded">Show Plan</button>
-        </div>
-
-        <!-- AI Suggest -->
-        <div>
-            <h3 class="text-lg font-medium mb-4">AI Suggest</h3>
-            <div class="bg-gray-300 p-4 rounded">
-                <p class="font-semibold">lorem ipsum lorem ipsum lorem ipsum</p>
-                <p class="font-semibold">lorem ipsum lorem ipsum lorem ipsum</p>
+            <div>
+                <label for="task-description" class="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
+                <textarea id="task-description" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" placeholder="Enter task description"></textarea>
             </div>
-        </div>
-
-        <!-- Your Note -->
-        <div>
-            <h3 class="text-lg font-medium mb-4">Your Note</h3>
-            <div class="bg-gray-300 h-48 rounded p-4"></div>
-        </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="task-priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                    <select id="task-priority" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <!-- Daily date picker -->
+<div id="daily-date-picker" class="mt-2">
+    <label for="task-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+    <input type="date" id="task-due-date" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+  </div>
+  
+  <!-- Monthly picker -->
+  <div id="monthly-date-picker" class="mt-2 hidden">
+    <label for="task-due-month" class="block text-sm font-medium text-gray-700 mb-1">Select Month</label>
+    <select id="task-due-month" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <option value="">Select Month</option>
+      <option value="0">January</option>
+      <option value="1">February</option>
+      <option value="2">March</option>
+      <option value="3">April</option>
+      <option value="4">May</option>
+      <option value="5">June</option>
+      <option value="6">July</option>
+      <option value="7">August</option>
+      <option value="8">September</option>
+      <option value="9">October</option>
+      <option value="10">November</option>
+      <option value="11">December</option>
+    </select>
+  </div>
+  
+  <!-- Yearly input -->
+  <div id="yearly-date-picker" class="mt-2 hidden">
+    <label for="task-due-year" class="block text-sm font-medium text-gray-700 mb-1">Enter Year</label>
+    <input type="number" id="task-due-year" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 2025">
+  </div>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button type="button" id="cancel-task" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg mr-2 hover:bg-gray-300 transition">Cancel</button>
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">Add Task</button>
+            </div>
+        </form>
     </div>
-</main>
+</div>
+
+
+<!-- Add Note Modal -->
+<div id="add-note-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Add New Note</h2>
+            <button id="close-note-modal" class="text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <form id="note-form" class="space-y-4">
+            <div>
+                <label for="note-title" class="block text-sm font-medium text-gray-700 mb-1">Note Title</label>
+                <input type="text" id="note-title" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter note title">
+            </div>
+            <div>
+                <label for="note-content" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                <textarea id="note-content" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="5" placeholder="Enter note content"></textarea>
+            </div>
+            <div>
+                <label for="note-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select id="note-category" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="ideas">Ideas</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button type="button" id="cancel-note" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg mr-2 hover:bg-gray-300 transition">Cancel</button>
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">Add Note</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Progress Update Modal -->
+<div id="progress-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-xs shadow-lg">
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">Update Progress</h2>
+      <input type="number" id="progress-input" min="0" max="100" class="w-full border px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter a value (0-100)">
+      <div class="flex justify-end mt-4 space-x-2">
+        <button id="cancel-progress" class="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+        <button id="confirm-progress" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Update</button>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>
 
 {{end}}
