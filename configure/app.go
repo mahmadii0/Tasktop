@@ -4,21 +4,12 @@ import (
 	"Tasktop"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 	"log"
-	"os"
 )
 
 var (
 	db *sql.DB
 )
-
-func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-}
 
 func CreateTables() {
 	source := Tasktop.DATABASE_SOURCE
@@ -114,7 +105,7 @@ func CreateTables() {
 }
 
 func Connect() {
-	source := os.Getenv("DATA_SOURCE_NAME")
+	source := Tasktop.DATABASE_SOURCE
 	d, err := sql.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
