@@ -1,7 +1,7 @@
 package configure
 
 import (
-	"Tasktop"
+	"Tasktop/constants"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -12,7 +12,7 @@ var (
 )
 
 func CreateTables() {
-	source := Tasktop.DATABASE_SOURCE
+	source := constants.DATABASE_SOURCE
 	d, err := sql.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
@@ -113,7 +113,7 @@ func CreateTables() {
 }
 
 func Connect() {
-	source := Tasktop.DATABASE_SOURCE
+	source := constants.DATABASE_SOURCE
 	d, err := sql.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
