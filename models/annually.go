@@ -5,17 +5,20 @@ import (
 )
 
 type AnnuallyPlan struct {
-	APID   int
-	Status bool
-	Year   int
-	UserID int //Foregin-key
+	APID     int
+	Progress int
+	Status   bool
+	Year     int
+	UserID   int //Foregin-key
 }
 type AnnuallyGoal struct {
-	AGID   int
-	Title  string
-	Desc   string
-	Status bool
-	APID   int //Foregin-key
+	AGID     int
+	Title    string
+	Desc     string
+	Priority string
+	Progress int
+	Status   bool
+	APID     int //Foregin-key
 }
 
 func init() {

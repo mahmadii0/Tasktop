@@ -5,18 +5,21 @@ import (
 )
 
 type MonthlyPlan struct {
-	MPID   int
-	Status bool
-	Date   string
-	UserID int //Foregin-key
+	MPID     int
+	Progress int
+	Status   bool
+	Date     string
+	UserID   int //Foregin-key
 }
 type MonthlyGoal struct {
-	MGID   int
-	Title  string
-	Desc   string
-	Status bool
-	MPID   int //Foregin-key
-	AGID   int //Foregin-key
+	MGID     int
+	Title    string
+	Desc     string
+	Priority string
+	Progress int
+	Status   bool
+	MPID     int //Foregin-key
+	AGID     int //Foregin-key
 }
 
 func init() {

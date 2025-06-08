@@ -6,18 +6,20 @@ import (
 )
 
 type DailyPlan struct {
-	DPID   int
-	Status bool
-	UserID int //Foregin-key
+	DPID     int
+	Progress int
+	Status   bool
+	UserID   int //Foregin-key
 }
 type DailyGoal struct {
 	DGID  int
 	Title string
 	//TimeTD  is stand of Time To Do for this task
-	TimeTD time.Time
-	Status bool
-	DPID   int //Foregin-key
-	MGID   int //Foregin-key
+	TimeTD   time.Time
+	Priority string
+	Status   bool
+	DPID     int //Foregin-key
+	MGID     int //Foregin-key
 }
 
 func init() {

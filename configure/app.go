@@ -28,6 +28,7 @@ func CreateTables() {
 	annuallyPlan := `
 	CREATE TABLE IF NOT EXISTS annuallyPlans(
 	    annuallyPId INTEGER PRIMARY KEY AUTO_INCREMENT,
+	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
 	    year INTEGER NOT NULL,
 	    userId INTEGER NOT NULL,
@@ -38,6 +39,8 @@ func CreateTables() {
 	    annuallyGId INTEGER PRIMARY KEY AUTO_INCREMENT,
 	    title varchar(100) NOT NULL,
 	    description varchar(1500),
+	    priority varchar(6),
+	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
 	    annuallyPId INTEGER NOT NULL,
 	    CONSTRAINT annuallyP_annuallyG FOREIGN KEY (annuallyPId) REFERENCES annuallyPlans(annuallyPId)
@@ -45,6 +48,7 @@ func CreateTables() {
 	monthlyPlan := `
 	CREATE TABLE IF NOT EXISTS monthlyPlans(
 	    monthlyPId INTEGER PRIMARY KEY AUTO_INCREMENT,
+	    prgress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
 	    date varchar(40) NOT NULL,
 	    userId INTEGER NOT NULL,
@@ -55,6 +59,8 @@ func CreateTables() {
 	    monthlyGId INTEGER PRIMARY KEY AUTO_INCREMENT,
 	    title varchar(100) NOT NULL,
 	    description varchar(1500),
+	    priority varchar(6),
+	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
 	    monthlyPId INTEGER NOT NULL,
 	    annuallyGId INTEGER NOT NULL,
@@ -64,6 +70,7 @@ func CreateTables() {
 	dailyPlan := `
 	CREATE TABLE IF NOT EXISTS dailyPlans(
 	    dailyPId INTEGER PRIMARY KEY AUTO_INCREMENT,
+	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
 	    userId INTEGER NOT NULL,
 	    CONSTRAINT user_dailyP FOREIGN KEY (userId) REFERENCES users(userId)
@@ -73,6 +80,7 @@ func CreateTables() {
 	    dailyGId INTEGER PRIMARY KEY AUTO_INCREMENT,
 	    title varchar(100) NOT NULL,
 	    timeToDo DATETIME,
+		priority varchar(6),
 	    status TINYINT NOT NULL,
 	    dailyPId INTEGER NOT NULL,
 	    monthlyGId INTEGER NOT NULL,
