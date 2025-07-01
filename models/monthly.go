@@ -5,21 +5,21 @@ import (
 )
 
 type MonthlyPlan struct {
-	MPID     int
-	Progress int
-	Status   bool
-	Date     string
-	UserID   int //Foregin-key
+	MPID     int    `json:"MPId"`
+	Progress int    `json:"progress"`
+	Status   bool   `json:"status"`
+	Date     string `json:"date"`
+	UserID   int    `json:"userId"` //Foregin-key
 }
 type MonthlyGoal struct {
-	MGID     int
-	Title    string
-	Desc     string
-	Priority string
-	Progress int
-	Status   bool
-	MPID     int //Foregin-key
-	AGID     int //Foregin-key
+	MGID     int    `json:"MGId"`
+	Title    string `json:"title"`
+	Desc     string `json:"desc"`
+	Priority string `json:"priority"`
+	Progress int    `json:"progress"`
+	Status   bool   `json:"status"`
+	MPID     int    `json:"MPId"` //Foregin-key
+	AGID     int    `json:"AGId"` //Foregin-key
 }
 
 func init() {

@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"Tasktop/models"
+	"encoding/json"
 	"net/http"
 )
 
@@ -23,33 +25,22 @@ func AnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 //Create Goals
 
 func CDailyGoal(w http.ResponseWriter, r *http.Request) {
-	TemplateRender(w, "/dashboard/create-goals/daily/create-update", nil)
+	w.Header().Set("Content-Type", "application/json")
+	var dailyGoal models.DailyGoal
+	_ = json.NewDecoder(r.Body).Decode(&dailyGoal)
+	status := models.AddDailyG(&dailyGoal)
+	if status {
+		json.NewEncoder(w).Encode(dailyGoal)
+		DashHandler(w, r)
+	}
+	DashHandler(w, r)
 }
 
 func CMonthlyGoal(w http.ResponseWriter, r *http.Request) {
-	TemplateRender(w, "/dashboard/create-goals/monthly/create-update", nil)
+
 }
 func CAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
-	// if r.Method == "GET" {
-	// 	TemplateRender(w, "/dashboard/create-goals/annually/create-update", nil)
-	// } else if r.Method == "POST" {
-	// 	if err := r.ParseForm(); err != nil {
-	// 		log.Println(err)
-	// 		return
-	// 	}
-	// 	title := r.FormValue("title")
-	// 	desc := r.FormValue("description")
-	// 	annuallyPId, err := models.GetAnnuallyPByUserId(1)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-	// 	annuallyG := &models.AnnuallyGoal{Title: title, Desc: desc, Status: true, APID: annuallyPId.APID}
-	// 	models.AddAnnuallyG(annuallyG)
-	// 	r.Method = "GET"
-	// 	AnnuallyGoals(w, r)
-	// } else {
-	// 	fmt.Println("dd")
-	// }
+
 }
 
 //Update Goals

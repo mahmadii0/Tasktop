@@ -5,20 +5,20 @@ import (
 )
 
 type AnnuallyPlan struct {
-	APID     int
-	Progress int
-	Status   bool
-	Year     int
-	UserID   int //Foregin-key
+	APID     int  `json:"APId"`
+	Progress int  `json:"progress"`
+	Status   bool `json:"status"`
+	Year     int  `json:"year"`
+	UserID   int  `json:"userId"` //Foregin-key
 }
 type AnnuallyGoal struct {
-	AGID     int
-	Title    string
-	Desc     string
-	Priority string
-	Progress int
-	Status   bool
-	APID     int //Foregin-key
+	AGID     int    `json:"AGId"`
+	Title    string `json:"title"`
+	Desc     string `json:"desc"`
+	Priority string `json:"priority"`
+	Progress int    `json:"progress"`
+	Status   bool   `json:"status"`
+	APID     int    `json:"APId"` //Foregin-key
 }
 
 func init() {

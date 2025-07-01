@@ -7,11 +7,11 @@ import (
 )
 
 type User struct {
-	UserID   int
-	Name     string
-	Email    string
-	Phone    string
-	Password string
+	UserID   int    `json:"userId"`
+	Name     string `json:"userName"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
 }
 
 var (
