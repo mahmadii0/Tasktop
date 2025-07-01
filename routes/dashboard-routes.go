@@ -2,31 +2,33 @@ package routes
 
 import (
 	"Tasktop/controllers"
+
 	"github.com/gorilla/mux"
 )
 
 var DashRegister = func(r *mux.Router) {
 	r.HandleFunc("/dashboard", controllers.DashHandler)
-	//Plans
-	r.HandleFunc("/dashboard/daily-plans", controllers.DailyPlan)
-	r.HandleFunc("/dashboard/monthly-plans", controllers.MonthlyPlan)
-	r.HandleFunc("/dashboard/annually-plans", controllers.AnnuallyPlan)
-	//Read
-	r.HandleFunc("/dashboard/daily-goals", controllers.DailyPlan)
-	r.HandleFunc("/dashboard/monthly-goals", controllers.MonthlyPlan)
-	r.HandleFunc("/dashboard/annually-goals", controllers.AnnuallyGoals).Methods("GET")
-	r.HandleFunc("/dashboard/annually-goals", controllers.AnnuallyGoals).Methods("POST")
-	//Create
-	r.HandleFunc("/dashboard/daily-goals/create", controllers.CDailyGoal).Methods("GET")
+
+	//Read Goals
+	r.HandleFunc("/dashboard/daily-goals/{goalId:[0-99]+}", controllers.DailyPlan).Methods("GET")
+	r.HandleFunc("/dashboard/monthly-goals/{goalId:[0-99]+}", controllers.MonthlyPlan).Methods("GET")
+	r.HandleFunc("/dashboard/annually-goals/{goalId:[0-99]+}", controllers.AnnuallyGoals).Methods("GET")
+
+	//Create Goals
 	r.HandleFunc("/dashboard/daily-goals/create", controllers.CDailyGoal).Methods("POST")
-	r.HandleFunc("/dashboard/monthly-goals/create", controllers.CMonthlyGoal).Methods("GET")
 	r.HandleFunc("/dashboard/monthly-goals/create", controllers.CMonthlyGoal).Methods("POST")
-	r.HandleFunc("/dashboard/annually-goals/create", controllers.CAnnuallyGoal).Methods("GET")
 	r.HandleFunc("/dashboard/annually-goals/create", controllers.CAnnuallyGoal).Methods("POST")
 
-	//Update
-	r.HandleFunc("/dashboard/annually-goals/update/{goalId:[0-99]+}", controllers.CAnnuallyGoal).Methods("GET")
-	r.HandleFunc("/dashboard/annually-goals/update/{goalId:[0-99]+}", controllers.CAnnuallyGoal).Methods("POST")
+	//Update Goals
+	r.HandleFunc("/dashboard/daily-goals/{goalId:[0-99]+}", controllers.DailyPlan).Methods("PUT")
+	r.HandleFunc("/dashboard/monthly-goals/{goalId:[0-99]+}", controllers.MonthlyPlan).Methods("PUT")
+	r.HandleFunc("/dashboard/annually-goals/{goalId:[0-99]+}", controllers.AnnuallyGoals).Methods("PUT")
+
+	//Delete Goals
+	r.HandleFunc("/dashboard/daily-goals/{goalId:[0-99]+}", controllers.DailyPlan).Methods("DELETE")
+	r.HandleFunc("/dashboard/monthly-goals/{goalId:[0-99]+}", controllers.MonthlyPlan).Methods("DELETE")
+	r.HandleFunc("/dashboard/annually-goals/{goalId:[0-99]+}", controllers.AnnuallyGoals).Methods("DELETE")
+
 	//Report
 	r.HandleFunc("/dashboard/report", controllers.Report)
 }
