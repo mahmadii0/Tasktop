@@ -3,8 +3,9 @@ package configure
 import (
 	"Tasktop/constants"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -19,8 +20,8 @@ func CreateTables() {
 	}
 	user := `
 	CREATE TABLE IF NOT EXISTS users(
-	    userId INTEGER PRIMARY KEY AUTO_INCREMENT,
-	    name varchar(150) NOT NULL,
+	    username varchar(100) PRIMARY KEY AUTO_INCREMENT,
+	    fullname varchar(150) NOT NULL,
 	    email varchar(250) UNIQUE NOT NULL,
 	    phone varchar(13) UNIQUE,
 	    password varchar(400) NOT NULL
@@ -31,8 +32,8 @@ func CreateTables() {
 	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
 	    year INTEGER NOT NULL,
-	    userId INTEGER NOT NULL,
-	    CONSTRAINT user_annuallyP FOREIGN KEY (userId) REFERENCES users(userId)
+	    username varchar(100) NOT NULL,
+	    CONSTRAINT user_annuallyP FOREIGN KEY (username) REFERENCES users(username)
 	);`
 	annuallyGoals := `
 	CREATE TABLE IF NOT EXISTS annuallyGoals(
@@ -51,8 +52,8 @@ func CreateTables() {
 	    prgress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
 	    date varchar(40) NOT NULL,
-	    userId INTEGER NOT NULL,
-	    CONSTRAINT user_monthlyP FOREIGN KEY (userId) REFERENCES users(userId)
+	    username varchar(100) NOT NULL,
+	    CONSTRAINT user_monthlyP FOREIGN KEY (username) REFERENCES users(username)
 	);`
 	monthlyGoals := `
 	CREATE TABLE IF NOT EXISTS monthlyGoals(
@@ -72,8 +73,8 @@ func CreateTables() {
 	    dailyPId INTEGER PRIMARY KEY AUTO_INCREMENT,
 	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
-	    userId INTEGER NOT NULL,
-	    CONSTRAINT user_dailyP FOREIGN KEY (userId) REFERENCES users(userId)
+	    username varchar(100) NOT NULL,
+	    CONSTRAINT user_dailyP FOREIGN KEY (username) REFERENCES users(username)
 	);`
 	dailyGoals := `
 	CREATE TABLE IF NOT EXISTS dailyGoals(
