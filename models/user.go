@@ -32,9 +32,14 @@ func init() {
 
 //User
 
-func AddUser(user *User) (*User, bool) {
-	user.Email = "dfdfd"
-	return user, true
+func AddUser(user *User) bool {
+	status := true
+	query := `INSERT INTO users VALUES(?,?,?,?,?)`
+	_, err := db.Exec(query, user.UserName, user.FullName, user.Email, user.Phone, user.Password)
+	if err != nil {
+		status = false
+	}
+	return status
 }
 
 func GetUserByUserName(username string) (*User, error) {
@@ -67,7 +72,12 @@ func DeleteUser(userId int) bool {
 
 //Questions
 
-func AddQuestions(user *User) bool {
-	user.Email = "dfdfd"
-	return true
+func AddQuestions(username string, questions *SecurityQuestions) bool {
+	status := true
+	query := `INSERT INTO securityquestions VALUES(?,?,?,?,?)`
+	_, err := db.Exec(query, username, questions.Question1, questions.Answer1, questions.Question2, questions.Answer2)
+	if err != nil {
+		status = false
+	}
+	return status
 }
