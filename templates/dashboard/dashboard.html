@@ -227,7 +227,7 @@
                 </svg>
             </button>
         </div>
-        <form id="task-form" class="space-y-4">
+        <form  method="post" id="task-form" class="space-y-4">
             <div>
                 <label for="task-type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
                 <select id="task-type" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -257,7 +257,7 @@
 <div id="daily-date-picker" class="mt-2">
     <label for="task-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
     <input type="date" id="task-due-date" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-  </div>
+</div>
   
   <!-- Monthly picker -->
   <div id="monthly-date-picker" class="mt-2 hidden">
@@ -284,10 +284,10 @@
     <label for="task-due-year" class="block text-sm font-medium text-gray-700 mb-1">Enter Year</label>
     <input type="number" id="task-due-year" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 2025">
   </div>
-            </div>
+</div>
             <div class="flex justify-end pt-2">
                 <button type="button" id="cancel-task" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg mr-2 hover:bg-gray-300 transition">Cancel</button>
-                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">Add Task</button>
+                <button type="submit" value="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">Add Task</button>
             </div>
         </form>
     </div>

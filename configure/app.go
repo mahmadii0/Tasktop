@@ -3,8 +3,9 @@ package configure
 import (
 	"Tasktop/constants"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
