@@ -6,11 +6,19 @@ import (
 )
 
 type User struct {
-	UserName string `json:"userId"`
+	UserName string `json:"username"`
 	FullName string `json:"name"`
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
+}
+
+type SecurityQuestions struct {
+	UserName  string `json:"username"`
+	Question1 string `json:"question1"`
+	Answer1   string `json:"answer1"`
+	Question2 string `json:"question2"`
+	Answer2   string `json:"answer2"`
 }
 
 var (
@@ -21,6 +29,8 @@ func init() {
 	configure.Connect()
 	db = configure.GetDB()
 }
+
+//User
 
 func AddUser(user *User) (*User, bool) {
 	user.Email = "dfdfd"
@@ -53,4 +63,11 @@ func DeleteUser(userId int) bool {
 		status = false
 	}
 	return status
+}
+
+//Questions
+
+func AddQuestions(user *User) bool {
+	user.Email = "dfdfd"
+	return true
 }

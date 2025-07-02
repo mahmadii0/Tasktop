@@ -20,12 +20,23 @@ func CreateTables() {
 	}
 	user := `
 	CREATE TABLE IF NOT EXISTS users(
-	    username varchar(100) PRIMARY KEY AUTO_INCREMENT,
+	    username varchar(100) PRIMARY KEY,
 	    fullname varchar(150) NOT NULL,
 	    email varchar(250) UNIQUE NOT NULL,
 	    phone varchar(13) UNIQUE,
 	    password varchar(400) NOT NULL
 	    );`
+
+	securityQuestions :=
+		`CREATE TABLE IF NOT EXISTS securityquestions(
+	    username varchar(100) NOT NULL,
+	    question1 varchar(100) NOT NULL,
+	    answer1 varchar(100) NOT NULL,
+	    question2 varchar(100) NOT NULL,
+	    answer2 varchar(100) NOT NULL,
+		CONSTRAINT user_securityQ FOREIGN KEY (username) REFERENCES users(username)
+	    );`
+
 	annuallyPlan := `
 	CREATE TABLE IF NOT EXISTS annuallyPlans(
 	    annuallyPId INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -91,6 +102,9 @@ func CreateTables() {
 
 	if _, err = d.Exec(user); err != nil {
 		log.Printf("Error on creating user table: %v", err)
+	}
+	if _, err = d.Exec(securityQuestions); err != nil {
+		log.Printf("Error on creating securityQuestions table: %v", err)
 	}
 	if _, err = d.Exec(annuallyPlan); err != nil {
 		log.Printf("Error on creating annuallyPlan table: %v", err)
