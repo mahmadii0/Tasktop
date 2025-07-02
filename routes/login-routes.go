@@ -7,7 +7,9 @@ import (
 )
 
 var LogRegister = func(r *mux.Router) {
-	r.HandleFunc("/register", controllers.SignUp)
-	r.HandleFunc("/login", controllers.LogIn)
+	r.HandleFunc("/register", controllers.SignUp).Methods("POST")
+	r.HandleFunc("/register", controllers.SignUp).Methods("GET")
+	r.HandleFunc("/login", controllers.LogIn).Methods("POST")
+	r.HandleFunc("/login", controllers.LogIn).Methods("GET")
 	r.HandleFunc("/logout", controllers.LogOut)
 }
