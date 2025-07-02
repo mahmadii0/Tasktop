@@ -30,9 +30,9 @@ func CreateTables() {
 	securityQuestions :=
 		`CREATE TABLE IF NOT EXISTS securityquestions(
 	    username varchar(100) NOT NULL,
-	    question1 varchar(100) NOT NULL,
+	    question1 varchar(2) NOT NULL,
 	    answer1 varchar(100) NOT NULL,
-	    question2 varchar(100) NOT NULL,
+	    question2 varchar(2) NOT NULL,
 	    answer2 varchar(100) NOT NULL,
 		CONSTRAINT user_securityQ FOREIGN KEY (username) REFERENCES users(username)
 	    );`

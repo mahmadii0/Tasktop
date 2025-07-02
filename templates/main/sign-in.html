@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Authentication System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{{define "Title"}}Login{{end}}
+{{define "Head"}}
     <link rel="stylesheet" href="../../static/css/login-css.css" />
     <script src="../../static/script/login-script.js" defer></script>
     <script src="../../static/script/login-script2.js" defer></script>
-</head>
-<body>
+{{end}}
+
+{{define "Content"}}
     <div class="floating-shapes">
         <div class="shape" style="width: 80px; height: 80px; left: 10%; top: 10%; animation-duration: 25s;"></div>
         <div class="shape" style="width: 60px; height: 60px; left: 25%; top: 30%; animation-duration: 20s;"></div>
@@ -146,7 +141,7 @@
                         </div>
                     </div>
                     
-                    <form id="signupForm">
+                    <form method="post" id="signupForm">
                         <!-- Step 1: Account Information -->
                         <div class="signup-step active" id="step1">
                             <div class="form-group" id="signupEmailGroup">
@@ -154,7 +149,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-envelope"></i>
                                 </span>
-                                <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com" required>
+                                <input type="email" name="email" class="form-input" id="signupEmail" placeholder="your@email.com" required>
                                 <div class="validation-message">Please enter a valid email address</div>
                             </div>
                             
@@ -163,7 +158,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-user"></i>
                                 </span>
-                                <input type="text" class="form-input" id="signupUsername" placeholder="johndoe123" required>
+                                <input type="text" name="username" class="form-input" id="signupUsername" placeholder="johndoe123" required>
                                 <div class="validation-message">Username must be at least 8 characters</div>
                             </div>
                             
@@ -172,7 +167,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-lock"></i>
                                 </span>
-                                <input type="password" class="form-input" id="signupPassword" placeholder="••••••••" required>
+                                <input type="password" name="password" class="form-input" id="signupPassword" placeholder="••••••••" required>
                                 <span class="password-toggle" onclick="togglePassword('signupPassword', this)">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -243,7 +238,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-user"></i>
                                 </span>
-                                <input type="text" class="form-input" id="firstName" placeholder="John" required>
+                                <input type="text" name="fisrtName" class="form-input" id="firstName" placeholder="John" required>
                                 <div class="validation-message">First name is required</div>
                             </div>
                             
@@ -252,7 +247,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-user"></i>
                                 </span>
-                                <input type="text" class="form-input" id="lastName" placeholder="Doe" required>
+                                <input type="text" name="lastName" class="form-input" id="lastName" placeholder="Doe" required>
                                 <div class="validation-message">Last name is required</div>
                             </div>
                             
@@ -261,11 +256,11 @@
                                 <span class="input-icon">
                                     <i class="fas fa-phone"></i>
                                 </span>
-                                <input type="tel" class="form-input" id="phoneNumber" placeholder="+1 (123) 456-7890">
+                                <input type="tel" name="phone" class="form-input" id="phoneNumber" placeholder="+1 (123) 456-7890">
                                 <div class="validation-message">Please enter a valid phone number</div>
                             </div>
                             
-                            <div class="form-group">
+                            <div class="form-group hidden">
                                 <label class="form-label" for="birthdate">Date of Birth</label>
                                 <span class="input-icon">
                                     <i class="fas fa-calendar"></i>
@@ -286,7 +281,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-question-circle"></i>
                                 </span>
-                                <select class="form-input" id="securityQuestion1" required>
+                                <select name="question1" class="form-input" id="securityQuestion1" required>
                                     <option value="" disabled selected>Select a security question</option>
                                     <option value="q1">What was your first pet's name?</option>
                                     <option value="q2">What was the name of your first school?</option>
@@ -300,7 +295,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-key"></i>
                                 </span>
-                                <input type="text" class="form-input" id="securityAnswer1" placeholder="Your answer" required>
+                                <input type="text" name="answer1" class="form-input" id="securityAnswer1" placeholder="Your answer" required>
                             </div>
                             
                             <div class="form-group">
@@ -308,7 +303,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-question-circle"></i>
                                 </span>
-                                <select class="form-input" id="securityQuestion2" required>
+                                <select name="question2" class="form-input" id="securityQuestion2" required>
                                     <option value="" disabled selected>Select a security question</option>
                                     <option value="q5">What is your mother's maiden name?</option>
                                     <option value="q6">What was your first car?</option>
@@ -322,7 +317,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-key"></i>
                                 </span>
-                                <input type="text" class="form-input" id="securityAnswer2" placeholder="Your answer" required>
+                                <input type="text" name="answer2" class="form-input" id="securityAnswer2" placeholder="Your answer" required>
                             </div>
                             
                             <div class="step-buttons">
@@ -342,16 +337,7 @@
                                 </label>
                             </div>
                             
-                            <div class="checkbox-wrapper" style="margin-bottom: 1.5rem;">
-                                <div class="custom-checkbox" id="newsletterCheckbox" onclick="toggleCheckbox(this)">
-                                    <input type="checkbox" class="checkbox-input" id="newsletter">
-                                </div>
-                                <label for="newsletter" style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
-                                    I want to receive news and updates via email
-                                </label>
-                            </div>
-                            
-                            <button type="button" class="btn btn-primary" id="signupBtn" onclick="handleSignup()">
+                            <button type="submit" value="submit" class="btn btn-primary" id="signupBtn" onclick="handleSignup()">
                                 Create Account
                             </button>
                             
@@ -499,5 +485,4 @@
         </div>
     </div>
     
-</body>
-</html>
+{{end}}
