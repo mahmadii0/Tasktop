@@ -141,7 +141,7 @@
                         </div>
                     </div>
                     
-                    <form method="post" id="signupForm">
+                    <form id="signupForm">
                         <!-- Step 1: Account Information -->
                         <div class="signup-step active" id="step1">
                             <div class="form-group" id="signupEmailGroup">
@@ -281,7 +281,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-question-circle"></i>
                                 </span>
-                                <select name="question1" class="form-input" id="securityQuestion1" required>
+                                <select class="form-input" id="securityQuestion1" name="question1" required>
                                     <option value="" disabled selected>Select a security question</option>
                                     <option value="q1">What was your first pet's name?</option>
                                     <option value="q2">What was the name of your first school?</option>
@@ -303,7 +303,7 @@
                                 <span class="input-icon">
                                     <i class="fas fa-question-circle"></i>
                                 </span>
-                                <select name="question2" class="form-input" id="securityQuestion2" required>
+                                <select class="form-input" id="securityQuestion2" name="question2" required>
                                     <option value="" disabled selected>Select a security question</option>
                                     <option value="q5">What is your mother's maiden name?</option>
                                     <option value="q6">What was your first car?</option>
@@ -337,7 +337,7 @@
                                 </label>
                             </div>
                             
-                            <button type="submit" value="submit" class="btn btn-primary" id="signupBtn" onclick="handleSignup()">
+                            <button type="button" value="submit" class="btn btn-primary" id="signupBtn" onclick="handleSignup()">
                                 Create Account
                             </button>
                             
