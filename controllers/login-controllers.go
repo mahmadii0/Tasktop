@@ -3,6 +3,7 @@ package controllers
 import (
 	"Tasktop/models"
 	"Tasktop/utils"
+	"fmt"
 	"net/http"
 )
 
@@ -56,6 +57,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Error While Hashing", er)
 			return
 		}
+
 		//User Injection
 		user.UserName = userName
 		user.FullName = fullName
@@ -91,6 +93,52 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	if email == "" || password == "" {
+		err := http.StatusBadRequest
+		http.Error(w, "Invalid Request", err)
+		return
+	}
+
+	//Check Email
+	hash, err := models.GetPassHashByEmail(email)
+	if err != nil {
+		er := http.StatusBadRequest
+		fmt.Printf("Wrong Email or Password")
+		http.Error(w, "Error For Getting Hash password", er)
+		return
+	}
+	status := utils.CheckPassword(password, hash)
+	if !(status) {
+		er := http.StatusBadRequest
+		fmt.Printf("Wrong Email or Password")
+		http.Error(w, "Wrong Password", er)
+		return
+	}
+
+	sessionToken := utils.GenerateToken(32)
+	csrfToken := utils.GenerateToken(32)
+	//Set session cookie
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  "session_token",
+		Value: sessionToken,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  "csrf_token",
+		Value: csrfToken,
+	})
+
+	status = models.SetTokens(sessionToken, csrfToken, email)
+	if !(status) {
+		er := http.StatusBadRequest
+		http.Error(w, "Error while Set tokens", er)
+		return
+	}
+	return
 
 }
 func LogOut(w http.ResponseWriter, r *http.Request) {

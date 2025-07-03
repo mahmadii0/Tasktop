@@ -6,11 +6,13 @@ import (
 )
 
 type User struct {
-	UserName string `json:"username"`
-	FullName string `json:"name"`
-	Email    string `json:"email"`
-	Phone    string `json:"phone"`
-	Password string `json:"password"`
+	UserName     string `json:"username"`
+	FullName     string `json:"name"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	Password     string `json:"password"`
+	SessionToken string
+	CSRF         string
 }
 
 type SecurityQuestions struct {
@@ -34,12 +36,30 @@ func init() {
 
 func AddUser(user *User) bool {
 	status := true
-	query := `INSERT INTO users VALUES(?,?,?,?,?)`
+	query := `INSERT INTO users(username,fullname,email,phone,password) VALUES(?,?,?,?,?)`
 	_, err := db.Exec(query, user.UserName, user.FullName, user.Email, user.Phone, user.Password)
 	if err != nil {
 		status = false
 	}
 	return status
+}
+
+func SetTokens(sessionToken string, csrfToken string, email string) bool {
+	status := true
+	query := `UPDATE users SET session_token=? ,csrf_token=? WHERE email=?`
+	_, err := db.Exec(query, sessionToken, csrfToken, email)
+	if err != nil {
+		status = false
+	}
+	return status
+}
+
+func GetPassHashByEmail(email string) (string, error) {
+	var hash string
+	query := `SELECT password FROM users WHERE email=?`
+	row := db.QueryRow(query, email)
+	err := row.Scan(&hash)
+	return hash, err
 }
 
 func GetUserByUserName(username string) (*User, error) {

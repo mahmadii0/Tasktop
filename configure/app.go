@@ -24,7 +24,9 @@ func CreateTables() {
 	    fullname varchar(150) NOT NULL,
 	    email varchar(250) UNIQUE NOT NULL,
 	    phone varchar(13) UNIQUE,
-	    password varchar(400) NOT NULL
+	    password varchar(400) NOT NULL,
+		session_token varchar(64),
+		csrf_token varchar(64)
 	    );`
 
 	securityQuestions :=
