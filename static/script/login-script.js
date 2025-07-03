@@ -193,7 +193,7 @@
             const passwordGroup = document.getElementById('loginPasswordGroup');
             let isValid = true;
             
-            // Fixed: Improved email validation
+            //Improved email validation
             if (!validateEmail(email)) {
                 emailGroup.classList.add('error');
                 isValid = false;
@@ -207,10 +207,29 @@
             } else {
                 passwordGroup.classList.remove('error');
             }
-            
-            if (isValid) {
+
+            const form = document.getElementById('loginForm');
+            const formData = new FormData(form);
+            fetch('/login', { 
+                method: 'POST',
+                body: formData 
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error while sign-in');
+                }
+                return response.text();
+            })
+            .then(data => {
                 showNotification('success', 'Success', 'You have successfully logged in!');
-            }
+                setTimeout(() => {
+                    switchSection(0); 
+                }, 2000);
+            })
+            .catch(error => {
+                showNotification('error', 'Error', `Error: ${error.message}`);
+            });
+
         }
         
         // Handle signup
@@ -231,7 +250,7 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('خطا در ثبت‌نام');
+                    throw new Error('Error while sign-up');
                 }
                 return response.text();
             })
@@ -242,7 +261,7 @@
                 }, 2000);
             })
             .catch(error => {
-                showNotification('error', 'Error', `خطا: ${error.message}`);
+                showNotification('error', 'Error', `Error: ${error.message}`);
             });
         }
 
