@@ -216,17 +216,44 @@
         // Handle signup
         function handleSignup() {
             const termsCheckbox = document.getElementById('termsCheckbox');
-            
+        
             if (!termsCheckbox.classList.contains('checked')) {
                 showNotification('error', 'Error', 'You must agree to the Terms of Service and Privacy Policy.');
                 return;
             }
-            
-            showNotification('success', 'Success', 'Your account has been created successfully!');
-            setTimeout(() => {
-                switchSection(0);
-            }, 2000);
+
+            const form = document.getElementById('signupForm');
+            const formData = new FormData(form); 
+
+            fetch('/register', { 
+                method: 'POST',
+                body: formData 
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('خطا در ثبت‌نام');
+                }
+                return response.text();
+            })
+            .then(data => {
+                showNotification('success', 'Success', 'Your account has been created successfully!');
+                setTimeout(() => {
+                    switchSection(0); 
+                }, 2000);
+            })
+            .catch(error => {
+                showNotification('error', 'Error', `خطا: ${error.message}`);
+            });
         }
+
+document.getElementById("signupBtn").removeEventListener("click", function() {
+    location.reload();
+});
+document.getElementById("signupBtn").addEventListener("click", handleSignup);
+// setTimeout(() => {
+//                 switchSection(0);
+//             }, 2000);
+// document.getElementById("signupBtn").addEventListener("click", handleSignup); 
         
         // Show notification
         function showNotification(type, title, message) {

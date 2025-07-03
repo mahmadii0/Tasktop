@@ -3,19 +3,18 @@ package controllers
 import (
 	"Tasktop/models"
 	"Tasktop/utils"
-	"encoding/json"
 	"net/http"
 )
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	var user *models.User
-	var questions *models.SecurityQuestions
+	var user = &models.User{}
+	var questions = &models.SecurityQuestions{}
 
 	if r.Method == http.MethodGet {
-		TemplateRender(w, "/main/sign-in", nil)
+		TemplateRender(w, "/main/authentication", nil)
 	} else if r.Method == http.MethodPost {
 		userName := r.FormValue("username")
-		fullName := r.FormValue("fisrtName") + r.FormValue("lastName")
+		fullName := r.FormValue("fisrtName") + "  " + r.FormValue("lastName")
 		email := r.FormValue("email")
 		phone := r.FormValue("phone")
 		password := r.FormValue("password")
@@ -30,25 +29,32 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid Password or Username", err)
 		}
 		u, _ := models.GetUserByUserName(userName)
-		if u.UserName == userName || u.Email == email || u.Phone == phone {
-			err := http.StatusConflict
-			http.Error(w, "The user information(userName,Email,Phone) already used", err)
+		if u.FullName != "" {
+			if u.UserName == userName || u.Email == email || u.Phone == phone {
+				err := http.StatusConflict
+				http.Error(w, "The user information(userName,Email,Phone) already used", err)
+				return
+			}
 		}
+
 		//Hashing
 		hashedPassword, err := utils.HashPassword(password)
 		if err != nil {
 			er := http.StatusNotAcceptable
 			http.Error(w, "Error While Hashing", er)
+			return
 		}
 		hashedAnswer1, err := utils.HashPassword(answer1)
 		if err != nil {
 			er := http.StatusNotAcceptable
 			http.Error(w, "Error While Hashing", er)
+			return
 		}
 		hashedAnswer2, err := utils.HashPassword(answer2)
 		if err != nil {
 			er := http.StatusNotAcceptable
 			http.Error(w, "Error While Hashing", er)
+			return
 		}
 		//User Injection
 		user.UserName = userName
@@ -60,6 +66,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		if !(status) {
 			err := http.StatusBadRequest
 			http.Error(w, "Bad Request", err)
+			return
 		}
 
 		//Questions Injection
@@ -71,14 +78,14 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		if !(status) {
 			err := http.StatusBadRequest
 			http.Error(w, "Bad Request", err)
+			return
 		}
-
-		json.NewEncoder(w).Encode(user)
-		return //Create a welcome register page
+		return
 
 	} else {
 		err := http.StatusMethodNotAllowed
 		http.Error(w, "Invalid Method", err)
+		return
 	}
 
 }

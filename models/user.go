@@ -44,7 +44,7 @@ func AddUser(user *User) bool {
 
 func GetUserByUserName(username string) (*User, error) {
 	var user User
-	query := `SELECT userId,name,email,phone FROM users WHERE userId=?`
+	query := `SELECT username,fullname,email,phone FROM users WHERE username=?`
 	row := db.QueryRow(query, username)
 	err := row.Scan(&user.UserName, &user.FullName, &user.Email, &user.Phone)
 	return &user, err
@@ -60,10 +60,10 @@ func UpdateUser(user *User) bool {
 	return status
 }
 
-func DeleteUser(userId int) bool {
+func DeleteUser(username int) bool {
 	status := true
 	query := `DELETE FROM users WHERE id= ?`
-	_, err := db.Exec(query, userId)
+	_, err := db.Exec(query, username)
 	if err != nil {
 		status = false
 	}
