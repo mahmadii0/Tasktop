@@ -18,11 +18,11 @@ func Authorize(r *http.Request) error {
 	}
 	email := models.GetEmailBySessionToken(st.Value)
 
-	csrf := r.Header.Get("X-CSRF-Token")
-	if csrf == "" {
+	csrf, err := r.Cookie("csrf_token")
+	if csrf.Value == "" || err != nil {
 		return AuthError
 	}
-	status := models.CompareCsrfToken(email, csrf)
+	status := models.CompareCsrfToken(email, csrf.Value)
 	if !(status) {
 		return AuthError
 	}
@@ -41,7 +41,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 }
 
 var DashRegister = func(r *mux.Router) {
-	r.HandleFunc("/", controllers.DashHandler)
+	r.HandleFunc("", controllers.DashHandler)
 	//Read Goals
 	r.HandleFunc("/daily-goals/{goalId:[0-99]+}", controllers.DailyGoal).Methods("GET")
 	r.HandleFunc("/monthly-goals/{goalId:[0-99]+}", controllers.MonthlyGoal).Methods("GET")
