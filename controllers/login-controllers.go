@@ -5,6 +5,7 @@ import (
 	"Tasktop/utils"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
@@ -93,6 +94,11 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		err := http.StatusMethodNotAllowed
+		http.Error(w, "Invalid Method", err)
+		return
+	}
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
@@ -123,13 +129,17 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	//Set session cookie
 
 	http.SetCookie(w, &http.Cookie{
-		Name:  "session_token",
-		Value: sessionToken,
+		Name:     "session_token",
+		Value:    sessionToken,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
 	})
 
 	http.SetCookie(w, &http.Cookie{
-		Name:  "csrf_token",
-		Value: csrfToken,
+		Name:     "csrf_token",
+		Value:    csrfToken,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: false,
 	})
 
 	status = models.SetTokens(sessionToken, csrfToken, email)

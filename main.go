@@ -14,8 +14,10 @@ func main() {
 	router.PathPrefix("/static/").Handler(
 		http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	routes.MainRegister(router)
-	routes.DashRegister(router)
 	routes.LogRegister(router)
+	dashRouter := router.PathPrefix("/dashboard").Subrouter()
+	routes.DashRegister(dashRouter)
+	dashRouter.Use(routes.AuthMiddleware)
 	configure.CreateTables()
 	log.Fatal(http.ListenAndServe("localhost:8080", router))
 }

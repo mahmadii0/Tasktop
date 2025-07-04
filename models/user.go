@@ -54,6 +54,26 @@ func SetTokens(sessionToken string, csrfToken string, email string) bool {
 	return status
 }
 
+func GetEmailBySessionToken(sessionToken string) string {
+	email := ""
+	query := `SELECT email From users WHERE session_token=?`
+	row := db.QueryRow(query, sessionToken)
+	_ = row.Scan(&email)
+	return email
+}
+
+func CompareCsrfToken(email string, csrf string) bool {
+	status := true
+	csrfDb := ""
+	query := `SELECT csrf_token From users WHERE email=?`
+	row := db.QueryRow(query, email)
+	_ = row.Scan(&csrfDb)
+	if csrfDb != csrf {
+		status = false
+	}
+	return status
+}
+
 func GetPassHashByEmail(email string) (string, error) {
 	var hash string
 	query := `SELECT password FROM users WHERE email=?`
