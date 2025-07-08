@@ -54,6 +54,16 @@ func SetTokens(sessionToken string, csrfToken string, email string) bool {
 	return status
 }
 
+func ClearTokens(email string) bool {
+	status := true
+	query := `UPDATE users SET session_token="" ,csrf_token="" WHERE email=?`
+	_, err := db.Exec(query, email)
+	if err != nil {
+		status = false
+	}
+	return status
+}
+
 func GetEmailBySessionToken(sessionToken string) string {
 	email := ""
 	query := `SELECT email From users WHERE session_token=?`

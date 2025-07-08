@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Tasktop/middlewares"
 	"Tasktop/models"
 	"Tasktop/utils"
 	"fmt"
@@ -152,5 +153,35 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 
 }
 func LogOut(w http.ResponseWriter, r *http.Request) {
+	if err := middlewares.Authorize(r); err != nil {
+		er := http.StatusUnauthorized
+		http.Error(w, "UnAuthorized", er)
+		return
+	}
 
+	//Clear Cookies
+	st, _ := r.Cookie("session_token")
+	email := models.GetEmailBySessionToken(st.Value)
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HttpOnly: true,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "csrf_token",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HttpOnly: false,
+	})
+
+	status := models.ClearTokens(email)
+	if !(status) {
+		er := http.StatusBadRequest
+		http.Error(w, "Error while clear tokens", er)
+		return
+	}
+	return
 }
