@@ -233,9 +233,11 @@
         }
         
         // Handle signup
-        function handleSignup() {
+        function handleSignup(e) {
+            e.preventDefault(); 
+
             const termsCheckbox = document.getElementById('termsCheckbox');
-        
+
             if (!termsCheckbox.classList.contains('checked')) {
                 showNotification('error', 'Error', 'You must agree to the Terms of Service and Privacy Policy.');
                 return;
@@ -265,14 +267,16 @@
             });
         }
 
-document.getElementById("signupBtn").removeEventListener("click", function() {
-    location.reload();
-});
-document.getElementById("signupBtn").addEventListener("click", handleSignup);
-// setTimeout(() => {
-//                 switchSection(0);
-//             }, 2000);
-// document.getElementById("signupBtn").addEventListener("click", handleSignup); 
+        // Remove any previous reload handler
+        document.getElementById("signupBtn").removeEventListener("click", function() {
+            location.reload();
+        });
+
+        // Add correct handler
+        document.getElementById("signupBtn").addEventListener("click", function(e) {
+            handleSignup(e);
+        });
+
         
         // Show notification
         function showNotification(type, title, message) {

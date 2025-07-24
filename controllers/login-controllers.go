@@ -30,6 +30,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		if len(password) < 8 || len(userName) < 8 {
 			err := http.StatusNotAcceptable
 			http.Error(w, "Invalid Password or Username", err)
+			return
 		}
 		u, _ := models.GetUserByUserName(userName)
 		if u.FullName != "" {

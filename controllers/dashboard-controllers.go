@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"Tasktop/models"
-	"encoding/json"
+	"Tasktop/utils"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 func DashHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,15 +27,39 @@ func AnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 //Create Goals
 
 func CDailyGoal(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	var dailyGoal models.DailyGoal
-	_ = json.NewDecoder(r.Body).Decode(&dailyGoal)
-	status := models.AddDailyG(&dailyGoal)
-	if status {
-		json.NewEncoder(w).Encode(dailyGoal)
-		DashHandler(w, r)
+	dailyGoal.Title = r.FormValue("title")
+	timeTD := r.FormValue("timeTD")
+	parsedTime, _ := time.Parse(time.RFC3339, timeTD)
+	dailyGoal.TimeTD = parsedTime
+	dailyGoal.Priority = r.FormValue("priority")
+	dailyPId, _ := strconv.Atoi(r.FormValue("dailyPId"))
+	dailyGoal.DPID = dailyPId
+	mGId := r.FormValue("monthlyGId")
+	var monthlyGId int = 0
+	if mGId != "" {
+		monthlyGId, _ = strconv.Atoi(mGId)
 	}
-	DashHandler(w, r)
+	dailyGoal.MGID = monthlyGId
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	Id, err := utils.ConvertTimeToPlanId(timeTD)
+	if err != nil {
+		er := http.StatusNotModified
+		http.Error(w, "Error while Id converting", er)
+		return
+	}
+	status := models.DailyPExist(username, Id)
+	if !(status) {
+		status = models.AddDailyP(Id, username)
+		if !(status) {
+			http.Error(w, "Error while add daily plan", http.StatusNotModified)
+			return
+		}
+	}
+
+	status = models.AddDailyG(&dailyGoal)
+
 }
 
 func CMonthlyGoal(w http.ResponseWriter, r *http.Request) {

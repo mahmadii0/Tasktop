@@ -9,7 +9,7 @@ type MonthlyPlan struct {
 	Progress int    `json:"progress"`
 	Status   bool   `json:"status"`
 	Date     string `json:"date"`
-	UserID   int    `json:"userId"` //Foregin-key
+	UserName string `json:"userId"` //Foregin-key
 }
 type MonthlyGoal struct {
 	MGID     int    `json:"MGId"`
@@ -33,7 +33,7 @@ func GetMonthlyPByUserId(userId int) (*MonthlyPlan, error) {
 	var monthlyP *MonthlyPlan
 	query := `SELECT * FROM monthlyPlans WHERE userId=?`
 	row := db.QueryRow(query, userId)
-	err := row.Scan(&monthlyP.MPID, &monthlyP.Status, &monthlyP.Date, &monthlyP.UserID)
+	err := row.Scan(&monthlyP.MPID, &monthlyP.Status, &monthlyP.Date, &monthlyP.UserName)
 	return monthlyP, err
 }
 
@@ -41,7 +41,7 @@ func GetMonthlyPById(monthlyPId int) (*MonthlyPlan, error) {
 	var monthlyP *MonthlyPlan
 	query := `SELECT * FROM monthlyPlans WHERE monthlyPId=?`
 	row := db.QueryRow(query, monthlyPId)
-	err := row.Scan(&monthlyP.MPID, &monthlyP.Status, &monthlyP.Date, &monthlyP.UserID)
+	err := row.Scan(&monthlyP.MPID, &monthlyP.Status, &monthlyP.Date, &monthlyP.UserName)
 	return monthlyP, err
 }
 
@@ -59,7 +59,7 @@ func AddMonthlyP(date string, userId int) bool {
 func UpdateMonthlyP(monthlyP *MonthlyPlan) bool {
 	status := true
 	query := `UPDATE monthlyPlans SET status=?, date=?, userId=? WHERE monthlyPId=?`
-	_, err := db.Exec(query, monthlyP.Status, monthlyP.Date, monthlyP.UserID, monthlyP.MPID)
+	_, err := db.Exec(query, monthlyP.Status, monthlyP.Date, monthlyP.UserName, monthlyP.MPID)
 	if err != nil {
 		status = false
 	}

@@ -3,6 +3,7 @@ package models
 import (
 	"Tasktop/configure"
 	"database/sql"
+	"fmt"
 )
 
 type User struct {
@@ -36,9 +37,10 @@ func init() {
 
 func AddUser(user *User) bool {
 	status := true
-	query := `INSERT INTO users(username,fullname,email,phone,password) VALUES(?,?,?,?,?)`
+	query := `INSERT INTO users VALUES(?,?,?,?,?,"","")`
 	_, err := db.Exec(query, user.UserName, user.FullName, user.Email, user.Phone, user.Password)
 	if err != nil {
+		fmt.Printf("Error adding user:", err)
 		status = false
 	}
 	return status
@@ -67,6 +69,14 @@ func ClearTokens(email string) bool {
 func GetEmailBySessionToken(sessionToken string) string {
 	email := ""
 	query := `SELECT email From users WHERE session_token=?`
+	row := db.QueryRow(query, sessionToken)
+	_ = row.Scan(&email)
+	return email
+}
+
+func GetUsernameBySessionToken(sessionToken string) string {
+	email := ""
+	query := `SELECT username From users WHERE session_token=?`
 	row := db.QueryRow(query, sessionToken)
 	_ = row.Scan(&email)
 	return email

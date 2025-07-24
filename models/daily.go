@@ -6,10 +6,10 @@ import (
 )
 
 type DailyPlan struct {
-	DPID     int  `json:"DPId"`
-	Progress int  `json:"progress"`
-	Status   bool `json:"status"`
-	UserID   int  `json:"userId"` //Foregin-key
+	DPID     int    `json:"DPId"`
+	Progress int    `json:"progress"`
+	Status   bool   `json:"status"`
+	UserName string `json:"userId"` //Foregin-key
 }
 type DailyGoal struct {
 	DGID  int    `json:"DGId"`
@@ -29,26 +29,30 @@ func init() {
 
 //Daily Plan Functions
 
-func GetDailyPByUserId(userId int) (*DailyPlan, error) {
-	var dailyP *DailyPlan
-	query := `SELECT * FROM dailyplans WHERE userId=?`
-	row := db.QueryRow(query, userId)
-	err := row.Scan(&dailyP.DPID, &dailyP.Status, &dailyP.UserID)
-	return dailyP, err
+func DailyPExist(username string, Id int) bool {
+	var s int = 0
+	var status bool = true
+	query := `SELECT status FROM dailyplans WHERE username=? and dailyPId=?`
+	row := db.QueryRow(query, username, Id)
+	err := row.Scan(&s)
+	if s != 1 || err != nil {
+		status = false
+	}
+	return status
 }
 
 func GetDailyPById(dailyPId int) (*DailyPlan, error) {
 	var dailyP *DailyPlan
 	query := `SELECT * FROM dailyplans WHERE dailyPId=?`
 	row := db.QueryRow(query, dailyPId)
-	err := row.Scan(&dailyP.DPID, &dailyP.Status, &dailyP.UserID)
+	err := row.Scan(&dailyP.DPID, &dailyP.Status, &dailyP.UserName)
 	return dailyP, err
 }
 
-func AddDailyP(date string, userId int) bool {
+func AddDailyP(id int, username string) bool {
 	status := true
-	query := `INSERT INTO dailyplans(status,userId) VALUES (0,?)`
-	_, err := db.Exec(query, userId)
+	query := `INSERT INTO dailyplans(dailyPId,progress,status,username) VALUES (?,0,1,?)`
+	_, err := db.Exec(query, id, username)
 	if err != nil {
 		status = false
 	}
@@ -59,7 +63,7 @@ func AddDailyP(date string, userId int) bool {
 func UpdateDailyP(dailyP *DailyPlan) bool {
 	status := true
 	query := `UPDATE dailyplans SET status=?, userId=? WHERE dailyPId=?`
-	_, err := db.Exec(query, dailyP.Status, dailyP.UserID, dailyP.DPID)
+	_, err := db.Exec(query, dailyP.Status, dailyP.UserName, dailyP.DPID)
 	if err != nil {
 		status = false
 	}

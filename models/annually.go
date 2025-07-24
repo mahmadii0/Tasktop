@@ -5,11 +5,11 @@ import (
 )
 
 type AnnuallyPlan struct {
-	APID     int  `json:"APId"`
-	Progress int  `json:"progress"`
-	Status   bool `json:"status"`
-	Year     int  `json:"year"`
-	UserID   int  `json:"userId"` //Foregin-key
+	APID     int    `json:"APId"`
+	Progress int    `json:"progress"`
+	Status   bool   `json:"status"`
+	Year     int    `json:"year"`
+	UserName string `json:"userId"` //Foregin-key
 }
 type AnnuallyGoal struct {
 	AGID     int    `json:"AGId"`
@@ -32,14 +32,14 @@ func GetAnnuallyPByUserId(userId int) (*AnnuallyPlan, error) {
 	annuallyP := &AnnuallyPlan{}
 	query := `SELECT * FROM annuallyPlans WHERE userId=?`
 	row := db.QueryRow(query, userId)
-	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserID)
+	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserName)
 	return annuallyP, err
 }
 func GetAnnuallyPById(annuallyPId int) (*AnnuallyPlan, error) {
 	var annuallyP *AnnuallyPlan
 	query := `SELECT * FROM annuallyPlans WHERE annuallyPId=?`
 	row := db.QueryRow(query, annuallyPId)
-	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserID)
+	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserName)
 	return annuallyP, err
 }
 
@@ -57,7 +57,7 @@ func AddAnnuallyP(year int, userId int) bool {
 func UpdateAnnuallyP(annuallyP *AnnuallyPlan) bool {
 	status := true
 	query := `UPDATE annuallyPlans SET status=?, year=?, userId=? WHERE annuallyPId=?`
-	_, err := db.Exec(query, annuallyP.Status, annuallyP.Year, annuallyP.UserID, annuallyP.APID)
+	_, err := db.Exec(query, annuallyP.Status, annuallyP.Year, annuallyP.UserName, annuallyP.APID)
 	if err != nil {
 		status = false
 	}
