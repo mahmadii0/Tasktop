@@ -6,6 +6,7 @@ import (
 	"Tasktop/utils"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -17,6 +18,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		TemplateRender(w, "/main/authentication", nil)
 	} else if r.Method == http.MethodPost {
 		userName := r.FormValue("username")
+		userName = strings.ToLower(userName)
 		fullName := r.FormValue("fisrtName") + "  " + r.FormValue("lastName")
 		email := r.FormValue("email")
 		phone := r.FormValue("phone")
@@ -96,11 +98,11 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		err := http.StatusMethodNotAllowed
-		http.Error(w, "Invalid Method", err)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	err := http.StatusMethodNotAllowed
+	// 	http.Error(w, "Invalid Method", err)
+	// 	return
+	// }
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 

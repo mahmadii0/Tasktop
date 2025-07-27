@@ -2,6 +2,7 @@ package models
 
 import (
 	"Tasktop/configure"
+	"fmt"
 )
 
 type AnnuallyPlan struct {
@@ -41,6 +42,25 @@ func GetAnnuallyPById(annuallyPId int) (*AnnuallyPlan, error) {
 	row := db.QueryRow(query, annuallyPId)
 	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserName)
 	return annuallyP, err
+}
+
+func GetAnnuallyPId(username string, year string) int {
+	var id int = 0
+	var s int = 0
+	query := `SELECT annuallyPId,status FROM annuallyplans WHERE username=? and year=?`
+	row := db.QueryRow(query, username, year)
+	err := row.Scan(&id, &s)
+	if err != nil {
+		fmt.Printf("Error while fetch data:", err)
+	}
+	if s == 0 && id != 0 {
+		query := `UPDATE annuallyplans SET status = 1 WHERE username=? and year=?`
+		_, err := db.Exec(query, username, year)
+		if err != nil {
+			fmt.Printf("Error while activate annuallyplan: ", err)
+		}
+	}
+	return id
 }
 
 func AddAnnuallyP(year int, userId int) bool {
@@ -96,8 +116,8 @@ func GetAnnuallyGById(annuallyGId int) (*AnnuallyGoal, error) {
 
 func AddAnnuallyG(annuallyGoal *AnnuallyGoal) bool {
 	status := true
-	query := `INSERT INTO annuallyGoals(title,description,status,annuallyPId) VALUES (?,?,?,?)`
-	_, err := db.Exec(query, annuallyGoal.Title, annuallyGoal.Desc, annuallyGoal.Status, annuallyGoal.APID)
+	query := `INSERT INTO annuallyGoals(title,description,priority,progress,status,annuallyPId) VALUES (?,?,?,0,1,?)`
+	_, err := db.Exec(query, annuallyGoal.Title, annuallyGoal.Desc, annuallyGoal.Priority, annuallyGoal.APID)
 	if err != nil {
 		status = false
 	}

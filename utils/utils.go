@@ -4,22 +4,14 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"log"
-	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func ConvertTimeToPlanId(time string) (int, error) {
-	selected := time[0:10]
-	for i, item := range selected {
-		if item == '-' {
-			t1 := selected[:i]
-			t2 := selected[i+1:]
-			selected = t1 + t2
-		}
-	}
-	Id, err := strconv.Atoi(selected)
-	return Id, err
+func SeparateDateTime(dateTime string) (string, string) {
+	date := dateTime[0:10]
+	time := dateTime[12:]
+	return date, time
 }
 
 func HashPassword(pass string) (string, error) {

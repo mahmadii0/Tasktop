@@ -2,7 +2,7 @@ package models
 
 import (
 	"Tasktop/configure"
-	"time"
+	"fmt"
 )
 
 type DailyPlan struct {
@@ -15,11 +15,11 @@ type DailyGoal struct {
 	DGID  int    `json:"DGId"`
 	Title string `json:"title"`
 	//TimeTD  is stand of Time To Do for this task
-	TimeTD   time.Time `json:"timeToDo"`
-	Priority string    `json:"priority"`
-	Status   bool      `json:"status"`
-	DPID     int       `json:"DPId"` //Foregin-key
-	MGID     int       `json:"MGId"` //Foregin-key
+	TimeTD   string `json:"timeToDo"`
+	Priority string `json:"priority"`
+	Status   bool   `json:"status"`
+	DPID     int    `json:"DPId"` //Foregin-key
+	MGID     int    `json:"MGId"` //Foregin-key
 }
 
 func init() {
@@ -29,16 +29,23 @@ func init() {
 
 //Daily Plan Functions
 
-func DailyPExist(username string, Id int) bool {
+func GetDailyPId(username string, date string) int {
+	var id int = 0
 	var s int = 0
-	var status bool = true
-	query := `SELECT status FROM dailyplans WHERE username=? and dailyPId=?`
-	row := db.QueryRow(query, username, Id)
-	err := row.Scan(&s)
-	if s != 1 || err != nil {
-		status = false
+	query := `SELECT dailyPId,status FROM dailyplans WHERE username=? and date=?`
+	row := db.QueryRow(query, username, date)
+	err := row.Scan(&id, &s)
+	if err != nil {
+		fmt.Printf("Error while fetch data:", err)
 	}
-	return status
+	if s == 0 && id != 0 {
+		query := `UPDATE dailyplans SET status = 1 WHERE username=? and date=?`
+		_, err := db.Exec(query, username, date)
+		if err != nil {
+			fmt.Printf("Error while activate dailyplan: ", err)
+		}
+	}
+	return id
 }
 
 func GetDailyPById(dailyPId int) (*DailyPlan, error) {
@@ -49,10 +56,10 @@ func GetDailyPById(dailyPId int) (*DailyPlan, error) {
 	return dailyP, err
 }
 
-func AddDailyP(id int, username string) bool {
+func AddDailyP(username string, date string) bool {
 	status := true
-	query := `INSERT INTO dailyplans(dailyPId,progress,status,username) VALUES (?,0,1,?)`
-	_, err := db.Exec(query, id, username)
+	query := `INSERT INTO dailyplans(progress,status,date,username) VALUES (0,1,?,?)`
+	_, err := db.Exec(query, date, username)
 	if err != nil {
 		status = false
 	}
@@ -103,7 +110,7 @@ func GetDailyGById(dailyGId int) (*DailyGoal, error) {
 func AddDailyG(dailyGoal *DailyGoal) bool {
 	status := true
 	query := `INSERT INTO dailygoals(title,timeToDo,priority,status,dailyPId,monthlyGId) VALUES (?,?,?,?,?,?)`
-	_, err := db.Exec(query, dailyGoal.Title, dailyGoal.TimeTD, dailyGoal.Priority, dailyGoal.Status, dailyGoal.DPID, dailyGoal.MGID)
+	_, err := db.Exec(query, dailyGoal.Title, dailyGoal.TimeTD, dailyGoal.Priority, 1, dailyGoal.DPID, dailyGoal.MGID)
 	if err != nil {
 		status = false
 	}

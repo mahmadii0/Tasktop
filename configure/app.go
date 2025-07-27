@@ -61,10 +61,10 @@ func CreateTables() {
 	);`
 	monthlyPlan := `
 	CREATE TABLE IF NOT EXISTS monthlyPlans(
-	    monthlyPId INTEGER PRIMARY KEY ,
-	    prgress INTEGER NOT NULL,
+	    monthlyPId INTEGER PRIMARY KEY AUTO_INCREMENT,
+	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
-	    date varchar(40) NOT NULL,
+	    date DATE NOT NULL,
 	    username varchar(100) NOT NULL,
 	    CONSTRAINT user_monthlyP FOREIGN KEY (username) REFERENCES users(username)
 	);`
@@ -83,9 +83,10 @@ func CreateTables() {
 	);`
 	dailyPlan := `
 	CREATE TABLE IF NOT EXISTS dailyPlans(
-	    dailyPId INTEGER PRIMARY KEY,
+	    dailyPId INTEGER PRIMARY KEY AUTO_INCREMENT,
 	    progress INTEGER NOT NULL,
 	    status TINYINT NOT NULL,
+		date DATE NOT NULL,
 	    username varchar(100) NOT NULL,
 	    CONSTRAINT user_dailyP FOREIGN KEY (username) REFERENCES users(username)
 	);`

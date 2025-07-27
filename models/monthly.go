@@ -2,6 +2,7 @@ package models
 
 import (
 	"Tasktop/configure"
+	"fmt"
 )
 
 type MonthlyPlan struct {
@@ -29,12 +30,23 @@ func init() {
 
 //Monthly Plan Functions
 
-func GetMonthlyPByUserId(userId int) (*MonthlyPlan, error) {
-	var monthlyP *MonthlyPlan
-	query := `SELECT * FROM monthlyPlans WHERE userId=?`
-	row := db.QueryRow(query, userId)
-	err := row.Scan(&monthlyP.MPID, &monthlyP.Status, &monthlyP.Date, &monthlyP.UserName)
-	return monthlyP, err
+func GetMonthlyPId(username string, date string) int {
+	var id int = 0
+	var s int = 0
+	query := `SELECT monthlyPId,status FROM monthlyPlans WHERE username=? and date=?`
+	row := db.QueryRow(query, username, date)
+	err := row.Scan(&id, &s)
+	if err != nil {
+		fmt.Printf("Error while fetch data:", err)
+	}
+	if s == 0 && id != 0 {
+		query := `UPDATE monthlyPlans SET status = 1 WHERE username=? and date=?`
+		_, err := db.Exec(query, username, date)
+		if err != nil {
+			fmt.Printf("Error while activate monthlyplan: ", err)
+		}
+	}
+	return id
 }
 
 func GetMonthlyPById(monthlyPId int) (*MonthlyPlan, error) {
@@ -45,10 +57,10 @@ func GetMonthlyPById(monthlyPId int) (*MonthlyPlan, error) {
 	return monthlyP, err
 }
 
-func AddMonthlyP(date string, userId int) bool {
+func AddMonthlyP(username string, date string) bool {
 	status := true
-	query := `INSERT INTO monthlyPlans(status,date,userId) VALUES (0,?,?)`
-	_, err := db.Exec(query, date, userId)
+	query := `INSERT INTO monthlyPlans(progress,status,date,username) VALUES (0,1,?,?)`
+	_, err := db.Exec(query, date, username)
 	if err != nil {
 		status = false
 	}
@@ -80,7 +92,7 @@ func DeleteMonthlyPlan(monthlyPId int) bool {
 
 func GetMonthlyGByMonthlyPId(monthlyPId int) (*MonthlyGoal, error) {
 	var monthlyGoal *MonthlyGoal
-	query := `SELECT * FROM monthlyGoals WHERE monthlyGId=?`
+	query := `SELECT * FROM monthlygoals WHERE monthlyGId=?`
 	row := db.QueryRow(query, monthlyPId)
 	err := row.Scan(&monthlyGoal.MGID, &monthlyGoal.Title, &monthlyGoal.Desc,
 		&monthlyGoal.Status, &monthlyGoal.MPID, &monthlyGoal.AGID)
@@ -98,8 +110,8 @@ func GetMonthlyGById(monthlyGId int) (*MonthlyGoal, error) {
 
 func AddMonthlyG(monthlyGoal *MonthlyGoal) bool {
 	status := true
-	query := `INSERT INTO monthlyGoals(title,description,status,annuallyGId) VALUES (?,?,?,?)`
-	_, err := db.Exec(query, monthlyGoal.Title, monthlyGoal.Desc, monthlyGoal.Status, monthlyGoal.AGID)
+	query := `INSERT INTO monthlygoals(title,description,priority,progress,status,monthlyPId,annuallyGId) VALUES (?,?,?,0,1,?,?)`
+	_, err := db.Exec(query, monthlyGoal.Title, monthlyGoal.Desc, monthlyGoal.Priority, monthlyGoal.MPID, monthlyGoal.AGID)
 	if err != nil {
 		status = false
 	}
@@ -108,7 +120,7 @@ func AddMonthlyG(monthlyGoal *MonthlyGoal) bool {
 
 func UpdateMonthlyG(monthlyGoal *MonthlyGoal) bool {
 	status := true
-	query := `UPDATE monthlyGoals SET title=?, description=?, status=?, annuallyGId=? WHERE monthlyGId=?`
+	query := `UPDATE monthlygoals SET title=?, description=?, status=?, annuallyGId=? WHERE monthlyGId=?`
 	_, err := db.Exec(query, monthlyGoal.Title, monthlyGoal.Desc, monthlyGoal.Status, monthlyGoal.AGID, monthlyGoal.MGID)
 	if err != nil {
 		status = false
@@ -118,7 +130,7 @@ func UpdateMonthlyG(monthlyGoal *MonthlyGoal) bool {
 
 func DeleteMonthlyG(monthlyGId int) bool {
 	status := true
-	query := `DELETE FROM monthlyGoals WHERE monthlyGId=?`
+	query := `DELETE FROM monthlygoals WHERE monthlyGId=?`
 	_, err := db.Exec(query, monthlyGId)
 	if err != nil {
 		status = false
