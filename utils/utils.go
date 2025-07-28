@@ -9,7 +9,7 @@ import (
 )
 
 func SeparateDateTime(dateTime string) (string, string) {
-	date := dateTime[0:10]
+	date := dateTime[0:11]
 	time := dateTime[12:]
 	return date, time
 }

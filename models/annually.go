@@ -44,7 +44,7 @@ func GetAnnuallyPById(annuallyPId int) (*AnnuallyPlan, error) {
 	return annuallyP, err
 }
 
-func GetAnnuallyPId(username string, year string) int {
+func GetAnnuallyPId(username string, year int) int {
 	var id int = 0
 	var s int = 0
 	query := `SELECT annuallyPId,status FROM annuallyplans WHERE username=? and year=?`
@@ -63,10 +63,10 @@ func GetAnnuallyPId(username string, year string) int {
 	return id
 }
 
-func AddAnnuallyP(year int, userId int) bool {
+func AddAnnuallyP(username string, year int) bool {
 	status := true
-	query := `INSERT INTO annuallyPlans(status,year,userId) VALUES (0,?,?)`
-	_, err := db.Exec(query, year, userId)
+	query := `INSERT INTO annuallyplans(progress,status,year,username) VALUES (0,1,?,?)`
+	_, err := db.Exec(query, year, username)
 	if err != nil {
 		status = false
 	}
@@ -126,8 +126,8 @@ func AddAnnuallyG(annuallyGoal *AnnuallyGoal) bool {
 
 func UpdateAnnuallyG(annuallyGoal *AnnuallyGoal) bool {
 	status := true
-	query := `UPDATE annuallyGoals SET title=?, description=?, status=?, annuallyPId=? WHERE annuallyGId=?`
-	_, err := db.Exec(query, annuallyGoal.Title, annuallyGoal.Desc, annuallyGoal.Status, annuallyGoal.APID, annuallyGoal.AGID)
+	query := `UPDATE annuallyGoals SET title=?, description=?, priority=?, progress=?, status=?, annuallyPId=? WHERE annuallyGId=?`
+	_, err := db.Exec(query, annuallyGoal.Title, annuallyGoal.Desc, annuallyGoal.Priority, annuallyGoal.Progress, annuallyGoal.Status, annuallyGoal.APID, annuallyGoal.AGID)
 	if err != nil {
 		status = false
 	}

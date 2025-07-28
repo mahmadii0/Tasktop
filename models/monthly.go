@@ -120,8 +120,8 @@ func AddMonthlyG(monthlyGoal *MonthlyGoal) bool {
 
 func UpdateMonthlyG(monthlyGoal *MonthlyGoal) bool {
 	status := true
-	query := `UPDATE monthlygoals SET title=?, description=?, status=?, annuallyGId=? WHERE monthlyGId=?`
-	_, err := db.Exec(query, monthlyGoal.Title, monthlyGoal.Desc, monthlyGoal.Status, monthlyGoal.AGID, monthlyGoal.MGID)
+	query := `UPDATE monthlygoals SET title=?, description=?, priority=?, progress=?, status=?, monthlyPId=?, annuallyGId=? WHERE monthlyGId=?`
+	_, err := db.Exec(query, monthlyGoal.Title, monthlyGoal.Desc, monthlyGoal.Priority, monthlyGoal.Progress, monthlyGoal.Status, monthlyGoal.MPID, monthlyGoal.AGID, monthlyGoal.MGID)
 	if err != nil {
 		status = false
 	}

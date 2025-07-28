@@ -3,6 +3,7 @@ package controllers
 import (
 	"Tasktop/models"
 	"Tasktop/utils"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -95,13 +96,19 @@ func CAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 	annuallyGoal.Title = r.FormValue("title")
 	annuallyGoal.Desc = r.FormValue("desc")
 	annuallyGoal.Priority = r.FormValue("priority")
-	year := r.FormValue("year")
+	y := r.FormValue("year")
+	y = y[1:]
+	year, err := strconv.Atoi(y)
+	if err != nil {
+		http.Error(w, "Error while parsing year", http.StatusBadRequest)
+		return
+	}
 
 	st, _ := r.Cookie("session_token")
 	username := models.GetUsernameBySessionToken(st.Value)
 	id := models.GetAnnuallyPId(username, year)
 	if id == 0 {
-		status := models.AddMonthlyP(username, year)
+		status := models.AddAnnuallyP(username, year)
 		if !(status) {
 			http.Error(w, "Error while adding daily plan", http.StatusNotModified)
 			return
@@ -166,25 +173,158 @@ func UDailyGoal(w http.ResponseWriter, r *http.Request) {
 }
 
 func UMonthlyGoal(w http.ResponseWriter, r *http.Request) {
+	var monthlyGoal models.MonthlyGoal
+	vars := mux.Vars(r)
+	Id, err := strconv.ParseInt(vars["goalId"], 0, 0)
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+	}
+	monthlyGoal.MGID = int(Id)
+	monthlyGoal.Title = r.FormValue("title")
+	monthlyGoal.Desc = r.FormValue("desc")
+	monthlyGoal.Priority = r.FormValue("priority")
+	p, err := strconv.Atoi(r.FormValue("progress"))
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+		return
+	}
+	monthlyGoal.Progress = p
+	s := r.FormValue("status")
+	if s == "1" {
+		monthlyGoal.Status = true
+	} else if s == "0" {
+		monthlyGoal.Status = false
+	} else {
+		http.Error(w, "Not valid status data", http.StatusBadRequest)
+		return
+	}
+	date := r.FormValue("date")
 
+	aGId := r.FormValue("annuallyGId")
+	var annuallyGId int = 0
+	if aGId != "" {
+		annuallyGId, _ = strconv.Atoi(aGId)
+	}
+	monthlyGoal.AGID = annuallyGId
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	id := models.GetMonthlyPId(username, date)
+	if id == 0 {
+		status := models.AddMonthlyP(username, date)
+		if !(status) {
+			http.Error(w, "Error while adding daily plan", http.StatusNotModified)
+			return
+		}
+	}
+	monthlyGoal.MPID = id
+	status := models.UpdateMonthlyG(&monthlyGoal)
+	if !(status) {
+		http.Error(w, "Error while adding daily goal", http.StatusNotModified)
+		return
+	}
+	return
 }
 
 func UAnnuallyGoals(w http.ResponseWriter, r *http.Request) {
-
+	var annuallyGoal models.AnnuallyGoal
+	vars := mux.Vars(r)
+	Id, err := strconv.ParseInt(vars["goalId"], 0, 0)
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+	}
+	annuallyGoal.AGID = int(Id)
+	annuallyGoal.Title = r.FormValue("title")
+	annuallyGoal.Desc = r.FormValue("desc")
+	annuallyGoal.Priority = r.FormValue("priority")
+	p, err := strconv.Atoi(r.FormValue("progress"))
+	if err != nil {
+		http.Error(w, "Error while parsing progress", http.StatusBadRequest)
+		return
+	}
+	annuallyGoal.Progress = p
+	s := r.FormValue("status")
+	if s == "1" {
+		annuallyGoal.Status = true
+	} else if s == "0" {
+		annuallyGoal.Status = false
+	} else {
+		http.Error(w, "Not valid status data", http.StatusBadRequest)
+		return
+	}
+	y := r.FormValue("year")
+	y = y[1:]
+	year, err := strconv.Atoi(y)
+	if err != nil {
+		http.Error(w, "Error while parsing year", http.StatusBadRequest)
+		return
+	}
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	id := models.GetAnnuallyPId(username, year)
+	if id == 0 {
+		status := models.AddAnnuallyP(username, year)
+		if !(status) {
+			http.Error(w, "Error while adding annually plan", http.StatusNotModified)
+			return
+		}
+	}
+	annuallyGoal.APID = id
+	status := models.UpdateAnnuallyG(&annuallyGoal)
+	if !(status) {
+		http.Error(w, "Error while adding daily goal", http.StatusNotModified)
+		return
+	}
+	return
 }
 
 //Delete Goals
 
 func DDailyGoal(w http.ResponseWriter, r *http.Request) {
-
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["goalId"])
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+		return
+	}
+	status := models.DeleteDailyG(Id)
+	if !(status) {
+		http.Error(w, "Error while deleting daily goal", http.StatusBadRequest)
+		fmt.Printf("Error while deleting daily goal")
+		return
+	}
+	return
 }
 
 func DMonthlyGoal(w http.ResponseWriter, r *http.Request) {
-
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["goalId"])
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+		return
+	}
+	status := models.DeleteMonthlyG(Id)
+	if !(status) {
+		http.Error(w, "Error while deleting monthly goal", http.StatusBadRequest)
+		fmt.Printf("Error while deleting monthly goal")
+		return
+	}
+	return
 }
 
 func DAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
-
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["goalId"])
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+		return
+	}
+	status := models.DeleteAnnuallyG(Id)
+	if !(status) {
+		http.Error(w, "Error while deleting annually goal", http.StatusBadRequest)
+		fmt.Printf("Error while deleting annually goal")
+		return
+	}
+	return
 }
 
 //Report

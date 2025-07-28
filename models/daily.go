@@ -119,8 +119,8 @@ func AddDailyG(dailyGoal *DailyGoal) bool {
 
 func UpdateDailyG(dailyGoal *DailyGoal) bool {
 	status := true
-	query := `UPDATE dailygoals SET title=?, timeToDo=?, status=?, dailyPId=?, monthlyGId=? WHERE dailyGId=?`
-	_, err := db.Exec(query, dailyGoal.Title, dailyGoal.TimeTD, dailyGoal.Status, dailyGoal.DPID, dailyGoal.MGID, dailyGoal.DGID)
+	query := `UPDATE dailygoals SET title=?, timeToDo=?, priority=?, status=?, dailyPId=?, monthlyGId=? WHERE dailyGId=?`
+	_, err := db.Exec(query, dailyGoal.Title, dailyGoal.TimeTD, dailyGoal.Priority, dailyGoal.Status, dailyGoal.DPID, dailyGoal.MGID, dailyGoal.DGID)
 	if err != nil {
 		status = false
 	}
