@@ -89,22 +89,48 @@ func DeleteDailyPlan(dailyPId int) bool {
 
 //Daily Goal Function
 
-func GetDailyGByDailyPId(dailyPId int) (*DailyGoal, error) {
-	var dailyGoal *DailyGoal
-	query := `SELECT * FROM dailygoals WHERE dailyGId=?`
-	row := db.QueryRow(query, dailyPId)
-	err := row.Scan(&dailyGoal.DGID, &dailyGoal.Title, &dailyGoal.TimeTD,
-		&dailyGoal.Status, &dailyGoal.DPID, &dailyGoal.MGID)
-	return dailyGoal, err
+// func GetDailyGByDailyPId(dailyPId int) (*DailyGoal, error) {
+// 	var dailyGoal *DailyGoal
+// 	query := `SELECT * FROM dailygoals WHERE dailyGId=?`
+// 	row := db.QueryRow(query, dailyPId)
+// 	err := row.Scan(&dailyGoal.DGID, &dailyGoal.Title, &dailyGoal.TimeTD,
+// 		&dailyGoal.Status, &dailyGoal.DPID, &dailyGoal.MGID)
+// 	return dailyGoal, err
+// }
+
+func GetDailyGs(id int) ([]*DailyGoal, error) {
+	dgs := make([]*DailyGoal, 0)
+	query := `SELECT * FROM dailygoals WHERE dailyPId=?`
+	rows, err := db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		dg := new(DailyGoal)
+		if err := rows.Scan(&dg.DGID, &dg.Title, &dg.TimeTD, &dg.Priority, &dg.Status, &dg.DPID, &dg.MGID); err != nil {
+			return nil, err
+		}
+		dgs = append(dgs, dg)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return dgs, err
+
 }
 
 func GetDailyGById(dailyGId int) (*DailyGoal, error) {
-	var dailyGoal *DailyGoal
+	dailyGoal := &DailyGoal{}
 	query := `SELECT * FROM dailygoals WHERE dailyGId=?`
 	row := db.QueryRow(query, dailyGId)
-	err := row.Scan(&dailyGoal.DGID, &dailyGoal.Title, &dailyGoal.TimeTD,
+	err := row.Scan(&dailyGoal.DGID, &dailyGoal.Title, &dailyGoal.TimeTD, &dailyGoal.Priority,
 		&dailyGoal.Status, &dailyGoal.DPID, &dailyGoal.MGID)
-	return dailyGoal, err
+	if err != nil {
+		return nil, err
+	}
+	dailyGoal.Priority = dailyGoal.Priority[1:]
+	return dailyGoal, nil
 }
 
 func AddDailyG(dailyGoal *DailyGoal) bool {

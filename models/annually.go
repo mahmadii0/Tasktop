@@ -96,20 +96,42 @@ func DeleteAnnuallyPlan(annuallyPId int) bool {
 
 //Annually Goal Function
 
-func GetAnnuallyGByAnnuallyPId(annuallyPId int) (*AnnuallyGoal, error) {
-	var annuallyGoal *AnnuallyGoal
-	query := `SELECT * FROM annuallyGoals WHERE annuallyPId=?`
-	row := db.QueryRow(query, annuallyPId)
-	err := row.Scan(&annuallyGoal.AGID, &annuallyGoal.Title, &annuallyGoal.Desc,
-		&annuallyGoal.Status, &annuallyGoal.APID)
-	return annuallyGoal, err
+// func GetAnnuallyGByAnnuallyPId(annuallyPId int) (*AnnuallyGoal, error) {
+// 	var annuallyGoal *AnnuallyGoal
+// 	query := `SELECT * FROM annuallyGoals WHERE annuallyPId=?`
+// 	row := db.QueryRow(query, annuallyPId)
+// 	err := row.Scan(&annuallyGoal.AGID, &annuallyGoal.Title, &annuallyGoal.Desc,
+// 		&annuallyGoal.Status, &annuallyGoal.APID)
+// 	return annuallyGoal, err
+// }
+
+func GetAnnuallyGs(id int) ([]*AnnuallyGoal, error) {
+	ags := make([]*AnnuallyGoal, 0)
+	query := `SELECT * FROM annuallygoals WHERE annuallyPId=?`
+	rows, err := db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		ag := new(AnnuallyGoal)
+		if err := rows.Scan(&ag.AGID, &ag.Desc, &ag.Title, &ag.Priority, &ag.Progress, &ag.Status, &ag.APID); err != nil {
+			return nil, err
+		}
+		ags = append(ags, ag)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return ags, err
+
 }
 
 func GetAnnuallyGById(annuallyGId int) (*AnnuallyGoal, error) {
-	var annuallyGoal *AnnuallyGoal
+	annuallyGoal := &AnnuallyGoal{}
 	query := `SELECT * FROM annuallyGoals WHERE annuallyGId=?`
 	row := db.QueryRow(query, annuallyGId)
-	err := row.Scan(&annuallyGoal.AGID, &annuallyGoal.Title, &annuallyGoal.Desc,
+	err := row.Scan(&annuallyGoal.AGID, &annuallyGoal.Title, &annuallyGoal.Desc, &annuallyGoal.Priority, &annuallyGoal.Progress,
 		&annuallyGoal.Status, &annuallyGoal.APID)
 	return annuallyGoal, err
 }

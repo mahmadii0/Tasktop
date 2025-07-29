@@ -90,20 +90,42 @@ func DeleteMonthlyPlan(monthlyPId int) bool {
 
 //Monthly Goal Function
 
-func GetMonthlyGByMonthlyPId(monthlyPId int) (*MonthlyGoal, error) {
-	var monthlyGoal *MonthlyGoal
-	query := `SELECT * FROM monthlygoals WHERE monthlyGId=?`
-	row := db.QueryRow(query, monthlyPId)
-	err := row.Scan(&monthlyGoal.MGID, &monthlyGoal.Title, &monthlyGoal.Desc,
-		&monthlyGoal.Status, &monthlyGoal.MPID, &monthlyGoal.AGID)
-	return monthlyGoal, err
+// func GetMonthlyGByMonthlyPId(monthlyPId int) (*MonthlyGoal, error) {
+// 	var monthlyGoal *MonthlyGoal
+// 	query := `SELECT * FROM monthlygoals WHERE monthlyGId=?`
+// 	row := db.QueryRow(query, monthlyPId)
+// 	err := row.Scan(&monthlyGoal.MGID, &monthlyGoal.Title, &monthlyGoal.Desc,
+// 		&monthlyGoal.Status, &monthlyGoal.MPID, &monthlyGoal.AGID)
+// 	return monthlyGoal, err
+// }
+
+func GetMonthlyGs(id int) ([]*MonthlyGoal, error) {
+	mgs := make([]*MonthlyGoal, 0)
+	query := `SELECT * FROM monthlygoals WHERE monthlyPId=?`
+	rows, err := db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		mg := new(MonthlyGoal)
+		if err := rows.Scan(&mg.MGID, &mg.Title, &mg.Desc, &mg.Priority, &mg.Progress, &mg.Status, &mg.MPID, &mg.AGID); err != nil {
+			return nil, err
+		}
+		mgs = append(mgs, mg)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return mgs, err
+
 }
 
 func GetMonthlyGById(monthlyGId int) (*MonthlyGoal, error) {
-	var monthlyGoal *MonthlyGoal
-	query := `SELECT * FROM annuallyGoals WHERE annuallyGId=?`
+	monthlyGoal := &MonthlyGoal{}
+	query := `SELECT * FROM monthlyGoals WHERE monthlyGId=?`
 	row := db.QueryRow(query, monthlyGId)
-	err := row.Scan(&monthlyGoal.MGID, &monthlyGoal.Title, &monthlyGoal.Desc,
+	err := row.Scan(&monthlyGoal.MGID, &monthlyGoal.Title, &monthlyGoal.Desc, &monthlyGoal.Priority, &monthlyGoal.Progress,
 		&monthlyGoal.Status, &monthlyGoal.MPID, &monthlyGoal.AGID)
 	return monthlyGoal, err
 }

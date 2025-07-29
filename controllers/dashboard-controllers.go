@@ -3,6 +3,7 @@ package controllers
 import (
 	"Tasktop/models"
 	"Tasktop/utils"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -14,16 +15,126 @@ func DashHandler(w http.ResponseWriter, r *http.Request) {
 	TemplateRender(w, "/dashboard/dashboard", nil)
 }
 
-//Read Goals
+//Read Goal(single)
 
 func DailyGoal(w http.ResponseWriter, r *http.Request) {
-
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["goalId"])
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+	}
+	dailyGoal, err := models.GetDailyGById(Id)
+	if err != nil {
+		http.Error(w, "Error while fetching data", http.StatusNotFound)
+		return
+	}
+	if dailyGoal.DGID == 0 {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(dailyGoal)
 }
-func MonthlyGoal(w http.ResponseWriter, r *http.Request) {
 
+func MonthlyGoal(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["goalId"])
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+	}
+	monthlyGoal, err := models.GetMonthlyGById(Id)
+	if err != nil {
+		http.Error(w, "Error while fetching data", http.StatusNotFound)
+		return
+	}
+	if monthlyGoal.MGID == 0 {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(monthlyGoal)
 }
 func AnnuallyGoal(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["goalId"])
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+	}
+	annuallyGoal, err := models.GetAnnuallyGById(Id)
+	if err != nil {
+		http.Error(w, "Error while fetching data", http.StatusNotFound)
+		return
+	}
+	if annuallyGoal.AGID == 0 {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(annuallyGoal)
+}
 
+//Read Goals(user goals on declear date)
+
+func GetDailyGoals(w http.ResponseWriter, r *http.Request) {
+	date := r.FormValue("date")
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	id := models.GetDailyPId(username, date)
+	dailyGoals, err := models.GetDailyGs(id)
+	if err != nil {
+		http.Error(w, "Error while fetching data", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	for _, dailyGoal := range dailyGoals {
+		if dailyGoal.DGID == 0 {
+			continue
+		}
+		json.NewEncoder(w).Encode(dailyGoal)
+	}
+}
+
+func GetMonthlyGoals(w http.ResponseWriter, r *http.Request) {
+	date := r.FormValue("date")
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	id := models.GetMonthlyPId(username, date)
+	monthlyGoals, err := models.GetMonthlyGs(id)
+	if err != nil {
+		http.Error(w, "Error while fetching data", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	for _, monthlyGoal := range monthlyGoals {
+		if monthlyGoal.MGID == 0 {
+			continue
+		}
+		json.NewEncoder(w).Encode(monthlyGoal)
+	}
+}
+
+func GetAnnuallyGoals(w http.ResponseWriter, r *http.Request) {
+	y := r.FormValue("year")
+	y = y[0:]
+	year, err := strconv.Atoi(y)
+	if err != nil {
+		http.Error(w, "Error while parsing year", http.StatusBadRequest)
+	}
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	id := models.GetAnnuallyPId(username, year)
+	annuallyGoals, err := models.GetAnnuallyGs(id)
+	if err != nil {
+		http.Error(w, "Error while fetching data", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	for _, annuallyGoal := range annuallyGoals {
+		if annuallyGoal.AGID == 0 {
+			continue
+		}
+		json.NewEncoder(w).Encode(annuallyGoal)
+	}
 }
 
 //Create Goals

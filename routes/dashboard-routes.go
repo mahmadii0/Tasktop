@@ -8,10 +8,15 @@ import (
 
 var DashRegister = func(r *mux.Router) {
 	r.HandleFunc("", controllers.DashHandler)
-	//Read Goals
-	r.HandleFunc("/daily-goals/{goalId:[0-99]+}", controllers.DailyGoal).Methods("GET")
-	r.HandleFunc("/monthly-goals/{goalId:[0-99]+}", controllers.MonthlyGoal).Methods("GET")
-	r.HandleFunc("/annually-goals/{goalId:[0-99]+}", controllers.AnnuallyGoal).Methods("GET")
+	//Read Goal(single)
+	r.HandleFunc("/daily-goals/{goalId:[0-9]+}", controllers.DailyGoal).Methods("GET")
+	r.HandleFunc("/monthly-goals/{goalId:[0-9]+}", controllers.MonthlyGoal).Methods("GET")
+	r.HandleFunc("/annually-goals/{goalId:[0-9]+}", controllers.AnnuallyGoal).Methods("GET")
+
+	//Read Goals(user goals on declear date)
+	r.HandleFunc("/daily-goals", controllers.GetDailyGoals).Methods("GET")
+	r.HandleFunc("/monthly-goals", controllers.GetMonthlyGoals).Methods("GET")
+	r.HandleFunc("/annually-goals", controllers.GetAnnuallyGoals).Methods("GET")
 
 	//Create Goals
 	r.HandleFunc("/daily-goals/create", controllers.CDailyGoal).Methods("POST")
@@ -19,14 +24,14 @@ var DashRegister = func(r *mux.Router) {
 	r.HandleFunc("/annually-goals/create", controllers.CAnnuallyGoal).Methods("POST")
 
 	//Update Goals
-	r.HandleFunc("/daily-goals/{goalId:[0-99]+}", controllers.UDailyGoal).Methods("PUT")
-	r.HandleFunc("/monthly-goals/{goalId:[0-99]+}", controllers.UMonthlyGoal).Methods("PUT")
-	r.HandleFunc("/annually-goals/{goalId:[0-99]+}", controllers.UAnnuallyGoals).Methods("PUT")
+	r.HandleFunc("/daily-goals/{goalId:[0-9]+}", controllers.UDailyGoal).Methods("PUT")
+	r.HandleFunc("/monthly-goals/{goalId:[0-9]+}", controllers.UMonthlyGoal).Methods("PUT")
+	r.HandleFunc("/annually-goals/{goalId:[0-9]+}", controllers.UAnnuallyGoals).Methods("PUT")
 
 	//Delete Goals
-	r.HandleFunc("/daily-goals/{goalId:[0-99]+}", controllers.DDailyGoal).Methods("DELETE")
-	r.HandleFunc("/monthly-goals/{goalId:[0-99]+}", controllers.DMonthlyGoal).Methods("DELETE")
-	r.HandleFunc("/annually-goals/{goalId:[0-99]+}", controllers.DAnnuallyGoal).Methods("DELETE")
+	r.HandleFunc("/daily-goals/{goalId:[0-9]+}", controllers.DDailyGoal).Methods("DELETE")
+	r.HandleFunc("/monthly-goals/{goalId:[0-9]+}", controllers.DMonthlyGoal).Methods("DELETE")
+	r.HandleFunc("/annually-goals/{goalId:[0-9]+}", controllers.DAnnuallyGoal).Methods("DELETE")
 
 	//Report
 	r.HandleFunc("/report", controllers.Report)
