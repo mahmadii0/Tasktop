@@ -10,7 +10,7 @@ type MonthlyPlan struct {
 	Progress int    `json:"progress"`
 	Status   bool   `json:"status"`
 	Date     string `json:"date"`
-	UserName string `json:"userId"` //Foregin-key
+	UserName string `json:"username"` //Foregin-key
 }
 type MonthlyGoal struct {
 	MGID     int    `json:"MGId"`

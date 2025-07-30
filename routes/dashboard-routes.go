@@ -33,6 +33,11 @@ var DashRegister = func(r *mux.Router) {
 	r.HandleFunc("/monthly-goals/{goalId:[0-9]+}", controllers.DMonthlyGoal).Methods("DELETE")
 	r.HandleFunc("/annually-goals/{goalId:[0-9]+}", controllers.DAnnuallyGoal).Methods("DELETE")
 
+	//Notes
+	r.HandleFunc("/notes", controllers.Notes).Methods("GET")
+	r.HandleFunc("/notes/create", controllers.CNote).Methods("POST")
+
 	//Report
 	r.HandleFunc("/report", controllers.Report)
+
 }

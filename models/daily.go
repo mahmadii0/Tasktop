@@ -9,7 +9,7 @@ type DailyPlan struct {
 	DPID     int    `json:"DPId"`
 	Progress int    `json:"progress"`
 	Status   bool   `json:"status"`
-	UserName string `json:"userId"` //Foregin-key
+	UserName string `json:"username"` //Foregin-key
 }
 type DailyGoal struct {
 	DGID  int    `json:"DGId"`

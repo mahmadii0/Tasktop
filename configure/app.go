@@ -102,6 +102,14 @@ func CreateTables() {
 	    CONSTRAINT dailyP_dailyG FOREIGN KEY (dailyPId) REFERENCES dailyPlans(dailyPId),
 	    CONSTRAINT monthlyG_dailyG FOREIGN KEY (monthlyGId) REFERENCES monthlyGoals(monthlyGId)
 	);`
+	notes := `
+	CREATE TABLE IF NOT EXISTS notes(
+		noteId INTEGER PRIMARY KEY AUTO_INCREMENT,
+		title varchar(200),
+		note_text varchar(2000) NOT NULL,
+		username varchar(100) NOT NULL,
+		CONSTRAINT user_notes FOREIGN KEY (username) REFERENCES users(username)
+	);`
 
 	if _, err = d.Exec(user); err != nil {
 		log.Printf("Error on creating user table: %v", err)
@@ -126,6 +134,9 @@ func CreateTables() {
 	}
 	if _, err = d.Exec(dailyGoals); err != nil {
 		log.Printf("Error on creating dailyGoals table: %v", err)
+	}
+	if _, err = d.Exec(notes); err != nil {
+		log.Printf("Error on creating notes table: %v", err)
 	}
 
 }

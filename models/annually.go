@@ -10,7 +10,7 @@ type AnnuallyPlan struct {
 	Progress int    `json:"progress"`
 	Status   bool   `json:"status"`
 	Year     int    `json:"year"`
-	UserName string `json:"userId"` //Foregin-key
+	UserName string `json:"username"` //Foregin-key
 }
 type AnnuallyGoal struct {
 	AGID     int    `json:"AGId"`

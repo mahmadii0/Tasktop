@@ -438,6 +438,34 @@ func DAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func Notes(w http.ResponseWriter, r *http.Request) {
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	notes, err := models.GetNotes(username)
+	if err != nil {
+		http.Error(w, "Error while fetching data", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	for _, note := range notes {
+		json.NewEncoder(w).Encode(note)
+	}
+}
+
+func CNote(w http.ResponseWriter, r *http.Request) {
+	var note models.Note
+	note.Title = r.FormValue("title")
+	note.NoteText = r.FormValue("noteText")
+	st, _ := r.Cookie("session_token")
+	note.UserName = models.GetUsernameBySessionToken(st.Value)
+	status := models.AddNote(&note)
+	if !(status) {
+		http.Error(w, "Error while adding note", http.StatusBadRequest)
+		return
+	}
+	return
+}
+
 //Report
 
 func Report(w http.ResponseWriter, r *http.Request) {
