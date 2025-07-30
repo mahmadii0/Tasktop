@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/robfig/cron/v3"
 )
 
 func DashHandler(w http.ResponseWriter, r *http.Request) {
@@ -438,6 +440,8 @@ func DAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+//Notes
+
 func Notes(w http.ResponseWriter, r *http.Request) {
 	st, _ := r.Cookie("session_token")
 	username := models.GetUsernameBySessionToken(st.Value)
@@ -464,6 +468,36 @@ func CNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	return
+}
+
+func DNote(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	Id, err := strconv.Atoi(vars["noteId"])
+	if err != nil {
+		http.Error(w, "Error while parsing Id", http.StatusBadRequest)
+		return
+	}
+	status := models.DeleteNote(Id)
+	if !(status) {
+		http.Error(w, "Error while deleteing note", http.StatusBadRequest)
+		return
+	}
+	return
+}
+
+func DNotes() {
+	loc, _ := time.LoadLocation("Asia/Tehran")
+	c := cron.New(cron.WithLocation(loc))
+	_, err := c.AddFunc("0 0 * * *", func() {
+		models.DeleteAllNotes()
+	})
+	if err != nil {
+		fmt.Printf("Error on deleteing notes: ", err)
+	}
+
+	c.Start()
+
+	select {}
 }
 
 //Report

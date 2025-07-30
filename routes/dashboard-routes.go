@@ -36,6 +36,7 @@ var DashRegister = func(r *mux.Router) {
 	//Notes
 	r.HandleFunc("/notes", controllers.Notes).Methods("GET")
 	r.HandleFunc("/notes/create", controllers.CNote).Methods("POST")
+	r.HandleFunc("/notes/{noteId:[0-9]}", controllers.DNote).Methods("DELETE")
 
 	//Report
 	r.HandleFunc("/report", controllers.Report)

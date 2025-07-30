@@ -7,6 +7,16 @@ type Note struct {
 	UserName string `json:"username`
 }
 
+func DeleteAllNotes() bool {
+	status := true
+	query := `DELETE FROM notes`
+	_, err := db.Exec(query)
+	if err != nil {
+		status = false
+	}
+	return status
+}
+
 func AddNote(note *Note) bool {
 	status := true
 	query := `INSERT INTO notes(title,note_text,username) VALUES(?,?,?)`
@@ -15,6 +25,16 @@ func AddNote(note *Note) bool {
 		status = false
 	}
 	return status
+}
+
+func DeleteNote(noteId int) bool {
+	status := true
+	query := `DELETE FROM notes WHERE noteId=?`
+	if _, err := db.Exec(query, noteId); err != nil {
+		status = false
+	}
+	return status
+
 }
 
 func GetNotes(username string) ([]*Note, error) {
