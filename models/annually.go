@@ -29,20 +29,34 @@ func init() {
 
 //Annually Plan Functions
 
-func GetAnnuallyPByUserId(userId int) (*AnnuallyPlan, error) {
-	annuallyP := &AnnuallyPlan{}
-	query := `SELECT * FROM annuallyPlans WHERE userId=?`
-	row := db.QueryRow(query, userId)
-	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserName)
-	return annuallyP, err
+func GetAnnuallyPs(username string) ([]*AnnuallyPlan, error) {
+	aps := make([]*AnnuallyPlan, 0)
+	query := `SELECT * FROM annuallyplans WHERE username=?`
+	rows, err := db.Query(query, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		ap := new(AnnuallyPlan)
+		if err := rows.Scan(&ap.APID, &ap.Progress, &ap.Status, &ap.Year, &ap.UserName); err != nil {
+			return nil, err
+		}
+		aps = append(aps, ap)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return aps, err
 }
-func GetAnnuallyPById(annuallyPId int) (*AnnuallyPlan, error) {
-	var annuallyP *AnnuallyPlan
-	query := `SELECT * FROM annuallyPlans WHERE annuallyPId=?`
-	row := db.QueryRow(query, annuallyPId)
-	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserName)
-	return annuallyP, err
-}
+
+// func GetAnnuallyPById(annuallyPId int) (*AnnuallyPlan, error) {
+// 	var annuallyP *AnnuallyPlan
+// 	query := `SELECT * FROM annuallyPlans WHERE annuallyPId=?`
+// 	row := db.QueryRow(query, annuallyPId)
+// 	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserName)
+// 	return annuallyP, err
+// }
 
 func GetAnnuallyPId(username string, year int) int {
 	var id int = 0
@@ -74,25 +88,25 @@ func AddAnnuallyP(username string, year int) bool {
 
 }
 
-func UpdateAnnuallyP(annuallyP *AnnuallyPlan) bool {
-	status := true
-	query := `UPDATE annuallyPlans SET status=?, year=?, userId=? WHERE annuallyPId=?`
-	_, err := db.Exec(query, annuallyP.Status, annuallyP.Year, annuallyP.UserName, annuallyP.APID)
-	if err != nil {
-		status = false
-	}
-	return status
-}
+// func UpdateAnnuallyP(annuallyP *AnnuallyPlan) bool {
+// 	status := true
+// 	query := `UPDATE annuallyPlans SET status=?, year=?, userId=? WHERE annuallyPId=?`
+// 	_, err := db.Exec(query, annuallyP.Status, annuallyP.Year, annuallyP.UserName, annuallyP.APID)
+// 	if err != nil {
+// 		status = false
+// 	}
+// 	return status
+// }
 
-func DeleteAnnuallyPlan(annuallyPId int) bool {
-	status := true
-	query := `DELETE FROM annuallyPlans WHERE annuallyPId=?`
-	_, err := db.Exec(query, annuallyPId)
-	if err != nil {
-		status = false
-	}
-	return status
-}
+// func DeleteAnnuallyPlan(annuallyPId int) bool {
+// 	status := true
+// 	query := `DELETE FROM annuallyPlans WHERE annuallyPId=?`
+// 	_, err := db.Exec(query, annuallyPId)
+// 	if err != nil {
+// 		status = false
+// 	}
+// 	return status
+// }
 
 //Annually Goal Function
 
@@ -164,4 +178,31 @@ func DeleteAnnuallyG(annuallyGId int) bool {
 		status = false
 	}
 	return status
+}
+
+//Annually Report
+
+func GetAProgresses(annuallyPs []*AnnuallyPlan) (map[int]int, error) {
+	var progresses = make(map[int]int)
+	for _, annuallyP := range annuallyPs {
+		query := `SELECT progress FROM annuallygoals WHERE annuallyPId=?`
+		rows, err := db.Query(query, annuallyP.APID)
+		if err != nil {
+			return nil, err
+		}
+		defer rows.Close()
+		var progress int
+		counter := 0
+		for rows.Next() {
+			var p int
+			if err := rows.Scan(&p); err != nil {
+				return nil, err
+			}
+			progress = progress + p
+			counter++
+		}
+		progress = progress / counter
+		progresses[annuallyP.Year] = progress
+	}
+	return progresses, nil
 }

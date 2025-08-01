@@ -9,6 +9,7 @@ type DailyPlan struct {
 	DPID     int    `json:"DPId"`
 	Progress int    `json:"progress"`
 	Status   bool   `json:"status"`
+	Date     string `json:"date"`
 	UserName string `json:"username"` //Foregin-key
 }
 type DailyGoal struct {
@@ -28,6 +29,27 @@ func init() {
 }
 
 //Daily Plan Functions
+
+func GetDailyPs(username string) ([]*DailyPlan, error) {
+	dps := make([]*DailyPlan, 0)
+	query := `SELECT * FROM dailyplans WHERE username=?`
+	rows, err := db.Query(query, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		dp := new(DailyPlan)
+		if err := rows.Scan(&dp.DPID, &dp.Progress, &dp.Status, &dp.Date, &dp.UserName); err != nil {
+			return nil, err
+		}
+		dps = append(dps, dp)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return dps, err
+}
 
 func GetDailyPId(username string, date string) int {
 	var id int = 0
@@ -89,15 +111,31 @@ func DeleteDailyPlan(dailyPId int) bool {
 
 //Daily Goal Function
 
-// func GetDailyGByDailyPId(dailyPId int) (*DailyGoal, error) {
-// 	var dailyGoal *DailyGoal
-// 	query := `SELECT * FROM dailygoals WHERE dailyGId=?`
-// 	row := db.QueryRow(query, dailyPId)
-// 	err := row.Scan(&dailyGoal.DGID, &dailyGoal.Title, &dailyGoal.TimeTD,
-// 		&dailyGoal.Status, &dailyGoal.DPID, &dailyGoal.MGID)
-// 	return dailyGoal, err
-// }
-
+//	func GetDailyGByDailyPId(dailyPId int) (*DailyGoal, error) {
+//		var dailyGoal *DailyGoal
+//		query := `SELECT * FROM dailygoals WHERE dailyGId=?`
+//		row := db.QueryRow(query, dailyPId)
+//		err := row.Scan(&dailyGoal.DGID, &dailyGoal.Title, &dailyGoal.TimeTD,
+//			&dailyGoal.Status, &dailyGoal.DPID, &dailyGoal.MGID)
+//		return dailyGoal, err
+//	}
+func GetDailyGStatuses(id int) ([]int, error) {
+	statuses := make([]int, 0)
+	query := `SELECT status FROM dailygoals WHERE dailyPId=?`
+	rows, err := db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	for rows.Next() {
+		i := 0
+		if err := rows.Scan(&i); err != nil {
+			return nil, err
+		}
+		statuses = append(statuses, i)
+	}
+	return statuses, nil
+}
 func GetDailyGs(id int) ([]*DailyGoal, error) {
 	dgs := make([]*DailyGoal, 0)
 	query := `SELECT * FROM dailygoals WHERE dailyPId=?`

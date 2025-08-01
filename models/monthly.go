@@ -28,7 +28,28 @@ func init() {
 	db = configure.GetDB()
 }
 
-//Monthly Plan Functions
+//Monthly Plan Function
+
+func GetMonthlyPs(username string) ([]*MonthlyPlan, error) {
+	mps := make([]*MonthlyPlan, 0)
+	query := `SELECT * FROM monthlyplans WHERE username=?`
+	rows, err := db.Query(query, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		mp := new(MonthlyPlan)
+		if err := rows.Scan(&mp.MPID, &mp.Progress, &mp.Status, &mp.Date, &mp.UserName); err != nil {
+			return nil, err
+		}
+		mps = append(mps, mp)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return mps, err
+}
 
 func GetMonthlyPId(username string, date string) int {
 	var id int = 0
@@ -98,6 +119,31 @@ func DeleteMonthlyPlan(monthlyPId int) bool {
 // 		&monthlyGoal.Status, &monthlyGoal.MPID, &monthlyGoal.AGID)
 // 	return monthlyGoal, err
 // }
+
+func GetMProgresses(monthlyPs []*MonthlyPlan) (map[string]int, error) {
+	var progresses = make(map[string]int)
+	for _, monthlyP := range monthlyPs {
+		query := `SELECT progress FROM monthlygoals WHERE monthlyPId=?`
+		rows, err := db.Query(query, monthlyP.MPID)
+		if err != nil {
+			return nil, err
+		}
+		defer rows.Close()
+		var progress int
+		counter := 0
+		for rows.Next() {
+			var p int
+			if err := rows.Scan(&p); err != nil {
+				return nil, err
+			}
+			progress = progress + p
+			counter++
+		}
+		progress = progress / counter
+		progresses[monthlyP.Date] = progress
+	}
+	return progresses, nil
+}
 
 func GetMonthlyGs(id int) ([]*MonthlyGoal, error) {
 	mgs := make([]*MonthlyGoal, 0)

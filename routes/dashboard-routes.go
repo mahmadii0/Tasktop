@@ -40,5 +40,8 @@ var DashRegister = func(r *mux.Router) {
 
 	//Report
 	r.HandleFunc("/report", controllers.Report)
+	r.HandleFunc("/report/daily", controllers.DailyReport).Methods("POST")
+	r.HandleFunc("/report/monthly", controllers.MonthlyReport).Methods("GET")
+	r.HandleFunc("/report/annually", controllers.AnnuallyReport).Methods("GET")
 
 }

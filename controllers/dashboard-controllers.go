@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/gorilla/mux"
 	"github.com/robfig/cron/v3"
 )
@@ -504,4 +506,88 @@ func DNotes() {
 
 func Report(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func DailyReport(w http.ResponseWriter, r *http.Request) {
+	date := r.FormValue("date")
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	id := models.GetDailyPId(username, date)
+	statuses, err := models.GetDailyGStatuses(id)
+	if err != nil {
+		http.Error(w, "Error while getting statuses", http.StatusBadRequest)
+		return
+	}
+	activeCounter := 0.00
+	counter := 0.00
+	for _, status := range statuses {
+		if status == 1 {
+			activeCounter++
+		}
+		counter++
+	}
+	result := activeCounter / counter
+	result = result * 100
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+
+}
+func MonthlyReport(w http.ResponseWriter, r *http.Request) {
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	monthlyPs, err := models.GetMonthlyPs(username)
+	if err != nil {
+		http.Error(w, "Error while getting monthlyPs", http.StatusBadRequest)
+		return
+	}
+	progresses, err := models.GetMProgresses(monthlyPs)
+	if err != nil {
+		http.Error(w, "Error while getting progresses", http.StatusBadRequest)
+		return
+	}
+
+	items := make([]opts.BarData, 0)
+	dates := make([]string, 0)
+	for i, progress := range progresses {
+		items = append(items, opts.BarData{Value: progress})
+		dates = append(dates, i)
+	}
+	bar := charts.NewBar()
+	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
+		Title:    "Monthly Report",
+		Subtitle: "Report your progress",
+	}))
+	bar.SetXAxis(dates).
+		AddSeries("Years", items)
+	bar.Render(w)
+}
+func AnnuallyReport(w http.ResponseWriter, r *http.Request) {
+	st, _ := r.Cookie("session_token")
+	username := models.GetUsernameBySessionToken(st.Value)
+	annuallyPs, err := models.GetAnnuallyPs(username)
+	if err != nil {
+		http.Error(w, "Error while getting annuallyPs", http.StatusBadRequest)
+		return
+	}
+	progresses, err := models.GetAProgresses(annuallyPs)
+	if err != nil {
+		http.Error(w, "Error while getting progresses", http.StatusBadRequest)
+		return
+	}
+
+	items := make([]opts.BarData, 0)
+	years := make([]string, 0)
+	for i, progress := range progresses {
+		items = append(items, opts.BarData{Value: progress})
+		year := strconv.Itoa(i)
+		years = append(years, year)
+	}
+	bar := charts.NewBar()
+	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
+		Title:    "Annually Report",
+		Subtitle: "Report your progress",
+	}))
+	bar.SetXAxis(years).
+		AddSeries("Years", items)
+	bar.Render(w)
 }
