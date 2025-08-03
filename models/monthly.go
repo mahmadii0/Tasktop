@@ -145,6 +145,17 @@ func GetMProgresses(monthlyPs []*MonthlyPlan) (map[string]int, error) {
 	return progresses, nil
 }
 
+func GetMonthlyGIdByDailyGId(id int) int {
+	var monthlyGId int
+	query := `SELECT monthlyGId FROM dailyGoals WHERE dailyGId=?`
+	row := db.QueryRow(query, id)
+	err := row.Scan(&monthlyGId)
+	if err != nil {
+		return -1
+	}
+	return monthlyGId
+}
+
 func GetMonthlyGs(id int) ([]*MonthlyGoal, error) {
 	mgs := make([]*MonthlyGoal, 0)
 	query := `SELECT * FROM monthlygoals WHERE monthlyPId=?`

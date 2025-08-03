@@ -119,6 +119,17 @@ func AddAnnuallyP(username string, year int) bool {
 // 	return annuallyGoal, err
 // }
 
+func GetAnnuallyGIdByMonthlyGId(id int) int {
+	var annuallyGId int
+	query := `SELECT annuallyGId FROM monthlygoals WHERE monthlyGId=?`
+	row := db.QueryRow(query, id)
+	err := row.Scan(&annuallyGId)
+	if err != nil {
+		return -1
+	}
+	return annuallyGId
+}
+
 func GetAnnuallyGs(id int) ([]*AnnuallyGoal, error) {
 	ags := make([]*AnnuallyGoal, 0)
 	query := `SELECT * FROM annuallygoals WHERE annuallyPId=?`

@@ -27,6 +27,7 @@ var DashRegister = func(r *mux.Router) {
 	r.HandleFunc("/daily-goals/{goalId:[0-9]+}", controllers.UDailyGoal).Methods("PUT")
 	r.HandleFunc("/monthly-goals/{goalId:[0-9]+}", controllers.UMonthlyGoal).Methods("PUT")
 	r.HandleFunc("/annually-goals/{goalId:[0-9]+}", controllers.UAnnuallyGoals).Methods("PUT")
+	r.HandleFunc("/{goalType}/status/{goalId:[0-9]+}", controllers.Status).Methods("GET")
 
 	//Delete Goals
 	r.HandleFunc("/daily-goals/{goalId:[0-9]+}", controllers.DDailyGoal).Methods("DELETE")

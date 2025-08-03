@@ -240,6 +240,50 @@ func CAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 
 //Update Goals
 
+func Status(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	typee := vars["goalType"]
+	Id, err := strconv.Atoi(vars["goalId"])
+	if err != nil {
+		http.Error(w, "Error while parsing goalId", http.StatusBadRequest)
+	}
+	if typee == "daily-goals" {
+		Status := models.CheckStatus("daily", Id)
+		if !(Status) {
+			http.Error(w, "Error while setting status", http.StatusBadRequest)
+			return
+		}
+		Status = models.SetProgress("monthly", Id)
+		if !(Status) {
+			http.Error(w, "Error while setting progress", http.StatusBadRequest)
+			return
+		}
+
+	} else if typee == "monthly-goals" {
+		Status := models.CheckStatus("monthly", Id)
+		if !(Status) {
+			http.Error(w, "Error while setting status", http.StatusBadRequest)
+			return
+		}
+		Status = models.SetProgress("annually", Id)
+		if !(Status) {
+			http.Error(w, "Error while setting progress", http.StatusBadRequest)
+			return
+		}
+	} else if typee == "annually-goals" {
+		Status := models.CheckStatus("annually", Id)
+		if !(Status) {
+			http.Error(w, "Error while setting status", http.StatusBadRequest)
+			return
+		}
+	} else {
+		http.Error(w, "Invalid goalType", http.StatusBadRequest)
+		return
+	}
+	return
+
+}
+
 func UDailyGoal(w http.ResponseWriter, r *http.Request) {
 	var dailyGoal models.DailyGoal
 	vars := mux.Vars(r)
@@ -518,15 +562,15 @@ func DailyReport(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error while getting statuses", http.StatusBadRequest)
 		return
 	}
-	activeCounter := 0.00
+	doneCounter := 0.00
 	counter := 0.00
 	for _, status := range statuses {
-		if status == 1 {
-			activeCounter++
+		if status == 0 {
+			doneCounter++
 		}
 		counter++
 	}
-	result := activeCounter / counter
+	result := doneCounter / counter
 	result = result * 100
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
