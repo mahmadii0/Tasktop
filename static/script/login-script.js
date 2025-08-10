@@ -13,6 +13,7 @@
                     link.classList.remove('active');
                 }
             });
+            // rezaaaaa
             
             document.getElementById('authWrapper').style.transform = `translateX(-${index * 20}%)`;
             currentSection = index;
