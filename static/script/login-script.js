@@ -225,6 +225,7 @@
                 showNotification('success', 'Success', 'You have successfully logged in!');
                 setTimeout(() => {
                     switchSection(0); 
+                    window.location.href = 'http://localhost:8080/dashboard';
                 }, 2000);
             })
             .catch(error => {
@@ -267,7 +268,7 @@
                 showNotification('error', 'Error', `Error: ${error.message}`);
             });
         }
-
+        
         // Remove any previous reload handler
         document.getElementById("signupBtn").removeEventListener("click", function() {
             location.reload();
@@ -348,7 +349,6 @@
             const hasLowercase = /[a-z]/.test(password);
             const hasNumber = /[0-9]/.test(password);
             const hasSpecial = /[^A-Za-z0-9]/.test(password);
-            
             // Update requirement indicators
             updateRequirement('req-length', hasLength);
             updateRequirement('req-uppercase', hasUppercase);
@@ -522,3 +522,4 @@
                 closeModal('socialLoginModal');
             });
         });
+        
