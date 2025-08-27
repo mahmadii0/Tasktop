@@ -111,15 +111,6 @@ func DeleteMonthlyPlan(monthlyPId int) bool {
 
 //Monthly Goal Function
 
-// func GetMonthlyGByMonthlyPId(monthlyPId int) (*MonthlyGoal, error) {
-// 	var monthlyGoal *MonthlyGoal
-// 	query := `SELECT * FROM monthlygoals WHERE monthlyGId=?`
-// 	row := db.QueryRow(query, monthlyPId)
-// 	err := row.Scan(&monthlyGoal.MGID, &monthlyGoal.Title, &monthlyGoal.Desc,
-// 		&monthlyGoal.Status, &monthlyGoal.MPID, &monthlyGoal.AGID)
-// 	return monthlyGoal, err
-// }
-
 func GetMProgresses(monthlyPs []*MonthlyPlan) (map[string]int, error) {
 	var progresses = make(map[string]int)
 	for _, monthlyP := range monthlyPs {

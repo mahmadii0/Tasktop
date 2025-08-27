@@ -111,14 +111,6 @@ func DeleteDailyPlan(dailyPId int) bool {
 
 //Daily Goal Function
 
-//	func GetDailyGByDailyPId(dailyPId int) (*DailyGoal, error) {
-//		var dailyGoal *DailyGoal
-//		query := `SELECT * FROM dailygoals WHERE dailyGId=?`
-//		row := db.QueryRow(query, dailyPId)
-//		err := row.Scan(&dailyGoal.DGID, &dailyGoal.Title, &dailyGoal.TimeTD,
-//			&dailyGoal.Status, &dailyGoal.DPID, &dailyGoal.MGID)
-//		return dailyGoal, err
-//	}
 func GetDailyGStatuses(id int) ([]int, error) {
 	statuses := make([]int, 0)
 	query := `SELECT status FROM dailygoals WHERE dailyPId=?`

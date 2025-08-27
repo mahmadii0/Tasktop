@@ -50,14 +50,6 @@ func GetAnnuallyPs(username string) ([]*AnnuallyPlan, error) {
 	return aps, err
 }
 
-// func GetAnnuallyPById(annuallyPId int) (*AnnuallyPlan, error) {
-// 	var annuallyP *AnnuallyPlan
-// 	query := `SELECT * FROM annuallyPlans WHERE annuallyPId=?`
-// 	row := db.QueryRow(query, annuallyPId)
-// 	err := row.Scan(&annuallyP.APID, &annuallyP.Status, &annuallyP.Year, &annuallyP.UserName)
-// 	return annuallyP, err
-// }
-
 func GetAnnuallyPId(username string, year int) int {
 	var id int = 0
 	var s int = 0
@@ -88,36 +80,7 @@ func AddAnnuallyP(username string, year int) bool {
 
 }
 
-// func UpdateAnnuallyP(annuallyP *AnnuallyPlan) bool {
-// 	status := true
-// 	query := `UPDATE annuallyPlans SET status=?, year=?, userId=? WHERE annuallyPId=?`
-// 	_, err := db.Exec(query, annuallyP.Status, annuallyP.Year, annuallyP.UserName, annuallyP.APID)
-// 	if err != nil {
-// 		status = false
-// 	}
-// 	return status
-// }
-
-// func DeleteAnnuallyPlan(annuallyPId int) bool {
-// 	status := true
-// 	query := `DELETE FROM annuallyPlans WHERE annuallyPId=?`
-// 	_, err := db.Exec(query, annuallyPId)
-// 	if err != nil {
-// 		status = false
-// 	}
-// 	return status
-// }
-
 //Annually Goal Function
-
-// func GetAnnuallyGByAnnuallyPId(annuallyPId int) (*AnnuallyGoal, error) {
-// 	var annuallyGoal *AnnuallyGoal
-// 	query := `SELECT * FROM annuallyGoals WHERE annuallyPId=?`
-// 	row := db.QueryRow(query, annuallyPId)
-// 	err := row.Scan(&annuallyGoal.AGID, &annuallyGoal.Title, &annuallyGoal.Desc,
-// 		&annuallyGoal.Status, &annuallyGoal.APID)
-// 	return annuallyGoal, err
-// }
 
 func GetAnnuallyGIdByMonthlyGId(id int) int {
 	var annuallyGId int

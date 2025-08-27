@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"Tasktop/constants"
 	"Tasktop/middlewares"
 	"Tasktop/models"
 	"Tasktop/utils"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -15,7 +17,13 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	var questions = &models.SecurityQuestions{}
 
 	if r.Method == http.MethodGet {
-		TemplateRender(w, "/main/authentication", nil)
+		htmlContent, err := ioutil.ReadFile(constants.TEMPLATES_SOURCE + "/main/authentication.html")
+		if err != nil {
+			http.Error(w, "Error reading HTML file", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html")
+		w.Write(htmlContent)
 	} else if r.Method == http.MethodPost {
 		userName := r.FormValue("username")
 		userName = strings.ToLower(userName)
