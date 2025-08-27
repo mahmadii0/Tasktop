@@ -1,5 +1,62 @@
  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+
+        .shape1{
+            width: 80px;
+            height: 80px; 
+            left: 10%; 
+            top: 10%; 
+            animation-duration: 25s;
+        }
+        .shape2{
+            width: 60px; 
+            height: 60px; 
+            left: 25%; 
+            top: 30%; 
+            animation-duration: 20s;
+        }
+        .shape3{
+            width: 100px; 
+            height: 100px; 
+            left: 60%; 
+            top: 5%; 
+            animation-duration: 30s;
+        }
+        .shape4{
+            width: 50px; 
+            height: 50px; 
+            left: 80%; 
+            top: 40%; 
+            animation-duration: 22s;
+        }
+        .shape5{
+            width: 70px; 
+            height: 70px; 
+            left: 40%; 
+            top: 70%; 
+            animation-duration: 28s;
+        }
+        .shape6{
+            width: 90px; 
+            height: 90px; 
+            left: 15%; 
+            top: 60%; 
+            animation-duration: 32s;
+        }
+        .shape7{
+            width: 55px; 
+            height: 55px; 
+            left: 75%; 
+            top: 70%; 
+            animation-duration: 24s;
+        }
+        .shape8{
+            width: 85px; 
+            height: 85px; 
+            left: 50%; 
+            top: 30%; 
+            animation-duration: 26s;
+        }
         :root {
             --primary: #4f46e5;
             --primary-dark: #4338ca;
@@ -418,7 +475,33 @@
             color: white;
         }
         
-        .checkbox-wrapper {
+        .checkbox-wrapper{
+            margin-bottom: 1.5rem;
+        }
+        .label1{
+            color: rgba(255, 255, 255, 0.7); 
+            font-size: 0.9rem;
+        }
+        .email-col{
+            color: rgba(255, 255, 255, 0.7); 
+            margin-bottom: 1.5rem;
+        }
+        .google{
+            color: rgba(255, 255, 255, 0.7); 
+            margin-bottom: 1rem;
+        }
+        .social-accounts{
+            display: none;
+        }
+        .use-another-account{
+            margin-top: 1rem; 
+            text-align: center;
+        }
+        .step-buttons{
+            justify-content: flex-start; 
+            margin-top: 1rem;
+        }
+        box-wrapper{
             display: flex;
             align-items: center;
         }
@@ -823,6 +906,8 @@
         .modal-body {
             margin-bottom: 1.5rem;
         }
+
+
         
         .modal-footer {
             display: flex;

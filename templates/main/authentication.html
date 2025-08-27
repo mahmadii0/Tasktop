@@ -7,14 +7,14 @@
 
 {{define "Content"}}
     <div class="floating-shapes">
-        <div class="shape" style="width: 80px; height: 80px; left: 10%; top: 10%; animation-duration: 25s;"></div>
-        <div class="shape" style="width: 60px; height: 60px; left: 25%; top: 30%; animation-duration: 20s;"></div>
-        <div class="shape" style="width: 100px; height: 100px; left: 60%; top: 5%; animation-duration: 30s;"></div>
-        <div class="shape" style="width: 50px; height: 50px; left: 80%; top: 40%; animation-duration: 22s;"></div>
-        <div class="shape" style="width: 70px; height: 70px; left: 40%; top: 70%; animation-duration: 28s;"></div>
-        <div class="shape" style="width: 90px; height: 90px; left: 15%; top: 60%; animation-duration: 32s;"></div>
-        <div class="shape" style="width: 55px; height: 55px; left: 75%; top: 70%; animation-duration: 24s;"></div>
-        <div class="shape" style="width: 85px; height: 85px; left: 50%; top: 30%; animation-duration: 26s;"></div>
+        <div class="shape1"></div>
+        <div class="shape2"></div>
+        <div class="shape3"></div>
+        <div class="shape4"></div>
+        <div class="shape5"></div>
+        <div class="shape6"></div>
+        <div class="shape7"></div>
+        <div class="shape8"></div>
     </div>
     
     <div class="auth-container">
@@ -328,20 +328,19 @@
                         
                         <!-- Step 4: Completion -->
                         <div class="signup-step" id="step4">
-                            <div class="checkbox-wrapper" style="margin-bottom: 1.5rem;">
+                            <div class="checkbox-wrapper">
                                 <div class="custom-checkbox" id="termsCheckbox" onclick="toggleCheckbox(this)">
                                     <input type="checkbox" class="checkbox-input" id="agreeTerms" required>
                                 </div>
-                                <label for="agreeTerms" style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+                                <label class="label1" for="agreeTerms">
                                     I agree to the <a href="#" style="color: var(--secondary);">Terms of Service</a> and <a href="#" style="color: var(--secondary);">Privacy Policy</a>
                                 </label>
                             </div>
-                            
                             <button type="button" value="submit" class="btn btn-primary" id="signupBtn" onclick="handleSignup()">
                                 Create Account
                             </button>
                             
-                            <div class="step-buttons" style="justify-content: flex-start; margin-top: 1rem;">
+                            <div class="step-buttons">
                                 <button type="button" class="btn-step btn-prev" onclick="prevStep(4)">Previous</button>
                             </div>
                         </div>
@@ -378,7 +377,7 @@
                 <h2 class="modal-title">Reset Your Password</h2>
             </div>
             <div class="modal-body">
-                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1.5rem;">
+                <p class="email-col">
                     Enter your email address and phone number below, and we'll send you a link to reset your password.
                 </p>
                 <div class="form-group" id="resetEmailGroup">
@@ -415,7 +414,7 @@
                 <h2 class="modal-title" id="socialModalTitle">Choose an Account</h2>
             </div>
             <div class="modal-body">
-                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem;" id="socialModalText">
+                <p class="google" id="socialModalText">
                     Select an account to continue with Google
                 </p>
                 
@@ -440,7 +439,7 @@
                     </div>
                 </div>
                 
-                <div class="social-accounts" id="facebookAccounts" style="display: none;">
+                <div class="social-accounts" id="facebookAccounts">
                     <div class="social-account" onclick="loginWithSocialAccount('facebook', 'john.doe@example.com')">
                         <div class="social-account-icon facebook">
                             <i class="fab fa-facebook-f"></i>
@@ -452,7 +451,7 @@
                     </div>
                 </div>
                 
-                <div class="social-accounts" id="twitterAccounts" style="display: none;">
+                <div class="social-accounts" id="twitterAccounts">
                     <div class="social-account" onclick="loginWithSocialAccount('twitter', '@johndoe')">
                         <div class="social-account-icon twitter">
                             <i class="fab fa-twitter"></i>
@@ -464,7 +463,7 @@
                     </div>
                 </div>
                 
-                <div class="social-accounts" id="appleAccounts" style="display: none;">
+                <div class="social-accounts" id="appleAccounts">
                     <div class="social-account" onclick="loginWithSocialAccount('apple', 'john.doe@icloud.com')">
                         <div class="social-account-icon apple">
                             <i class="fab fa-apple"></i>
@@ -476,7 +475,7 @@
                     </div>
                 </div>
                 
-                <div style="margin-top: 1rem; text-align: center;">
+                <div class="use-another-account">
                     <a href="#" style="color: var(--secondary); font-size: 0.9rem;" id="useAnotherAccount">
                         Use another account
                     </a>
