@@ -6,8 +6,8 @@ import (
 	"Tasktop/models"
 	"Tasktop/utils"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -17,7 +17,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	var questions = &models.SecurityQuestions{}
 
 	if r.Method == http.MethodGet {
-		htmlContent, err := ioutil.ReadFile(constants.TEMPLATES_SOURCE + "/main/authentication.html")
+		htmlContent, err := os.ReadFile(constants.TEMPLATES_SOURCE + "/main/authentication.html")
 		if err != nil {
 			http.Error(w, "Error reading HTML file", http.StatusInternalServerError)
 			return
