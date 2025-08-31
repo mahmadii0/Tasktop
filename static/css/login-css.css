@@ -58,8 +58,8 @@
             animation-duration: 26s;
         }
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
+            --primary: #F3A26D;
+            --primary-dark: #FF7601;
             --secondary: #06b6d4;
             --success: #10b981;
             --danger: #ef4444;
@@ -78,7 +78,8 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(to bottom right, #83cada, #83cada);
+;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -94,18 +95,19 @@
             width: 100%;
             max-width: 1200px;
             min-height: 650px;
-            background: rgba(15, 23, 42, 0.6);
+            background: #00809D;
             border-radius: 24px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 15px 8px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
+            margin-top: 250px;
         }
         
         .auth-sidebar {
             width: 300px;
-            background: rgba(15, 23, 42, 0.8);
+            background: #004150;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             padding: 2rem;
             display: flex;
@@ -329,20 +331,26 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, (var(--primary), var(--secondary)));
             color: white;
         }
         
-        .btn-primary:hover {
+        /* .btn-primary:hover {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
-        }
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); */
+        /* } */
         
         .btn-primary:active {
             transform: translateY(0);
         }
         
+        .loginnn {
+              background: linear-gradient(45deg, #ff6a00, #ee0979); /* رنگ‌های گرادینت */
+            color: #ffffff; 
+            border: none; 
+}
+
         .btn-outline {
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.2);
