@@ -88,6 +88,9 @@
             color: var(--light);
             position: relative;
             overflow-x: hidden;
+            height: 100%;
+            overflow: hidden; 
+            font-family: sans-serif;
         }
         
         .auth-container {
@@ -95,7 +98,7 @@
             width: 100%;
             max-width: 1200px;
             min-height: 650px;
-            background: #00809D;
+            background: linear-gradient(120deg,#014757,#39b8d4);
             border-radius: 24px;
             box-shadow: 0 0 15px 8px rgba(0, 0, 0, 0.3);
             overflow: hidden;
@@ -103,11 +106,13 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             margin-top: 250px;
+            
+
         }
         
         .auth-sidebar {
             width: 300px;
-            background: #004150;
+            background: linear-gradient(120deg, #013541,#014b5b);
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             padding: 2rem;
             display: flex;
@@ -119,6 +124,7 @@
             flex: 1;
             position: relative;
             overflow: hidden;
+            
         }
         
         .auth-wrapper {
@@ -133,6 +139,7 @@
             height: 100%;
             padding: 3rem;
             position: relative;
+            
         }
         
         .logo {
@@ -335,18 +342,18 @@
             color: white;
         }
         
-        /* .btn-primary:hover {
+        .btn-primary:hover {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); */
-        /* } */
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
         
         .btn-primary:active {
             transform: translateY(0);
         }
         
         .loginnn {
-              background: linear-gradient(45deg, #ff6a00, #ee0979); /* رنگ‌های گرادینت */
+            background: linear-gradient(45deg, #FF7601, #F3A26D); 
             color: #ffffff; 
             border: none; 
 }
