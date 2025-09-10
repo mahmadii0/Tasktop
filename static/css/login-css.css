@@ -79,7 +79,6 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #83cada, #83cada);
-;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -103,17 +102,15 @@
             box-shadow: 0 0 15px 8px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid linear-gradient(120deg, #013541,#014b5b);
             display: flex;
             margin-top: 250px;
-            
-
         }
         
         .auth-sidebar {
             width: 300px;
             background: linear-gradient(120deg, #013541,#014b5b);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid linear-gradient(120deg, #013541,#014b5b);
             padding: 2rem;
             display: flex;
             flex-direction: column;
@@ -138,7 +135,7 @@
             width: 20%;
             height: 100%;
             padding: 3rem;
-            position: relative;
+            position: relative
             
         }
         
