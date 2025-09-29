@@ -1,18 +1,24 @@
 package controllers
 
 import (
-	"Tasktop/constants"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
+	"os"
 	"path/filepath"
+
+	"github.com/joho/godotenv"
 )
 
 func TemplateRender(w http.ResponseWriter, templ string, data interface{}) {
-
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	templates := []string{
-		filepath.Join(constants.TEMPLATES_SOURCE + templ + ".html"),
-		filepath.Join(constants.TEMPLATES_SOURCE + "/base.html"),
+		filepath.Join(os.Getenv("TEMPLATES_SOURCE") + templ + ".html"),
+		filepath.Join(os.Getenv("TEMPLATES_SOURCE") + "/base.html"),
 	}
 
 	t, err := template.ParseFiles(templates...)

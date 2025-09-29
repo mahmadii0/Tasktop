@@ -1,23 +1,28 @@
 package controllers
 
 import (
-	"Tasktop/constants"
 	"Tasktop/middlewares"
 	"Tasktop/models"
 	"Tasktop/utils"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	var user = &models.User{}
 	var questions = &models.SecurityQuestions{}
-
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	if r.Method == http.MethodGet {
-		htmlContent, err := os.ReadFile(constants.TEMPLATES_SOURCE + "/main/authentication.html")
+		htmlContent, err := os.ReadFile(os.Getenv("TEMPLATES_SOURCE") + "/main/authentication.html")
 		if err != nil {
 			http.Error(w, "Error reading HTML file", http.StatusInternalServerError)
 			return

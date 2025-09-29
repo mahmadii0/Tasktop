@@ -1,11 +1,12 @@
 package configure
 
 import (
-	"Tasktop/constants"
 	"database/sql"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -13,7 +14,11 @@ var (
 )
 
 func CreateTables() {
-	source := constants.DATABASE_SOURCE
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	source := os.Getenv("DATABASE_SOURCE")
 	d, err := sql.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
@@ -142,7 +147,11 @@ func CreateTables() {
 }
 
 func Connect() {
-	source := constants.DATABASE_SOURCE
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	source := os.Getenv("DATABASE_SOURCE")
 	d, err := sql.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
