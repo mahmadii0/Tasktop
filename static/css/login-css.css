@@ -58,9 +58,9 @@
             animation-duration: 26s;
         }
         :root {
-            --primary: #F3A26D;
+            --primary: #020100;
             --primary-dark: #FF7601;
-            --secondary: #06b6d4;
+            --secondary: #3e3f7d;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
@@ -254,7 +254,7 @@
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(to right, #d0ab76,#ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -349,7 +349,7 @@
         }
         
         .loginnn {
-            background: linear-gradient(45deg, #FF7601, #F3A26D); 
+            background: linear-gradient(45deg, #e7c28d); 
             color: #ffffff; 
             border: none; 
 }
@@ -674,7 +674,7 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
+            background: #595aa5;
             border: 2px solid rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
@@ -686,8 +686,9 @@
         }
         
         .step-circle.active {
-            background: var(--primary);
+            background: #595aa5;
             border-color: var(--primary);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
         
         .step-circle.completed {
