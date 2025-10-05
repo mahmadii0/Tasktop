@@ -78,17 +78,16 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(to bottom right, #83cada, #83cada);
-            min-height: 100vh;
+            background: linear-gradient(to bottom right, #FFF2E0, #FFF2E0);
+           height: 90vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 2rem 1rem;
             color: var(--light);
             position: relative;
-            overflow-x: hidden;
             height: 100%;
-            overflow: hidden; 
+            overflow: hidden !important; 
             font-family: sans-serif;
         }
         
@@ -96,20 +95,20 @@
             position: relative;
             width: 100%;
             max-width: 1200px;
-            min-height: 650px;
-            background: linear-gradient(120deg,#014757,#39b8d4);
+            height: 95vh;
+            background: linear-gradient(120deg,#898AC4,#C0C9EE);
             border-radius: 24px;
             box-shadow: 0 0 15px 8px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             backdrop-filter: blur(20px);
             border: 1px solid linear-gradient(120deg, #013541,#014b5b);
             display: flex;
-            margin-top: 250px;
+            margin-top: 0.8rem;
         }
         
         .auth-sidebar {
             width: 300px;
-            background: linear-gradient(120deg, #013541,#014b5b);
+            background: linear-gradient(120deg, #3e3f7d,rgb(93, 95, 220));
             border-right: 1px solid linear-gradient(120deg, #013541,#014b5b);
             padding: 2rem;
             display: flex;
