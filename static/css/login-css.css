@@ -79,7 +79,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #FFF2E0, #FFF2E0);
-           height: 90vh;
+            height: 90vh;
             display: flex;
             align-items: center;
             justify-content: center;

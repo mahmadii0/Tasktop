@@ -9,7 +9,7 @@
     <div class="container mx-auto px-4 py-8">
         <div class="flex flex-col md:flex-row gap-6">
             <!-- Sidebar -->
-            <div class="w-full md:w-64 bg-white rounded-lg shadow-md p-4">
+            <div class="w-full md:w-64 bg-indigo-50 rounded-lg shadow-md p-4">
                 <div class="flex items-center justify-center mb-6">
                     <div class="relative h-20 w-20">
                         <svg class="progress-ring" width="80" height="80">
@@ -52,8 +52,8 @@
             </div>
             <!-- Main Dashboard Area -->
             <div class="flex-1">
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <div class="flex justify-between items-center mb-6">
+                <div class="bg-indigo-50 rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex justify-between items-center mb-6"id="content-titr">
                         <h2 class="text-xl font-bold text-gray-800">Dashboard Overview</h2>
                         <div class="flex space-x-2">
                             <button class="view-tab tab-active flex-1 py-3 text-center" data-view="daily" >Daily</button>
@@ -63,7 +63,7 @@
                     </div>
 
                    <!-- Calendar -->
-                   <div class="bg-white rounded-xl shadow-md p-5">
+                   <div class="bg-indigo-50 rounded-xl shadow-md p-5">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold text-gray-800">Calendar</h2>
                         <div class="flex space-x-2">
@@ -95,7 +95,7 @@
                 </div>
             </div>
                        <!-- Daily View -->
-                       <div id="daily-view" class="view-content p-5">
+                       <div id="daily-view" class="view-content p-5 bg-amber-100">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-semibold text-gray-800">Today's Goals</h2>
                             <button id="add-daily-task" class="bg-indigo-600 text-white rounded-full p-1 hover:bg-indigo-700 transition">
@@ -111,7 +111,7 @@
 
 
                      <!-- Monthly View -->
-                     <div id="monthly-view" class="view-content p-5 hidden">
+                     <div id="monthly-view" class="view-content p-5 hidden bg-amber-100">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-semibold text-gray-800">Monthly Goals</h2>
                             <button id="add-monthly-goal" class="bg-indigo-600 text-white rounded-full p-1 hover:bg-indigo-700 transition">
@@ -126,7 +126,7 @@
                     </div>
           
                       <!-- Yearly View -->
-                      <div id="yearly-view" class="view-content p-5 hidden">
+                      <div id="yearly-view" class="view-content p-5 hidden bg-amber-100">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-semibold text-gray-800">Yearly Objectives</h2>
                             <button id="add-yearly-objective" class="bg-indigo-600 text-white rounded-full p-1 hover:bg-indigo-700 transition">
