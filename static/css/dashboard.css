@@ -50,10 +50,10 @@ body {
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
 }
-.note {
-    background-color: #fff9c4;
+#Note{
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transform: translateY(-5px);
+    margin-top: 20px;
 }
 .ai-message {
     background-color: #f0f7ff;
@@ -121,4 +121,15 @@ body {
 }
 #yearly-view{
     border-radius: 10px;
+}
+#calendar-days{
+    border-radius: 10px;
+    opacity: 0.8;
+    
+}
+#calendar-month{
+    border-radius: 10px;
+}
+#Ai-box{
+    margin-top: 10px;
 }
