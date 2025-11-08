@@ -1,30 +1,30 @@
 package models
 
 import (
-	"Tasktop/configure"
 	"fmt"
+
+	"gorm.io/gorm"
 )
 
 type AnnuallyPlan struct {
-	APID     int    `json:"APId"`
-	Progress int    `json:"progress"`
-	Status   bool   `json:"status"`
-	Year     int    `json:"year"`
-	UserName string `json:"username"` //Foregin-key
+	gorm.Model
+	APID     int    `gorm:"primaryKey;autoIncrement" json:"APId"`
+	Progress int    `gorm:"not null" json:"progress"`
+	Status   bool   `gorm:"not null" json:"status"`
+	Year     int    `gorm:"not null" json:"year"`
+	UserName string `gorm:"not null;size:100" json:"username"` //Foregin-key
+	User     User   `gorm:"foreignKey:UserName"`
 }
 type AnnuallyGoal struct {
-	AGID     int    `json:"AGId"`
-	Title    string `json:"title"`
-	Desc     string `json:"desc"`
-	Priority string `json:"priority"`
-	Progress int    `json:"progress"`
-	Status   bool   `json:"status"`
-	APID     int    `json:"APId"` //Foregin-key
-}
-
-func init() {
-	configure.Connect()
-	db = configure.GetDB()
+	gorm.Model
+	AGID         int          `gorm:"primaryKey;autoIncrement" json:"AGId"`
+	Title        string       `gorm:"not null;size:100" json:"title"`
+	Desc         string       `gorm:"size:1500" json:"desc"`
+	Priority     string       `gorm:"size:6" json:"priority"`
+	Progress     int          `gorm:"not null" json:"progress"`
+	Status       bool         `gorm:"not null" jgorm:"not null" son:"status"`
+	APID         int          `gorm:"not null" json:"APId"` //Foregin-key
+	AnnuallyPlan AnnuallyPlan `gorm:"foreignKey:APID"`
 }
 
 //Annually Plan Functions
