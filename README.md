@@ -130,8 +130,6 @@ db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 | `/notes/{noteId:[0-9]}`                              | DELETE            | Delete Note                                              |
 | `/report/{daily/monthly/annually}`                   | GET               | get daily/monthly/annually report                        |
 
-> Note: In the code, **“goals”** represent **plans**, meaning your goals are the actual tasks or programs linked to your schedule.
-
 ---
 
 ## 🔒 Authentication
