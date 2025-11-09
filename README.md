@@ -112,23 +112,23 @@ db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 ## 📚 API & Routing Overview
 
-| Route                                                | Method            | Description                                              |
-| ---------------------------------------------------- | ----------------- | -------------------------------------------------------- |
-| `/register`                                          | GET               | Register web page                                        |
-| `/register`                                          | POST              | Register a new user                                      |
-| `/login`                                             | POST              | Authenticate and log in                                  |
-| `/logout`                                            | GET               | Log out                                                  |
-| `/dashboard`                                         | GET               | User dashboard (requires AuthMiddleware)                 |
-| `/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | GET               | Read Goal(single)                                        |
-| `/{daily/monthly/annually}-goals/`                   | GET               | Read Goals(user goals on declear date)                   |
-| `/{daily/monthly/annually}-goals/create`             | POST              | Create Goals                                             |
-| `/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | PUT               | Update Goals                                             |
-| `/{daily/monthly/annually}/status/{goalId:[0-9]+}`   | GET               | Update status of Goals                                   |
-| `/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | DELETE            | Delete Goals                                             |
-| `/notes`                                             | GET               | Get All Notes                                            |
-| `/notes/create`                                      | POST              | Create Note                                              |
-| `/notes/{noteId:[0-9]}`                              | DELETE            | Delete Note                                              |
-| `/report/{daily/monthly/annually}`                   | GET               | get daily/monthly/annually report                        |
+| Route                                                          | Method            | Description                                              |
+| -------------------------------------------------------------- | ----------------- | -------------------------------------------------------- |
+| `/register`                                                    | GET               | Register web page                                        |
+| `/register`                                                    | POST              | Register a new user                                      |
+| `/login`                                                       | POST              | Authenticate and log in                                  |
+| `/logout`                                                      | GET               | Log out                                                  |
+| `/dashboard`                                                   | GET               | User dashboard (requires AuthMiddleware)                 |
+| `/dashboard/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | GET               | Read Goal(single)                                        |
+| `/dashboard/{daily/monthly/annually}-goals/`                   | GET               | Read Goals(user goals on declear date)                   |
+| `/dashboard/{daily/monthly/annually}-goals/create`             | POST              | Create Goals                                             |
+| `/dashboard/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | PUT               | Update Goals                                             |
+| `/dashboard/{daily/monthly/annually}/status/{goalId:[0-9]+}`   | GET               | Update status of Goals                                   |
+| `/dashboard/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | DELETE            | Delete Goals                                             |
+| `/dashboard/notes`                                             | GET               | Get All Notes                                            |
+| `/dashboard/notes/create`                                      | POST              | Create Note                                              |
+| `/dashboard/notes/{noteId:[0-9]}`                              | DELETE            | Delete Note                                              |
+| `/dashboard/report/{daily/monthly/annually}`                   | GET               | get daily/monthly/annually report                        |
 
 ---
 
