@@ -1,21 +1,22 @@
 # 🗓️ Tasktop — Personal Planning Web App
 
 **Tasktop** is a web-based personal planning system built with **Golang** and **GORM (MySQL)**.  
-It allows users to organize, track, and review their **daily, monthly, and yearly goals** in a simple yet powerful dashboard.
-
+It allows users to organize, track, and review their **daily, monthly, and yearly goals** in a simple yet powerful dashboard with helpfull reports
+Also in the feature we gonna have ai assistant for it🔥
 This project is designed to provide both **API-like functionality** for managing plans and a **visual web interface** for user interaction.
 
 ---
 
 ## 🚀 Features
 
+- MVC architecture
 - Create and manage **daily, monthly, and yearly** plans  
-- Link daily plans to related **monthly goals**  
+- Link daily goals to related **monthly goals**  , Link monthly goals to **annually goals**
 - Track completion status (done / pending)  
-- User authentication and authorization  
+- User authentication and authorization 
 - Private dashboard protected by middleware  
 - REST-like routing using **Gorilla Mux**  
-- Database integration using **GORM ORM**  
+- Database integration using **GORM ORM**  --in progress
 - Modular and scalable folder structure
 
 ---
@@ -32,6 +33,7 @@ Tasktop/
 ├── routes/              # HTTP routing for main pages and dashboard
 ├── static/              # CSS, JS, and assets
 ├── templates/           # HTML templates for frontend rendering
+├── utils/               # utils for using in different site sections
 ├── main.go              # Application entry point
 └── go.mod               # Go module definition
 
@@ -54,11 +56,10 @@ Make sure you have the following installed:
 Create a `.env` file in the project root with your database credentials:
 
 ```bash
-DB_USER=root
-DB_PASS=your_password
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=tasktop
+DATABASE_SOURCE = "root:yourPassword@tcp(127.0.0.1:3306)/databaseName?charset=utf8&parseTime=True&loc=Local"
+//The full address of templates folder
+TEMPLATES_SOURCE = "C:/Users/user/Desktop/Tasktop/templates"
+
 ````
 
 ---
@@ -111,13 +112,23 @@ db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 ## 📚 API & Routing Overview
 
-| Route        | Method              | Description                              |
-| ------------ | ------------------- | ---------------------------------------- |
-| `/register`  | POST                | Register a new user                      |
-| `/login`     | POST                | Authenticate and log in                  |
-| `/dashboard` | GET                 | User dashboard (requires AuthMiddleware) |
-| `/goals`     | GET/POST/PUT/DELETE | Manage goals/plans                       |
-| `/static/*`  | GET                 | Serve static files                       |
+| Route                                                | Method            | Description                                              |
+| ---------------------------------------------------- | ----------------- | -------------------------------------------------------- |
+| `/register`                                          | GET               | Register web page                                        |
+| `/register`                                          | POST              | Register a new user                                      |
+| `/login`                                             | POST              | Authenticate and log in                                  |
+| `/logout`                                            | GET               | Log out                                                  |
+| `/dashboard`                                         | GET               | User dashboard (requires AuthMiddleware)                 |
+| `/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | GET               | Read Goal(single)                                        |
+| `/{daily/monthly/annually}-goals/`                   | GET               | Read Goals(user goals on declear date)                   |
+| `/{daily/monthly/annually}-goals/create`             | POST              | Create Goals                                             |
+| `/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | PUT               | Update Goals                                             |
+| `/{daily/monthly/annually}/status/{goalId:[0-9]+}`   | GET               | Update status of Goals                                   |
+| `/{daily/monthly/annually}-goals/{goalId:[0-9]+}`    | DELETE            | Delete Goals                                             |
+| `/notes`                                             | GET               | Get All Notes                                            |
+| `/notes/create`                                      | POST              | Create Note                                              |
+| `/notes/{noteId:[0-9]}`                              | DELETE            | Delete Note                                              |
+| `/report/{daily/monthly/annually}`                   | GET               | get daily/monthly/annually report                        |
 
 > Note: In the code, **“goals”** represent **plans**, meaning your goals are the actual tasks or programs linked to your schedule.
 
