@@ -54,80 +54,72 @@ func ClearTokens(email string) bool {
 	return true
 }
 
-//func GetEmailBySessionToken(sessionToken string) string {
-//	email := ""
-//	gorm.G[User](db).Where("")
-//	query := `SELECT email From users WHERE session_token=?`
-//	row := db.QueryRow(query, sessionToken)
-//	_ = row.Scan(&email)
-//	return email
-//}
+func GetEmailBySessionToken(sessionToken string) string {
+	var email string
+	e, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("email").Find(ctx)
+	if err != nil {
+		return ""
+	}
+	email = e[0].Email
+	return email
+}
 
-//
-//func GetUsernameBySessionToken(sessionToken string) string {
-//	email := ""
-//	query := `SELECT username From users WHERE session_token=?`
-//	row := db.QueryRow(query, sessionToken)
-//	_ = row.Scan(&email)
-//	return email
-//}
-//
-//func CompareCsrfToken(email string, csrf string) bool {
-//	status := true
-//	csrfDb := ""
-//	query := `SELECT csrf_token From users WHERE email=?`
-//	row := db.QueryRow(query, email)
-//	_ = row.Scan(&csrfDb)
-//	if csrfDb != csrf {
-//		status = false
-//	}
-//	return status
-//}
-//
-//func GetPassHashByEmail(email string) (string, error) {
-//	var hash string
-//	query := `SELECT password FROM users WHERE email=?`
-//	row := db.QueryRow(query, email)
-//	err := row.Scan(&hash)
-//	return hash, err
-//}
-//
-//func GetUserByUserName(username string) (*User, error) {
-//	var user User
-//	query := `SELECT username,fullname,email,phone FROM users WHERE username=?`
-//	row := db.QueryRow(query, username)
-//	err := row.Scan(&user.UserName, &user.FullName, &user.Email, &user.Phone)
-//	return &user, err
-//}
-//
-//func UpdateUser(user *User) bool {
-//	status := true
-//	query := `UPDATE users SET name= ?, email= ?, phone = ? WHERE id = ?`
-//	_, err := db.Exec(query, user.FullName, user.Email, user.Phone, user.UserName)
-//	if err != nil {
-//		status = false
-//	}
-//	return status
-//}
-//
-//func DeleteUser(username int) bool {
-//	status := true
-//	query := `DELETE FROM users WHERE id= ?`
-//	_, err := db.Exec(query, username)
-//	if err != nil {
-//		status = false
-//	}
-//	return status
-//}
-//
-////Questions
-//
-//func AddQuestions(username string, questions *SecurityQuestions) bool {
-//	status := true
-//	query := `INSERT INTO securityquestions VALUES(?,?,?,?,?)`
-//	_, err := db.Exec(query, username, questions.Question1, questions.Answer1, questions.Question2, questions.Answer2)
-//	if err != nil {
-//		status = false
-//	}
-//	return status
-//}
+func GetUsernameBySessionToken(sessionToken string) string {
+	var username string
+	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("username").Find(ctx)
+	if err != nil {
+		return ""
+	}
+	username = u[0].UserName
+	return username
+}
+
+func CompareCsrfToken(email string, csrf string) bool {
+	d, err := gorm.G[User](db).Where("email=?", email).Select("csrf_token").Find(ctx)
+	if err != nil {
+		return false
+	}
+	csrfDb := ""
+	csrfDb = d[0].CSRF
+	if csrfDb != csrf {
+		return false
+	}
+	return true
+}
+
+func GetPassHashByEmail(email string) (string, error) {
+	var hash string
+	pass, err := gorm.G[User](db).Where("email=?", email).Select("password").Find(ctx)
+	if err != nil {
+		return "", err
+	}
+	hash = pass[0].Password
+	return hash, err
+}
+
+func GetUserByUserName(username string) (*User, error) {
+	var user User
+	u, err := gorm.G[User](db).Where("username=?", username).Select("username,fullname,email,phone").Find(ctx)
+	if err != nil {
+		return nil, err
+	}
+	user = u[0]
+	return &user, err
+}
+
+func UpdateUser(user *User) bool {
+	gorm.G[User](db).Where("username=?", user.UserName).Updates(ctx, User{FullName: user.FullName, Email: user.Email, Phone: user.Phone})
+	return true
+}
+
+func DeleteUser(username int) bool {
+	gorm.G[User](db).Where("username = ?", username).Delete(ctx)
+	return true
+}
+
+//Questions
+
+func AddQuestions(username string, questions *SecurityQuestions) bool {
+	gorm.G[SecurityQuestions](db).Create(ctx, questions)
+	return true
+}

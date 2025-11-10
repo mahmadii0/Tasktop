@@ -1,21 +1,62 @@
-{{define "Title"}}Tasktop{{end}}
-{{define "Head"}}{{end}}
-{{define "Content"}}
-
-<div id="carouselExampleIndicators" class="carousel slide">
-    <div class="carousel-indicators">
-
-    </div>
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="/images/kk.jpg" class="d-block w-100" alt="...">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/css/index.css" />
+    
+</head>
+<header>
+    <div class="menu-container">
+        <div class="logo-container">
+            <img src="/static/images/logo.png" alt="tasktop">
+            <h1>Tasktop</h1> 
         </div>
-        <div class="carousel-caption d-none d-md-block">
-            <h2>Finish your plans with Tasktop</h2>
-            <button type="button" class="btn btn-light">SIGN UP</button>
-        </div>
+        
+        <ul class="menu">
+            <li class="menu-items"><a href="/register" class="login">Login</a></li>
+            <li class="menu-items"><a href="How is your Plan" class="desc">How is your Plan</a></li>
+            <li class="menu-items"><a href="" class="aboutus">About us</a></li>
+        </ul>
     </div>
+    <h2>Finish Your Plans With TASKTOP</h2>
+</header>
+<body>
+    <section class="desc-sec">
+        <h2>How is your Plan?</h2>
+        <h1 class="stroke">_____________</h1>
+        <br><br><br>
+        <div class="content-container">
+            <div class="items-container">
+                <p class="items">You can have plan for a <span>day</span>, <span>month</span> or <span>year</span></p>
+                <p class="items">You can relay a daily goal to a monthly goal</p>
+                <p class="items">You can relay a monthly goal to a annually goal</p>
+                <p class="items"><span>Also</span> you can have reports </p>                 
+            </div>
+            <img class="desc-vector" src="/static/images/note-vector.png" alt="">
+        </div>
 
-</div>
+    </section>
+    <section class="features-sec">
+        <div class="items-container">
+            <div class="ai-item items">
+                <img src="/static/images/svg/ai-solid-svgrepo-com.svg" alt="ai">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi, maiores!</p>
+            </div>
+            <div class="note-item items">
+                <img src="/static/images/svg/svg.svg" alt="notes">
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Itaque, dicta.</p>
+            </div>
+            <div class="prgrss-item items">
+                <img src="/static/images/svg/progress.svg" alt="progress">
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+            </div>
+            <div class="prgrss-item items">
+                <img src="/static/images/svg/service-report-svgrepo-com.svg" alt="progress">
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+            </div>
+        </div>
 
-{{end}}
+    </section>
+</body>
+</html>

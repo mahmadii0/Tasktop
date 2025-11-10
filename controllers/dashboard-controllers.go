@@ -548,10 +548,6 @@ func DNotes() {
 
 //Report
 
-func Report(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func DailyReport(w http.ResponseWriter, r *http.Request) {
 	date := r.FormValue("date")
 	st, _ := r.Cookie("session_token")
