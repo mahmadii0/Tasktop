@@ -4,6 +4,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
+}
+:root{
+    --primary-color:#5046e5;
+    --secondry-color:#fbf2d1;
+    --thirdy-color:#ecfeff;
+    --text-color:#545454;
 }
 ul{
     list-style: none;
@@ -14,35 +21,10 @@ a{
 
 body{
     font-family: 'Poppins', sans-serif;
-    background-color: #ecfeff;
+    background-color: var(--thirdy-color);
 }
 header{
-    width: 100vw;
-    height: 44rem;
-    width: 100vw;
-    background-image: url("/static/images/PM.jpg");
-    background-size: cover;
-    background-position: center 70%;
-}
-header h2{
-    font-family: "Comic Relief", system-ui;
-    font-weight: 700;
-    font-style: normal;
-    word-spacing: -.4rem;
-    text-align: center;
-    margin: 13rem 0 0 0;
-    background: linear-gradient(90deg, #fbf2d1, white);
-    background-clip: text;
-    color: transparent;
-    font-size: 4rem;
-}
-
-.stroke{
-    margin: -2rem 0 0 0;
-    color: #b9c7ff;
-    font-weight: bold;
-    font-size: 2.8rem;
-    letter-spacing: -.4rem;
+    height: 4.5rem;
 }
 .logo-container{
     display: flex;
@@ -52,18 +34,13 @@ header h2{
     width: 4.5rem;
 }
 .menu-container{
-    padding: 0 3% 0 3%;
+    padding: .5% 3% 0 3%;
     display: flex;
-    position: sticky;
-    top: 0;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(255, 255, 255, 0.5);
 }
 .menu-container h1{
-    background: linear-gradient(90deg, #5046e5, #1d1772);
-    background-clip: text;
-    color: transparent;
+    color: white;
     font-size: 2rem;
     
 }
@@ -71,19 +48,74 @@ header h2{
     display: flex;
     gap: 2rem;
 }
+.login a{
+    padding: .5rem 1rem .5rem 1rem;
+    border: 1px solid white;
+    border-radius: 1rem;
+}
+.login a:hover{
+    transition: all .5s;
+    border: 1px solid var(--secondry-color);
+    color:var(--secondry-color);
+}
 .menu-items a{
+    font-weight: 500;
     font-size: 1.1rem;
-    color: #1d1772;
+    color: white;
+}
+.menu-items a:hover{
+    transition: all .5s;
+    color:var(--secondry-color);
+
+}
+.hero-sec{
+    margin: -4.5rem 0 0 0;
+    width: 100vw;
+    height: 44rem;
+    padding: 17.5rem 0 0 0;
+    background-image: url("/static/images/PM.jpg");
+    background-size: cover;
+    background-position: center 70%;
+}
+.hero-sec h2{
+    font-family: "Comic Relief", system-ui;
+    font-weight: 700;
+    font-style: normal;
+    word-spacing: -.4rem;
+    text-align: center;
+    background: linear-gradient(90deg, var(--secondry-color), #fffdf7);
+    background-clip: text;
+    color: transparent;
+    font-size: 4rem;
+}
+.hero-sec h2:hover{
+    transition: all .5s;
+    color: var(--thirdy-color);
+    transform: scale(1.1);
+}
+.stroke{
+    margin: -2rem 0 0 0;
+    color: #b9c7ff;
+    font-weight: bold;
+    font-size: 2.8rem;
+    letter-spacing: -.4rem;
+}
+.trim-stroke{
+    margin: -3.1rem 0 0 0;
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 2.8rem;
+    letter-spacing: -.4rem;
 }
 
 .desc-sec{
     text-align: center;
     padding: 2% 0 0 0;
-    height: 31rem;
+    height: 28rem;
 }
-.desc-sec h2{
+.h2-title{
     font-size: 2.8rem;
-    background: linear-gradient(90deg, #5046e5, #1d1772);
+    background: linear-gradient(90deg, var(--primary-color), #1d1772);
     background-clip: text;
     color: transparent;
 }
@@ -92,6 +124,7 @@ header h2{
     width: 19rem;
     height: 16rem;
 }
+
 .desc-sec .content-container{
     padding: 0 11% 0 9%;
     display: flex;
@@ -111,15 +144,19 @@ header h2{
     font-size: 1.6rem;
 }
 .desc-sec .items span{
-    color: #5046e5;
+    color: var(--primary-color);
     font-weight: bold;
 }
 .features-sec{
-    height: 30rem;
-    background-color: #fbf2d1;
+    height: 35rem;
+    
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+.features-sec h2{
+    margin: -1rem 0 0 0;
 }
 .features-sec .items-container{
     display: flex;
@@ -129,7 +166,7 @@ header h2{
 .features-sec .items-container .items{
     padding: 1rem   ;
     border-radius: 1.2rem;
-    height: 17rem;
+    height: 19.5rem;
     width: 15rem;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.16);
     display: flex;
@@ -137,15 +174,149 @@ header h2{
     align-items: center;
     text-align: center;
 }
+.features-sec .items-container .items:hover{
+    background-color: var(--primary-color);
+    transition: all .5s;
+    transform: scale(1.08);
+}
 .features-sec .items-container .items p{
+    color: var(--text-color);
+    font-family: "Comic Relief", system-ui;
+    font-weight: 700;
     width: 12rem;
 }
+.features-sec .items-container .items p:hover{
+    color: white;
+}
+.title-items{
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #5046e5, #1d1772);
+    background-clip: text;
+    color: transparent;
+}
+.title-items:hover{
+    background: linear-gradient(90deg, var(--secondry-color),#fffdf7);
+    background-clip: text;
+    color: transparent;
+}
 .ai-item img{
+    margin-bottom: .4rem;
     width: 9rem;
 }
 .note-item img{
+    margin-bottom: 1.4rem;
     width: 8rem;
 }
 .prgrss-item img{
-    width: 9rem;
+    margin-bottom: -.1rem;
+    width: 9.5rem;
+}
+.report-item img{
+    margin: -2rem;
+    margin-bottom: -1.2rem;
+    width: 12.8rem;
+}
+
+.try-sec{
+    background: linear-gradient(90deg,var(--primary-color),#798fe8);
+    display: flex;
+    height: 25rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15% 0 10%;
+}
+.try-sec h2{
+    background: linear-gradient(90deg, #fffdf7, var(--secondry-color));
+    background-clip: text;
+    color: transparent;
+    font-size: 8rem;
+}
+.try-desc{
+    font-family: "Comic Relief", system-ui;
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: white;
+}
+.try-sec .texts-container{
+    margin: 2rem 0 0 0;
+}
+.try-sec .texts-container button{
+    background-color: transparent;
+    border-radius: 2rem;
+    border: 1px solid white;
+    width: 20rem;
+    height: 3rem;
+}
+.try-sec .texts-container button a{
+    font-weight: 100;
+    font-size: 1.1rem;
+    background: linear-gradient(90deg, #fffdf7, var(--secondry-color));
+    background-clip: text;
+    color: transparent;
+}
+
+.blog-sec{
+    text-align: center;
+    background: linear-gradient(90deg,var(--primary-color),#798fe8);
+    height: 40rem;
+}
+.blog-sec h2{
+    background: linear-gradient(90deg, #fffdf7, var(--secondry-color)) !important;
+    background-clip: text !important;
+    color: transparent !important;
+}
+.blog-container{
+    padding: 0 3% 0 3%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+}
+.blog-item img{
+    margin: .9rem 0 .7rem 0;
+    width: 15rem;
+    height: 15rem;
+    object-fit: cover;
+    border-radius: 1.5rem;
+}
+.blog-item{
+    height: 26.3rem;
+    width: 17rem;
+    border: 1px solid white;
+    border-radius: 1.5rem;
+    color: white;
+    font-size: 1.1rem;
+}
+.blog-item p{
+    background: linear-gradient(90deg, #fffdf7, var(--secondry-color));
+    background-clip: text;
+    color: transparent;
+    font-size: 1rem;
+    margin: .5rem 0 0 0;
+}
+.blog-item button{
+    margin: .8rem 0 0 0;
+    width: 10rem;
+    height: 2rem;
+    background-color: var(--secondry-color);
+    border: none;
+    border-radius: .5rem;
+}
+.blog-container button a{
+    font-size: 1rem;
+    color: var(--text-color);
+}
+footer{
+    text-align:center;
+    color:#000000;
+    background: linear-gradient(90deg,var(--primary-color),#798fe8);
+    height: 2rem;
+    
+}
+footer p{
+    opacity: 40%;
+}
+footer p span{
+    color:white
 }
