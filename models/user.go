@@ -1,7 +1,7 @@
 package models
 
 import (
-	"Tasktop/configure"
+	"Tasktop/utils"
 	"context"
 
 	"gorm.io/gorm"
@@ -34,7 +34,7 @@ var (
 )
 
 func init() {
-	db, ctx = configure.GetDBctx()
+	db, ctx = utils.GetDBctx()
 }
 
 //User
@@ -56,11 +56,11 @@ func ClearTokens(email string) bool {
 
 func GetEmailBySessionToken(sessionToken string) string {
 	var email string
-	e, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("email").Find(ctx)
+	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("email").Find(ctx)
 	if err != nil {
 		return ""
 	}
-	email = e[0].Email
+	email = u[0].Email
 	return email
 }
 
@@ -75,12 +75,12 @@ func GetUsernameBySessionToken(sessionToken string) string {
 }
 
 func CompareCsrfToken(email string, csrf string) bool {
-	d, err := gorm.G[User](db).Where("email=?", email).Select("csrf_token").Find(ctx)
+	u, err := gorm.G[User](db).Where("email=?", email).Select("csrf_token").Find(ctx)
 	if err != nil {
 		return false
 	}
 	csrfDb := ""
-	csrfDb = d[0].CSRF
+	csrfDb = u[0].CSRF
 	if csrfDb != csrf {
 		return false
 	}
@@ -89,11 +89,11 @@ func CompareCsrfToken(email string, csrf string) bool {
 
 func GetPassHashByEmail(email string) (string, error) {
 	var hash string
-	pass, err := gorm.G[User](db).Where("email=?", email).Select("password").Find(ctx)
+	u, err := gorm.G[User](db).Where("email=?", email).Select("password").Find(ctx)
 	if err != nil {
 		return "", err
 	}
-	hash = pass[0].Password
+	hash = u[0].Password
 	return hash, err
 }
 

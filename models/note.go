@@ -11,51 +11,26 @@ type Note struct {
 	User     User   `gorm:"foreignKey:UserName" json:"user"`
 }
 
-//
-//func DeleteAllNotes() bool {
-//	status := true
-//	query := `DELETE FROM notes`
-//	_, err := db.Exec(query)
-//	if err != nil {
-//		status = false
-//	}
-//	return status
-//}
-//
-//func AddNote(note *Note) bool {
-//	status := true
-//	query := `INSERT INTO notes(title,note_text,username) VALUES(?,?,?)`
-//	_, err := db.Exec(query, note.Title, note.NoteText, note.UserName)
-//	if err != nil {
-//		status = false
-//	}
-//	return status
-//}
-//
-//func DeleteNote(noteId int) bool {
-//	status := true
-//	query := `DELETE FROM notes WHERE noteId=?`
-//	if _, err := db.Exec(query, noteId); err != nil {
-//		status = false
-//	}
-//	return status
-//
-//}
-//
-//func GetNotes(username string) ([]*Note, error) {
-//	ns := make([]*Note, 0)
-//	query := `SELECT * FROM notes WHERE username=?`
-//	rows, err := db.Query(query, username)
-//	if err != nil {
-//		return nil, err
-//	}
-//	defer rows.Close()
-//	for rows.Next() {
-//		n := new(Note)
-//		if err := rows.Scan(&n.NoteId, &n.Title, &n.NoteText, &n.UserName); err != nil {
-//			return nil, err
-//		}
-//		ns = append(ns, n)
-//	}
-//	return ns, err
-//}
+func DeleteAllNotes() bool {
+	gorm.G[Note](db).Delete(ctx)
+	return true
+}
+
+func AddNote(note *Note) bool {
+	gorm.G[Note](db).Create(ctx, note)
+	return true
+}
+
+func DeleteNote(noteId int) bool {
+	gorm.G[Note](db).Where("noteId=?", noteId).Delete(ctx)
+	return true
+
+}
+
+func GetNotes(username string) ([]Note, error) {
+	n, err := gorm.G[Note](db).Where("username=?", username).Find(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return n, nil
+}

@@ -5,6 +5,7 @@ import (
 	"Tasktop/controllers"
 	"Tasktop/middlewares"
 	"Tasktop/routes"
+	"Tasktop/utils"
 	"log"
 	"net/http"
 
@@ -21,7 +22,7 @@ func main() {
 	routes.DashRegister(dashRouter)
 	dashRouter.Use(middlewares.AuthMiddleware)
 	configure.CreateTables()
-	configure.Connect()
+	utils.Connect()
 	go controllers.DNotes()
 	log.Fatal(http.ListenAndServe("localhost:8080", router))
 
