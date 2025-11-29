@@ -8,24 +8,23 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	UserName     string `gorm:"primaryKey;size:100" json:"username"`
+	UserID       int64  `gorm:"primaryKey;autoIncrement" json:"userId"`
+	UserName     string `gorm:"size:100;" json:"username"`
 	FullName     string `gorm:"not null;size:150" json:"name"`
-	Email        string `gorm:"unique;not null;size250" json:"email"`
+	Email        string `gorm:"unique;not null;size:250" json:"email"`
 	Phone        string `gorm:"unique;not null;size:13" json:"phone"`
-	Password     string `gorm:"not null,size:400" json:"password"`
+	Password     string `gorm:"not null;size:400" json:"password"`
 	SessionToken string `gorm:"size:64"`
 	CSRF         string `gorm:"size:64"`
 }
 
 type SecurityQuestions struct {
-	gorm.Model
-	UserName  string `gorm:"not null;size:100" json:"user_name"`
-	Question1 string `gorm:"not null,size:100" json:"question1"`
-	Answer1   string `gorm:"not null,size:2" json:"answer1"`
-	Question2 string `gorm:"not null,size:100" json:"question2"`
-	Answer2   string `gorm:"not null,size:2" json:"answer2"`
-	User      User   `gorm:"foreignKey:UserName"`
+	UserID    int64  `gorm:"not null" json:"userId"`
+	Question1 string `gorm:"not null;size:100" json:"question1"`
+	Answer1   string `gorm:"not null;size:100" json:"answer1"`
+	Question2 string `gorm:"not null;size:100" json:"question2"`
+	Answer2   string `gorm:"not null;size:100" json:"answer2"`
+	User      User   `gorm:"foreignKey:UserID"`
 }
 
 var (
@@ -64,14 +63,14 @@ func GetEmailBySessionToken(sessionToken string) string {
 	return email
 }
 
-func GetUsernameBySessionToken(sessionToken string) string {
-	var username string
+func GetUserIdBySessionToken(sessionToken string) int64 {
+	var userId int64
 	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("username").Find(ctx)
 	if err != nil {
-		return ""
+		return 0
 	}
-	username = u[0].UserName
-	return username
+	userId = u[0].UserID
+	return userId
 }
 
 func CompareCsrfToken(email string, csrf string) bool {

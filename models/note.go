@@ -3,12 +3,11 @@ package models
 import "gorm.io/gorm"
 
 type Note struct {
-	gorm.Model
 	NoteId   int    `gorm:"primaryKey;autoIncrement" json:"noteId"`
 	Title    string `json:"title;size:200"`
 	NoteText string `json:"noteText;size:2000"`
-	UserName string `json:"username;size:100"`
-	User     User   `gorm:"foreignKey:UserName" json:"user"`
+	UserID   int64  `gorm:"not null" json:"userId"`
+	User     User   `gorm:"foreignKey:UserID"`
 }
 
 func DeleteAllNotes() bool {
@@ -27,8 +26,8 @@ func DeleteNote(noteId int) bool {
 
 }
 
-func GetNotes(username string) ([]Note, error) {
-	n, err := gorm.G[Note](db).Where("username=?", username).Find(ctx)
+func GetNotes(userId int64) ([]Note, error) {
+	n, err := gorm.G[Note](db).Where("userId=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}

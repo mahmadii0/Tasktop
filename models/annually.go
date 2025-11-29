@@ -9,16 +9,14 @@ import (
 
 // status 1 is active
 type AnnuallyPlan struct {
-	gorm.Model
-	APID     int    `gorm:"primaryKey;autoIncrement" json:"APId"`
-	Progress int    `gorm:"not null" json:"progress"`
-	Status   bool   `gorm:"not null" json:"status"`
-	Year     int    `gorm:"not null" json:"year"`
-	UserName string `gorm:"not null;size:100" json:"username"` //Foregin-key
-	User     User   `gorm:"foreignKey:UserName"`
+	APID     int   `gorm:"primaryKey;autoIncrement" json:"APId"`
+	Progress int   `gorm:"not null" json:"progress"`
+	Status   bool  `gorm:"not null" json:"status"`
+	Year     int   `gorm:"not null" json:"year"`
+	UserID   int64 `gorm:"not null" json:"userId"` //Foregin-key
+	User     User  `gorm:"foreignKey:UserID"`
 }
 type AnnuallyGoal struct {
-	gorm.Model
 	AGID         int          `gorm:"primaryKey;autoIncrement" json:"AGId"`
 	Title        string       `gorm:"not null;size:100" json:"title"`
 	Desc         string       `gorm:"size:1500" json:"desc"`
@@ -35,8 +33,8 @@ func init() {
 
 //Annually Plan Functions
 
-func GetAnnuallyPs(username string) ([]AnnuallyPlan, error) {
-	ap, err := gorm.G[AnnuallyPlan](db).Where("username=?", username).Find(ctx)
+func GetAnnuallyPs(userId int64) ([]AnnuallyPlan, error) {
+	ap, err := gorm.G[AnnuallyPlan](db).Where("userId=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -44,9 +42,9 @@ func GetAnnuallyPs(username string) ([]AnnuallyPlan, error) {
 
 }
 
-func GetAnnuallyPId(username string, year int) int {
+func GetAnnuallyPId(userId int64, year int) int {
 	id := 0
-	ap, err := gorm.G[AnnuallyPlan](db).Where("username=? and year=?", username, year).Find(ctx)
+	ap, err := gorm.G[AnnuallyPlan](db).Where("userId=? and year=?", userId, year).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -54,8 +52,8 @@ func GetAnnuallyPId(username string, year int) int {
 	return id
 }
 
-func AddAnnuallyP(username string, year int) bool {
-	ap, err := gorm.G[AnnuallyPlan](db).Where("year = ? and username=?", year, username).Find(ctx)
+func AddAnnuallyP(userId int64, year int) bool {
+	ap, err := gorm.G[AnnuallyPlan](db).Where("year = ? and userId=?", year, userId).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -63,7 +61,7 @@ func AddAnnuallyP(username string, year int) bool {
 		gorm.G[AnnuallyPlan](db).Create(ctx, &AnnuallyPlan{
 			Progress: 0,
 			Status:   true,
-			UserName: username,
+			UserID:   userId,
 			Year:     year,
 		})
 		return true
@@ -116,7 +114,7 @@ func DeleteAnnuallyG(annuallyGId int) bool {
 
 //Annually Report
 
-func GetAProgresses(annuallyPs []*AnnuallyPlan) (map[int]int, error) {
+func GetAProgresses(annuallyPs []AnnuallyPlan) (map[int]int, error) {
 	var progresses = make(map[int]int)
 	for _, annuallyP := range annuallyPs {
 		ag, err := gorm.G[AnnuallyGoal](db).Where("annuallyPId=?", annuallyP.APID).Select("progress").Find(ctx)

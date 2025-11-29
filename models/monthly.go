@@ -9,16 +9,14 @@ import (
 )
 
 type MonthlyPlan struct {
-	gorm.Model
 	MPID     int       `gorm:"primaryKey;autoIncrement" json:"MPId"`
 	Progress int       `gorm:"not null" json:"progress"`
 	Status   bool      `gorm:"not null" json:"status"`
 	Date     time.Time `gorm:"type:date;not null" json:"date"`
-	UserName string    `gorm:"not null;size:100" json:"username"` //Foregin-key
-	User     User      `gorm:"foreignkey:UserName"`
+	UserID   int64     `gorm:"not null" json:"userId"` //Foregin-key
+	User     User      `gorm:"foreignKey:UserID"`
 }
 type MonthlyGoal struct {
-	gorm.Model
 	MGID         int          `gorm:"primaryKey;autoIncrement" json:"MGId"`
 	Title        string       `gorm:"not null;size:100" json:"title"`
 	Desc         string       `gorm:"size:1500" json:"desc"`
@@ -33,17 +31,17 @@ type MonthlyGoal struct {
 
 //Monthly Plan Function
 
-func GetMonthlyPs(username string) ([]MonthlyPlan, error) {
-	mp, err := gorm.G[MonthlyPlan](db).Where("username=?", username).Find(ctx)
+func GetMonthlyPs(userId int64) ([]MonthlyPlan, error) {
+	mp, err := gorm.G[MonthlyPlan](db).Where("userId=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return mp, nil
 }
 
-func GetMonthlyPId(username string, date string) int {
+func GetMonthlyPId(userId int64, date string) int {
 	id := 0
-	ap, err := gorm.G[MonthlyPlan](db).Where("username=? and date=?", username, date).Find(ctx)
+	ap, err := gorm.G[MonthlyPlan](db).Where("userId=? and date=?", userId, date).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -59,7 +57,7 @@ func GetMonthlyPId(username string, date string) int {
 //	return monthlyP, err
 //}
 
-func AddMonthlyP(username string, date string) bool {
+func AddMonthlyP(userId int64, date string) bool {
 	time, err := utils.ParseTime("date only", date)
 	if err != nil {
 		return false
@@ -68,7 +66,7 @@ func AddMonthlyP(username string, date string) bool {
 		Progress: 0,
 		Status:   true,
 		Date:     time,
-		UserName: username,
+		UserID:   userId,
 	})
 	return true
 
@@ -96,8 +94,8 @@ func AddMonthlyP(username string, date string) bool {
 
 //Monthly Goal Function
 
-func GetMProgresses(monthlyPs []*MonthlyPlan) (map[time.Time]int, error) {
-	var progresses = make(map[time.Time]int)
+func GetMProgresses(monthlyPs []MonthlyPlan) (map[string]int, error) {
+	var progresses = make(map[string]int)
 	for _, monthlyP := range monthlyPs {
 		ag, err := gorm.G[MonthlyGoal](db).Where("monthlyPId=?", monthlyP.MPID).Select("progress").Find(ctx)
 		if err != nil {
@@ -111,7 +109,7 @@ func GetMProgresses(monthlyPs []*MonthlyPlan) (map[time.Time]int, error) {
 			counter++
 		}
 		progress = progress / counter
-		progresses[monthlyP.Date] = progress
+		progresses[monthlyP.Date.String()] = progress
 	}
 	return progresses, nil
 

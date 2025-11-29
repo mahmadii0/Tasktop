@@ -9,16 +9,14 @@ import (
 )
 
 type DailyPlan struct {
-	gorm.Model
 	DPID     int       `gorm:"primaryKey;autoIncrement" json:"DPId"`
 	Progress int       `gorm:"not null" json:"progress"`
 	Status   bool      `gorm:"not null" json:"status"`
 	Date     time.Time `gorm:"type:date;not null" json:"date"`
-	UserName string    `gorm:"not null" json:"username"` //Foregin-key
-	User     User      `gorm:"foreignKey:UserName"`
+	UserID   int64     `gorm:"not null" json:"userId"` //Foregin-key
+	User     User      `gorm:"foreignKey:UserID"`
 }
 type DailyGoal struct {
-	gorm.Model
 	DGID  int    `gorm:"primaryKey;autoIncrement" json:"DGId"`
 	Title string `gorm:"not null;size:100" json:"title"`
 	//TimeTD  is stand of Time To Do for this task
@@ -33,17 +31,17 @@ type DailyGoal struct {
 
 //Daily Plan Functions
 
-func GetDailyPs(username string) ([]DailyPlan, error) {
-	dp, err := gorm.G[DailyPlan](db).Where("username=?", username).Find(ctx)
+func GetDailyPs(userId int64) ([]DailyPlan, error) {
+	dp, err := gorm.G[DailyPlan](db).Where("userId=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return dp, nil
 }
 
-func GetDailyPId(username string, date string) int {
+func GetDailyPId(userId int64, date string) int {
 	id := 0
-	ap, err := gorm.G[DailyPlan](db).Where("username=? and date=?", username, date).Find(ctx)
+	ap, err := gorm.G[DailyPlan](db).Where("userId=? and date=?", userId, date).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -59,7 +57,7 @@ func GetDailyPId(username string, date string) int {
 //	return dailyP, err
 //}
 
-func AddDailyP(username string, date string) bool {
+func AddDailyP(userId int64, date string) bool {
 	time, err := utils.ParseTime("date only", date)
 	if err != nil {
 		return false
@@ -68,7 +66,7 @@ func AddDailyP(username string, date string) bool {
 		Progress: 0,
 		Status:   true,
 		Date:     time,
-		UserName: username,
+		UserID:   userId,
 	})
 	return true
 }
