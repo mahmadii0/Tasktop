@@ -89,14 +89,16 @@ func CompareCsrfToken(email string, csrf string) bool {
 	return true
 }
 
-func GetPassHashByEmail(email string) (string, error) {
+func GetPassHashByEmail(email string) (int64, string, error) {
+	var userId int64
 	var hash string
-	u, err := gorm.G[User](db).Where("email=?", email).Select("password").Find(ctx)
+	u, err := gorm.G[User](db).Where("email=?", email).Select("id", "password").Find(ctx)
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
+	userId = u[0].ID
 	hash = u[0].Password
-	return hash, err
+	return userId, hash, err
 }
 
 func GetUserByUserName(username string) (*User, error) {
@@ -120,6 +122,14 @@ func UpdateUser(user *User) bool {
 func DeleteUser(username int) bool {
 	gorm.G[User](db).Where("user_name = ?", username).Delete(ctx)
 	return true
+}
+
+func UserFromId(id int64) *User {
+	u, err := gorm.G[User](db).Where("id=?", id).Select("id").Find(ctx)
+	if err != nil {
+		return nil
+	}
+	return &u[0]
 }
 
 //Questions

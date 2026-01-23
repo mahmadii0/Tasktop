@@ -127,7 +127,7 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Check Email
-	hash, err := models.GetPassHashByEmail(email)
+	userId, hash, err := models.GetPassHashByEmail(email)
 	if err != nil {
 		er := http.StatusBadRequest
 		fmt.Printf("Wrong Email or Password")
@@ -142,31 +142,18 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken := utils.GenerateToken(32)
-	csrfToken := utils.GenerateToken(32)
-	//Set session cookie
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    sessionToken,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-	})
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "csrf_token",
-		Value:    csrfToken,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: false,
-	})
-
-	status = models.SetTokens(sessionToken, csrfToken, email)
-	if !(status) {
-		er := http.StatusBadRequest
-		http.Error(w, "Error while Set tokens", er)
+	tokenString := utils.GenerateJWT(email, userId)
+	if tokenString == "" {
+		fmt.Printf("Failed to Generate JWT")
+		http.Error(w, "Failed to Generate JWT", http.StatusBadGateway)
 		return
 	}
-	return
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth",
+		Value:    tokenString,
+		Expires:  time.Now().Add(time.Hour * 24 * 1),
+		HttpOnly: true,
+	})
 
 }
 func LogOut(w http.ResponseWriter, r *http.Request) {
@@ -177,28 +164,13 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Clear Cookies
-	st, _ := r.Cookie("session_token")
-	email := models.GetEmailBySessionToken(st.Value)
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
+		Name:     "auth",
 		Value:    "",
 		Expires:  time.Now().Add(-time.Hour),
 		HttpOnly: true,
 	})
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "csrf_token",
-		Value:    "",
-		Expires:  time.Now().Add(-time.Hour),
-		HttpOnly: false,
-	})
-
-	status := models.ClearTokens(email)
-	if !(status) {
-		er := http.StatusBadRequest
-		http.Error(w, "Error while clear tokens", er)
-		return
-	}
 	return
 }

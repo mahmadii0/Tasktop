@@ -2,12 +2,12 @@ package utils
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
+	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
@@ -58,12 +58,24 @@ func CheckPassword(pass string, hash string) bool {
 	return status
 }
 
-func GenerateToken(length int) string {
-	bytes := make([]byte, length)
-	if _, err := rand.Read(bytes); err != nil {
-		log.Fatalf("Error while creating Token")
+//JWT
+
+func GenerateJWT(email string, userId int64) string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
-	return base64.URLEncoding.Strict().EncodeToString(bytes)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId": userId,
+		"ttl":    time.Now().Add(time.Hour * 24 * 1).Unix(),
+	})
+	jwtSecret := os.Getenv("SECRETJWT")
+	tokenString, err := token.SignedString([]byte(jwtSecret))
+	if err != nil {
+		fmt.Printf("Wrong Email or Password")
+		return ""
+	}
+	return tokenString
 }
 
 func Connect() {

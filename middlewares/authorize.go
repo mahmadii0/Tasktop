@@ -3,26 +3,63 @@ package middlewares
 import (
 	"Tasktop/models"
 	"errors"
+	"fmt"
 	"net/http"
+	"os"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var AuthError = errors.New("Unauthorized")
 
 func Authorize(r *http.Request) error {
-	st, err := r.Cookie("session_token")
-	if err != nil || st.Value == "" {
+	tokenStr, err := r.Cookie("auth")
+	if err != nil || tokenStr.Value == "" {
 		return AuthError
 	}
-	email := models.GetEmailBySessionToken(st.Value)
 
-	csrf, err := r.Cookie("csrf_token")
-	if csrf.Value == "" || err != nil {
+	jwtSecret := os.Getenv("SECRETJWT")
+	if jwtSecret == "" {
+		fmt.Errorf("JWT secret not configured")
 		return AuthError
 	}
-	status := models.CompareCsrfToken(email, csrf.Value)
-	if !(status) {
+
+	token, err := jwt.Parse(tokenStr.Value, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(jwtSecret), nil
+	})
+	if err != nil {
 		return AuthError
 	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return AuthError
+	}
+
+	ttl, _ := claims["ttl"].(float64)
+
+	if int64(ttl) < time.Now().Unix() {
+		return AuthError
+	}
+
+	if jwtSecret == "" {
+		return fmt.Errorf("JWT secret not configured")
+	}
+
+	userIdFloat, ok := claims["userId"].(float64)
+	if !ok {
+		return AuthError
+	}
+	userId := int64(userIdFloat)
+	user := models.UserFromId(userId)
+	if user.ID == 0 {
+		return AuthError
+	}
+
 	return nil
 }
 
