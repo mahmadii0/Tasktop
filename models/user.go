@@ -1,143 +1,133 @@
 package models
 
 import (
-	"Tasktop/configure"
-	"database/sql"
-	"fmt"
+	"Tasktop/utils"
+	"context"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
-	UserName     string `json:"username"`
-	FullName     string `json:"name"`
-	Email        string `json:"email"`
-	Phone        string `json:"phone"`
-	Password     string `json:"password"`
-	SessionToken string
-	CSRF         string
+	ID           int64  `gorm:"primaryKey;autoIncrement" json:"userId"`
+	UserName     string `gorm:"size:100;" json:"username"`
+	FullName     string `gorm:"not null;size:150" json:"name"`
+	Email        string `gorm:"unique;not null;size:250" json:"email"`
+	Phone        string `gorm:"unique;not null;size:13" json:"phone"`
+	Password     string `gorm:"not null;size:400" json:"password"`
+	SessionToken string `gorm:"size:64"`
+	CSRF         string `gorm:"size:64"`
 }
 
 type SecurityQuestions struct {
-	UserName  string `json:"username"`
-	Question1 string `json:"question1"`
-	Answer1   string `json:"answer1"`
-	Question2 string `json:"question2"`
-	Answer2   string `json:"answer2"`
+	UserID    int64  `gorm:"not null" json:"userId"`
+	Question1 string `gorm:"not null;size:100" json:"question1"`
+	Answer1   string `gorm:"not null;size:100" json:"answer1"`
+	Question2 string `gorm:"not null;size:100" json:"question2"`
+	Answer2   string `gorm:"not null;size:100" json:"answer2"`
+	User      User   `gorm:"foreignKey:UserID"`
 }
 
 var (
-	db *sql.DB
+	db  *gorm.DB
+	ctx context.Context
 )
 
 func init() {
-	configure.Connect()
-	db = configure.GetDB()
+	db, ctx = utils.GetDBctx()
 }
 
 //User
 
 func AddUser(user *User) bool {
-	status := true
-	query := `INSERT INTO users VALUES(?,?,?,?,?,"","")`
-	_, err := db.Exec(query, user.UserName, user.FullName, user.Email, user.Phone, user.Password)
-	if err != nil {
-		fmt.Printf("Error adding user:", err)
-		status = false
+	result := gorm.G[User](db).Create(ctx, user)
+	if result != nil {
+		return false
 	}
-	return status
+	return true
 }
 
 func SetTokens(sessionToken string, csrfToken string, email string) bool {
-	status := true
-	query := `UPDATE users SET session_token=? ,csrf_token=? WHERE email=?`
-	_, err := db.Exec(query, sessionToken, csrfToken, email)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[User](db).Where("email=?", email).Updates(ctx, User{CSRF: csrfToken, SessionToken: sessionToken})
+	return true
 }
 
 func ClearTokens(email string) bool {
-	status := true
-	query := `UPDATE users SET session_token="" ,csrf_token="" WHERE email=?`
-	_, err := db.Exec(query, email)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[User](db).Where("email=?", email).Updates(ctx, User{CSRF: "", SessionToken: ""})
+	return true
 }
 
 func GetEmailBySessionToken(sessionToken string) string {
-	email := ""
-	query := `SELECT email From users WHERE session_token=?`
-	row := db.QueryRow(query, sessionToken)
-	_ = row.Scan(&email)
+	var email string
+	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("email").Find(ctx)
+	if err != nil {
+		return ""
+	}
+	email = u[0].Email
 	return email
 }
 
-func GetUsernameBySessionToken(sessionToken string) string {
-	email := ""
-	query := `SELECT username From users WHERE session_token=?`
-	row := db.QueryRow(query, sessionToken)
-	_ = row.Scan(&email)
-	return email
+func GetUserIdBySessionToken(sessionToken string) int64 {
+	var userId int64
+	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("user_name").Find(ctx)
+	if err != nil {
+		return 0
+	}
+	userId = u[0].ID
+	return userId
 }
 
 func CompareCsrfToken(email string, csrf string) bool {
-	status := true
-	csrfDb := ""
-	query := `SELECT csrf_token From users WHERE email=?`
-	row := db.QueryRow(query, email)
-	_ = row.Scan(&csrfDb)
-	if csrfDb != csrf {
-		status = false
+	u, err := gorm.G[User](db).Where("email=?", email).Select("csrf").Find(ctx)
+	if err != nil {
+		return false
 	}
-	return status
+	csrfDb := ""
+	csrfDb = u[0].CSRF
+	if csrfDb != csrf {
+		return false
+	}
+	return true
 }
 
 func GetPassHashByEmail(email string) (string, error) {
 	var hash string
-	query := `SELECT password FROM users WHERE email=?`
-	row := db.QueryRow(query, email)
-	err := row.Scan(&hash)
+	u, err := gorm.G[User](db).Where("email=?", email).Select("password").Find(ctx)
+	if err != nil {
+		return "", err
+	}
+	hash = u[0].Password
 	return hash, err
 }
 
 func GetUserByUserName(username string) (*User, error) {
 	var user User
-	query := `SELECT username,fullname,email,phone FROM users WHERE username=?`
-	row := db.QueryRow(query, username)
-	err := row.Scan(&user.UserName, &user.FullName, &user.Email, &user.Phone)
+	u, err := gorm.G[User](db).Where("user_name=?", username).Select("user_name,full_name,email,phone").Find(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(u) == 0 {
+		return &user, err
+	}
+	user = u[0]
 	return &user, err
 }
 
 func UpdateUser(user *User) bool {
-	status := true
-	query := `UPDATE users SET name= ?, email= ?, phone = ? WHERE id = ?`
-	_, err := db.Exec(query, user.FullName, user.Email, user.Phone, user.UserName)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[User](db).Where("user_name=?", user.UserName).Updates(ctx, User{FullName: user.FullName, Email: user.Email, Phone: user.Phone})
+	return true
 }
 
 func DeleteUser(username int) bool {
-	status := true
-	query := `DELETE FROM users WHERE id= ?`
-	_, err := db.Exec(query, username)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[User](db).Where("user_name = ?", username).Delete(ctx)
+	return true
 }
 
 //Questions
 
-func AddQuestions(username string, questions *SecurityQuestions) bool {
-	status := true
-	query := `INSERT INTO securityquestions VALUES(?,?,?,?,?)`
-	_, err := db.Exec(query, username, questions.Question1, questions.Answer1, questions.Question2, questions.Answer2)
-	if err != nil {
-		status = false
+func AddQuestions(questions *SecurityQuestions) bool {
+	result := gorm.G[SecurityQuestions](db).Create(ctx, questions)
+	if result != nil {
+		return false
 	}
-	return status
+	return true
 }

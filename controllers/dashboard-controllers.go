@@ -82,7 +82,7 @@ func AnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 func GetDailyGoals(w http.ResponseWriter, r *http.Request) {
 	date := r.FormValue("date")
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetDailyPId(username, date)
 	dailyGoals, err := models.GetDailyGs(id)
 	if err != nil {
@@ -101,7 +101,7 @@ func GetDailyGoals(w http.ResponseWriter, r *http.Request) {
 func GetMonthlyGoals(w http.ResponseWriter, r *http.Request) {
 	date := r.FormValue("date")
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetMonthlyPId(username, date)
 	monthlyGoals, err := models.GetMonthlyGs(id)
 	if err != nil {
@@ -125,7 +125,7 @@ func GetAnnuallyGoals(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error while parsing year", http.StatusBadRequest)
 	}
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetAnnuallyPId(username, year)
 	annuallyGoals, err := models.GetAnnuallyGs(id)
 	if err != nil {
@@ -148,7 +148,12 @@ func CDailyGoal(w http.ResponseWriter, r *http.Request) {
 	dailyGoal.Title = r.FormValue("title")
 	timeTD := r.FormValue("timeTD")
 	date, _ := utils.SeparateDateTime(timeTD)
-	dailyGoal.TimeTD = timeTD[1:]
+	timetd, err := utils.ParseTime("RFC3339", timeTD[1:])
+	if err != nil {
+		http.Error(w, "Error while parsing time", http.StatusNotModified)
+		return
+	}
+	dailyGoal.TimeTD = timetd
 	dailyGoal.Priority = r.FormValue("priority")
 	mGId := r.FormValue("monthlyGId")
 	var monthlyGId int = 0
@@ -157,10 +162,10 @@ func CDailyGoal(w http.ResponseWriter, r *http.Request) {
 	}
 	dailyGoal.MGID = monthlyGId
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
-	id := models.GetDailyPId(username, date)
+	userId := models.GetUserIdBySessionToken(st.Value)
+	id := models.GetDailyPId(userId, date)
 	if id == 0 {
-		status := models.AddDailyP(username, date)
+		status := models.AddDailyP(userId, date)
 		if !(status) {
 			http.Error(w, "Error while adding daily plan", http.StatusNotModified)
 			return
@@ -189,7 +194,7 @@ func CMonthlyGoal(w http.ResponseWriter, r *http.Request) {
 	}
 	monthlyGoal.AGID = annuallyGId
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetMonthlyPId(username, date)
 	if id == 0 {
 		status := models.AddMonthlyP(username, date)
@@ -220,7 +225,7 @@ func CAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetAnnuallyPId(username, year)
 	if id == 0 {
 		status := models.AddAnnuallyP(username, year)
@@ -295,7 +300,12 @@ func UDailyGoal(w http.ResponseWriter, r *http.Request) {
 	dailyGoal.Title = r.FormValue("title")
 	timeTD := r.FormValue("timeTD")
 	date, _ := utils.SeparateDateTime(timeTD)
-	dailyGoal.TimeTD = timeTD[1:]
+	timetd, err := utils.ParseTime("RFC3339", timeTD[1:])
+	if err != nil {
+		http.Error(w, "Error while parsing time", http.StatusNotModified)
+		return
+	}
+	dailyGoal.TimeTD = timetd
 	dailyGoal.Priority = r.FormValue("priority")
 	s := r.FormValue("status")
 	if s == "1" {
@@ -313,7 +323,7 @@ func UDailyGoal(w http.ResponseWriter, r *http.Request) {
 	}
 	dailyGoal.MGID = monthlyGId
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetDailyPId(username, date)
 	if id == 0 {
 		status := models.AddDailyP(username, date)
@@ -366,7 +376,7 @@ func UMonthlyGoal(w http.ResponseWriter, r *http.Request) {
 	}
 	monthlyGoal.AGID = annuallyGId
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetMonthlyPId(username, date)
 	if id == 0 {
 		status := models.AddMonthlyP(username, date)
@@ -418,7 +428,7 @@ func UAnnuallyGoals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetAnnuallyPId(username, year)
 	if id == 0 {
 		status := models.AddAnnuallyP(username, year)
@@ -490,8 +500,8 @@ func DAnnuallyGoal(w http.ResponseWriter, r *http.Request) {
 
 func Notes(w http.ResponseWriter, r *http.Request) {
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
-	notes, err := models.GetNotes(username)
+	userId := models.GetUserIdBySessionToken(st.Value)
+	notes, err := models.GetNotes(userId)
 	if err != nil {
 		http.Error(w, "Error while fetching data", http.StatusBadRequest)
 		return
@@ -507,7 +517,7 @@ func CNote(w http.ResponseWriter, r *http.Request) {
 	note.Title = r.FormValue("title")
 	note.NoteText = r.FormValue("noteText")
 	st, _ := r.Cookie("session_token")
-	note.UserName = models.GetUsernameBySessionToken(st.Value)
+	note.UserID = models.GetUserIdBySessionToken(st.Value)
 	status := models.AddNote(&note)
 	if !(status) {
 		http.Error(w, "Error while adding note", http.StatusBadRequest)
@@ -548,14 +558,10 @@ func DNotes() {
 
 //Report
 
-func Report(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func DailyReport(w http.ResponseWriter, r *http.Request) {
 	date := r.FormValue("date")
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	id := models.GetDailyPId(username, date)
 	statuses, err := models.GetDailyGStatuses(id)
 	if err != nil {
@@ -565,7 +571,7 @@ func DailyReport(w http.ResponseWriter, r *http.Request) {
 	doneCounter := 0.00
 	counter := 0.00
 	for _, status := range statuses {
-		if status == 0 {
+		if status == false {
 			doneCounter++
 		}
 		counter++
@@ -578,7 +584,7 @@ func DailyReport(w http.ResponseWriter, r *http.Request) {
 }
 func MonthlyReport(w http.ResponseWriter, r *http.Request) {
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	monthlyPs, err := models.GetMonthlyPs(username)
 	if err != nil {
 		http.Error(w, "Error while getting monthlyPs", http.StatusBadRequest)
@@ -607,7 +613,7 @@ func MonthlyReport(w http.ResponseWriter, r *http.Request) {
 }
 func AnnuallyReport(w http.ResponseWriter, r *http.Request) {
 	st, _ := r.Cookie("session_token")
-	username := models.GetUsernameBySessionToken(st.Value)
+	username := models.GetUserIdBySessionToken(st.Value)
 	annuallyPs, err := models.GetAnnuallyPs(username)
 	if err != nil {
 		http.Error(w, "Error while getting annuallyPs", http.StatusBadRequest)

@@ -1,33 +1,26 @@
 package models
 
+import (
+	"Tasktop/utils"
+
+	"gorm.io/gorm"
+)
+
 func CheckStatus(typee string, id int) bool {
 	Status := true
 	switch typee {
 	case "daily":
-		query := `UPDATE dailygoals SET status= IF(status=1,0,1) WHERE dailyGId=?`
-		_, err := db.Exec(query, id)
-		if err != nil {
-			Status = false
-		}
-		// query = `SELECT status FROM dailygoals WHERE dailyGId=?`
-		// row := db.QueryRow(query, id)
-		// err = row.Scan(&status)
-		// if err != nil {
-		// 	Status = false
-		// }
-
+		db.Model(&DailyGoal{}).
+			Where("dg_id = ?", id).
+			Update("status", gorm.Expr("CASE WHEN status = 1 THEN 0 ELSE 1 END"))
 	case "monthly":
-		query := `UPDATE monthlygoals SET status= IF(status=1,0,1),progress=IF(status=1,status,100) WHERE monthlyGId=?`
-		_, err := db.Exec(query, id)
-		if err != nil {
-			Status = false
-		}
+		db.Model(&MonthlyGoal{}).
+			Where("mg_id = ?", id).
+			Update("status", gorm.Expr("CASE WHEN status = 1 THEN 0 ELSE 1 END"))
 	case "annually":
-		query := `UPDATE annuallygoals SET status= IF(status=1,0,1),progress=IF(status=1,status,100) WHERE annuallyGId=?`
-		_, err := db.Exec(query, id)
-		if err != nil {
-			Status = false
-		}
+		db.Model(&AnnuallyGoal{}).
+			Where("ag_id = ?", id).
+			Update("status", gorm.Expr("CASE WHEN status = 1 THEN 0 ELSE 1 END"))
 	}
 	return Status
 }
@@ -40,19 +33,15 @@ func SetProgress(typee string, id int) bool {
 		if monthlyGId == -1 {
 			Status = false
 		}
-		query := `SELECT status FROM dailygoals WHERE monthlyGId=?`
-		rows, err := db.Query(query, monthlyGId)
+		dg, err := gorm.G[DailyGoal](db).Where("mg_id = ?", id).Select("status").Find(ctx)
 		if err != nil {
 			Status = false
 		}
 		statuses := make([]float32, 0)
 		doneCounter := 0.00
 		counter := 0.00
-		for rows.Next() {
-			var status int
-			if err := rows.Scan(&status); err != nil {
-				Status = false
-			}
+		for _, item := range dg {
+			status := utils.BoolToInt(item.Status)
 			if status == 0 {
 				doneCounter++
 			}
@@ -60,43 +49,30 @@ func SetProgress(typee string, id int) bool {
 			counter++
 		}
 		result := (doneCounter / counter) * 100
-		query = `UPDATE monthlyGoals SET progress=? WHERE monthlyGId=?`
-		_, err = db.Exec(query, int(result), monthlyGId)
-		if err != nil {
-			Status = false
-		}
+		gorm.G[MonthlyGoal](db).Where("mg_id=?", id).Update(ctx, "progress", result)
 
 	case "annually":
 		annuallyGId := GetAnnuallyGIdByMonthlyGId(id)
 		if annuallyGId == -1 {
 			Status = false
 		}
-		query := `SELECT status FROM monthlygoals WHERE annuallyGId=?`
-		rows, err := db.Query(query, annuallyGId)
+		mg, err := gorm.G[MonthlyGoal](db).Where("ag_id = ?", id).Select("status").Find(ctx)
 		if err != nil {
 			Status = false
 		}
 		statuses := make([]float32, 0)
-		activeCounter := 0.00
+		doneCounter := 0.00
 		counter := 0.00
-		for rows.Next() {
-			var status int
-			if err := rows.Scan(&status); err != nil {
-				Status = false
-			}
+		for _, item := range mg {
+			status := utils.BoolToInt(item.Status)
 			if status == 0 {
-				activeCounter++
+				doneCounter++
 			}
 			statuses = append(statuses, float32(status))
 			counter++
 		}
-		result := (activeCounter / counter) * 100
-		query = `UPDATE annuallyGoals SET progress=? WHERE annuallyGId=?`
-		_, err = db.Exec(query, int(result), annuallyGId)
-		if err != nil {
-			Status = false
-		}
+		result := (doneCounter / counter) * 100
+		gorm.G[AnnuallyGoal](db).Where("ag_id=?", id).Update(ctx, "progress", result)
 	}
-
 	return Status
 }

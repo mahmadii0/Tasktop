@@ -1,209 +1,158 @@
 package models
 
 import (
-	"Tasktop/configure"
+	"Tasktop/utils"
 	"fmt"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type MonthlyPlan struct {
-	MPID     int    `json:"MPId"`
-	Progress int    `json:"progress"`
-	Status   bool   `json:"status"`
-	Date     string `json:"date"`
-	UserName string `json:"username"` //Foregin-key
+	MPID     int       `gorm:"primaryKey;autoIncrement" json:"MPId"`
+	Progress int       `gorm:"not null" json:"progress"`
+	Status   bool      `gorm:"not null" json:"status"`
+	Date     time.Time `gorm:"type:date;not null" json:"date"`
+	UserID   int64     `gorm:"not null;index" json:"userId"` //Foregin-key
+	User     User      `gorm:"foreignKey:UserID;references:ID"`
 }
 type MonthlyGoal struct {
-	MGID     int    `json:"MGId"`
-	Title    string `json:"title"`
-	Desc     string `json:"desc"`
-	Priority string `json:"priority"`
-	Progress int    `json:"progress"`
-	Status   bool   `json:"status"`
-	MPID     int    `json:"MPId"` //Foregin-key
-	AGID     int    `json:"AGId"` //Foregin-key
-}
-
-func init() {
-	configure.Connect()
-	db = configure.GetDB()
+	MGID         int          `gorm:"primaryKey;autoIncrement" json:"MGId"`
+	Title        string       `gorm:"not null;size:100" json:"title"`
+	Desc         string       `gorm:"size:1500" json:"desc"`
+	Priority     string       `gorm:"size:6" json:"priority"`
+	Progress     int          `gorm:"not null" json:"progress"`
+	Status       bool         `gorm:"not null" json:"status"`
+	MPID         int          `gorm:"not null" json:"MPId"` //Foregin-key
+	AGID         int          `gorm:"not null" json:"AGId"` //Foregin-key
+	MonthlyPlan  MonthlyPlan  `gorm:"foreignkey:MPID"`
+	AnnuallyGoal AnnuallyGoal `gorm:"foreignkey:AGID"`
 }
 
 //Monthly Plan Function
 
-func GetMonthlyPs(username string) ([]*MonthlyPlan, error) {
-	mps := make([]*MonthlyPlan, 0)
-	query := `SELECT * FROM monthlyplans WHERE username=?`
-	rows, err := db.Query(query, username)
+func GetMonthlyPs(userId int64) ([]MonthlyPlan, error) {
+	mp, err := gorm.G[MonthlyPlan](db).Where("user_id=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-	for rows.Next() {
-		mp := new(MonthlyPlan)
-		if err := rows.Scan(&mp.MPID, &mp.Progress, &mp.Status, &mp.Date, &mp.UserName); err != nil {
-			return nil, err
-		}
-		mps = append(mps, mp)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return mps, err
+	return mp, nil
 }
 
-func GetMonthlyPId(username string, date string) int {
-	var id int = 0
-	var s int = 0
-	query := `SELECT monthlyPId,status FROM monthlyPlans WHERE username=? and date=?`
-	row := db.QueryRow(query, username, date)
-	err := row.Scan(&id, &s)
+func GetMonthlyPId(userId int64, date string) int {
+	id := 0
+	ap, err := gorm.G[MonthlyPlan](db).Where("user_id=? and date=?", userId, date).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
-	if s == 0 && id != 0 {
-		query := `UPDATE monthlyPlans SET status = 1 WHERE username=? and date=?`
-		_, err := db.Exec(query, username, date)
-		if err != nil {
-			fmt.Printf("Error while activate monthlyplan: ", err)
-		}
-	}
+	id = id + ap[0].MPID
 	return id
 }
 
-func GetMonthlyPById(monthlyPId int) (*MonthlyPlan, error) {
-	var monthlyP *MonthlyPlan
-	query := `SELECT * FROM monthlyPlans WHERE monthlyPId=?`
-	row := db.QueryRow(query, monthlyPId)
-	err := row.Scan(&monthlyP.MPID, &monthlyP.Status, &monthlyP.Date, &monthlyP.UserName)
-	return monthlyP, err
-}
+//func GetMonthlyPById(monthlyPId int) (*MonthlyPlan, error) {
+//	var monthlyP *MonthlyPlan
+//	query := `SELECT * FROM monthlyPlans WHERE monthlyPId=?`
+//	row := db.QueryRow(query, monthlyPId)
+//	err := row.Scan(&monthlyP.MPID, &monthlyP.Status, &monthlyP.Date, &monthlyP.UserName)
+//	return monthlyP, err
+//}
 
-func AddMonthlyP(username string, date string) bool {
-	status := true
-	query := `INSERT INTO monthlyPlans(progress,status,date,username) VALUES (0,1,?,?)`
-	_, err := db.Exec(query, date, username)
+func AddMonthlyP(userId int64, date string) bool {
+	time, err := utils.ParseTime("date only", date)
 	if err != nil {
-		status = false
+		return false
 	}
-	return status
+	gorm.G[MonthlyPlan](db).Create(ctx, &MonthlyPlan{
+		Progress: 0,
+		Status:   true,
+		Date:     time,
+		UserID:   userId,
+	})
+	return true
 
 }
 
-func UpdateMonthlyP(monthlyP *MonthlyPlan) bool {
-	status := true
-	query := `UPDATE monthlyPlans SET status=?, date=?, userId=? WHERE monthlyPId=?`
-	_, err := db.Exec(query, monthlyP.Status, monthlyP.Date, monthlyP.UserName, monthlyP.MPID)
-	if err != nil {
-		status = false
-	}
-	return status
-}
+//func UpdateMonthlyP(monthlyP *MonthlyPlan) bool {
+//	status := true
+//	query := `UPDATE monthlyPlans SET status=?, date=?, userId=? WHERE monthlyPId=?`
+//	_, err := db.Exec(query, monthlyP.Status, monthlyP.Date, monthlyP.UserName, monthlyP.MPID)
+//	if err != nil {
+//		status = false
+//	}
+//	return status
+//}
 
-func DeleteMonthlyPlan(monthlyPId int) bool {
-	status := true
-	query := `DELETE FROM monthlyPlans WHERE monthlyPId=?`
-	_, err := db.Exec(query, monthlyPId)
-	if err != nil {
-		status = false
-	}
-	return status
-}
+//func DeleteMonthlyPlan(monthlyPId int) bool {
+//	status := true
+//	query := `DELETE FROM monthlyPlans WHERE monthlyPId=?`
+//	_, err := db.Exec(query, monthlyPId)
+//	if err != nil {
+//		status = false
+//	}
+//	return status
+//}
 
 //Monthly Goal Function
 
-func GetMProgresses(monthlyPs []*MonthlyPlan) (map[string]int, error) {
+func GetMProgresses(monthlyPs []MonthlyPlan) (map[string]int, error) {
 	var progresses = make(map[string]int)
 	for _, monthlyP := range monthlyPs {
-		query := `SELECT progress FROM monthlygoals WHERE monthlyPId=?`
-		rows, err := db.Query(query, monthlyP.MPID)
+		ag, err := gorm.G[MonthlyGoal](db).Where("mp_id=?", monthlyP.MPID).Select("progress").Find(ctx)
 		if err != nil {
 			return nil, err
 		}
-		defer rows.Close()
 		var progress int
 		counter := 0
-		for rows.Next() {
-			var p int
-			if err := rows.Scan(&p); err != nil {
-				return nil, err
-			}
+		for _, v := range ag {
+			p := v.Progress
 			progress = progress + p
 			counter++
 		}
 		progress = progress / counter
-		progresses[monthlyP.Date] = progress
+		progresses[monthlyP.Date.String()] = progress
 	}
 	return progresses, nil
+
 }
 
 func GetMonthlyGIdByDailyGId(id int) int {
-	var monthlyGId int
-	query := `SELECT monthlyGId FROM dailyGoals WHERE dailyGId=?`
-	row := db.QueryRow(query, id)
-	err := row.Scan(&monthlyGId)
+	dg, err := gorm.G[DailyGoal](db).Where("dg_id=?", id).Select("mg_id").Find(ctx)
 	if err != nil {
 		return -1
 	}
-	return monthlyGId
+	return dg[0].MGID
 }
 
-func GetMonthlyGs(id int) ([]*MonthlyGoal, error) {
-	mgs := make([]*MonthlyGoal, 0)
-	query := `SELECT * FROM monthlygoals WHERE monthlyPId=?`
-	rows, err := db.Query(query, id)
+func GetMonthlyGs(id int) ([]MonthlyGoal, error) {
+	mg, err := gorm.G[MonthlyGoal](db).Where("mp_id=?", id).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-	for rows.Next() {
-		mg := new(MonthlyGoal)
-		if err := rows.Scan(&mg.MGID, &mg.Title, &mg.Desc, &mg.Priority, &mg.Progress, &mg.Status, &mg.MPID, &mg.AGID); err != nil {
-			return nil, err
-		}
-		mgs = append(mgs, mg)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return mgs, err
+	return mg, err
 
 }
 
-func GetMonthlyGById(monthlyGId int) (*MonthlyGoal, error) {
-	monthlyGoal := &MonthlyGoal{}
-	query := `SELECT * FROM monthlyGoals WHERE monthlyGId=?`
-	row := db.QueryRow(query, monthlyGId)
-	err := row.Scan(&monthlyGoal.MGID, &monthlyGoal.Title, &monthlyGoal.Desc, &monthlyGoal.Priority, &monthlyGoal.Progress,
-		&monthlyGoal.Status, &monthlyGoal.MPID, &monthlyGoal.AGID)
-	return monthlyGoal, err
+func GetMonthlyGById(monthlyGId int) (MonthlyGoal, error) {
+	mg, err := gorm.G[MonthlyGoal](db).Where("mg_id=?", monthlyGId).Find(ctx)
+	if err != nil {
+		return mg[0], err
+	}
+	return mg[0], nil
 }
 
 func AddMonthlyG(monthlyGoal *MonthlyGoal) bool {
-	status := true
-	query := `INSERT INTO monthlygoals(title,description,priority,progress,status,monthlyPId,annuallyGId) VALUES (?,?,?,0,1,?,?)`
-	_, err := db.Exec(query, monthlyGoal.Title, monthlyGoal.Desc, monthlyGoal.Priority, monthlyGoal.MPID, monthlyGoal.AGID)
-	if err != nil {
-		status = false
-	}
-	return status
+	monthlyGoal.Progress = 0
+	monthlyGoal.Status = true
+	gorm.G[MonthlyGoal](db).Create(ctx, monthlyGoal)
+	return true
 }
 
 func UpdateMonthlyG(monthlyGoal *MonthlyGoal) bool {
-	status := true
-	query := `UPDATE monthlygoals SET title=?, description=?, priority=?, progress=?, status=?, monthlyPId=?, annuallyGId=? WHERE monthlyGId=?`
-	_, err := db.Exec(query, monthlyGoal.Title, monthlyGoal.Desc, monthlyGoal.Priority, monthlyGoal.Progress, monthlyGoal.Status, monthlyGoal.MPID, monthlyGoal.AGID, monthlyGoal.MGID)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[MonthlyGoal](db).Where("mg_id=?", monthlyGoal.MGID).Updates(ctx, *monthlyGoal)
+	return true
 }
 
 func DeleteMonthlyG(monthlyGId int) bool {
-	status := true
-	query := `DELETE FROM monthlygoals WHERE monthlyGId=?`
-	_, err := db.Exec(query, monthlyGId)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[MonthlyGoal](db).Where("mg_id=?", monthlyGId).Delete(ctx)
+	return true
 }

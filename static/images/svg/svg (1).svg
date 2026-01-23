@@ -1,0 +1,12 @@
+<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="#5046e5">
+
+ <g>
+  <title>Layer 1</title>
+  <g stroke-width="0" id="SVGRepo_bgCarrier"/>
+  <g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"/>
+  <g id="SVGRepo_iconCarrier">
+   <path id="svg_1" d="m18,7.40506l-16,0c-1.1,0 -2,0.9 -2,2l0,6c0,1.1 0.9,2 2,2l16,0c1.1,0 2,-0.9 2,-2l0,-6c0,-1.1 -0.9,-2 -2,-2zm0,8l-16,0l0,-6l16,0l0,6zm-11,-5l-4,0l0,4l4,0l0,-4zm5,0l-4,0l0,4l4,0l0,-4z"/>
+  </g>
+  <text transform="matrix(0.27226 0 0 0.243804 -0.364894 -1.65514)" stroke="#5046e5" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Archivo'" font-size="24" id="svg_2" y="33.25933" x="25.9504" fill="#5046e5">%</text>
+ </g>
+</svg>

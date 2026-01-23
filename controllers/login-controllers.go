@@ -94,7 +94,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		questions.Answer1 = hashedAnswer1
 		questions.Question2 = questions2
 		questions.Answer2 = hashedAnswer2
-		status = models.AddQuestions(user.UserName, questions)
+		questions.UserID = user.ID
+		status = models.AddQuestions(questions)
 		if !(status) {
 			err := http.StatusBadRequest
 			http.Error(w, "Bad Request", err)

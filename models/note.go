@@ -1,56 +1,35 @@
 package models
 
+import "gorm.io/gorm"
+
 type Note struct {
-	NoteId   int    `json:"noteId"`
-	Title    string `json:"title`
-	NoteText string `json:"noteText"`
-	UserName string `json:"username`
+	NoteId   int    `gorm:"primaryKey;autoIncrement" json:"noteId"`
+	Title    string `json:"title;size:200"`
+	NoteText string `json:"noteText;size:2000"`
+	UserID   int64  `gorm:"not null;index" json:"userId"`
+	User     User   `gorm:"foreignKey:UserID;references:ID"`
 }
 
 func DeleteAllNotes() bool {
-	status := true
-	query := `DELETE FROM notes`
-	_, err := db.Exec(query)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[Note](db).Delete(ctx)
+	return true
 }
 
 func AddNote(note *Note) bool {
-	status := true
-	query := `INSERT INTO notes(title,note_text,username) VALUES(?,?,?)`
-	_, err := db.Exec(query, note.Title, note.NoteText, note.UserName)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[Note](db).Create(ctx, note)
+	return true
 }
 
 func DeleteNote(noteId int) bool {
-	status := true
-	query := `DELETE FROM notes WHERE noteId=?`
-	if _, err := db.Exec(query, noteId); err != nil {
-		status = false
-	}
-	return status
+	gorm.G[Note](db).Where("note_id=?", noteId).Delete(ctx)
+	return true
 
 }
 
-func GetNotes(username string) ([]*Note, error) {
-	ns := make([]*Note, 0)
-	query := `SELECT * FROM notes WHERE username=?`
-	rows, err := db.Query(query, username)
+func GetNotes(userId int64) ([]Note, error) {
+	n, err := gorm.G[Note](db).Where("user_id=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-	for rows.Next() {
-		n := new(Note)
-		if err := rows.Scan(&n.NoteId, &n.Title, &n.NoteText, &n.UserName); err != nil {
-			return nil, err
-		}
-		ns = append(ns, n)
-	}
-	return ns, err
+	return n, nil
 }

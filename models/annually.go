@@ -1,177 +1,130 @@
 package models
 
 import (
-	"Tasktop/configure"
+	"Tasktop/utils"
 	"fmt"
+
+	"gorm.io/gorm"
 )
 
+// status 1 is active
 type AnnuallyPlan struct {
-	APID     int    `json:"APId"`
-	Progress int    `json:"progress"`
-	Status   bool   `json:"status"`
-	Year     int    `json:"year"`
-	UserName string `json:"username"` //Foregin-key
+	APID     int   `gorm:"primaryKey;autoIncrement" json:"APId"`
+	Progress int   `gorm:"not null" json:"progress"`
+	Status   bool  `gorm:"not null" json:"status"`
+	Year     int   `gorm:"not null" json:"year"`
+	UserID   int64 `gorm:"not null;index" json:"userId"` //Foregin-key
+	User     User  `gorm:"foreignKey:UserID;references:ID"`
 }
 type AnnuallyGoal struct {
-	AGID     int    `json:"AGId"`
-	Title    string `json:"title"`
-	Desc     string `json:"desc"`
-	Priority string `json:"priority"`
-	Progress int    `json:"progress"`
-	Status   bool   `json:"status"`
-	APID     int    `json:"APId"` //Foregin-key
+	AGID         int          `gorm:"primaryKey;autoIncrement" json:"AGId"`
+	Title        string       `gorm:"not null;size:100" json:"title"`
+	Desc         string       `gorm:"size:1500" json:"desc"`
+	Priority     string       `gorm:"size:6" json:"priority"`
+	Progress     int          `gorm:"not null" json:"progress"`
+	Status       bool         `gorm:"not null" jgorm:"not null" son:"status"`
+	APID         int          `gorm:"not null" json:"APId"` //Foregin-key
+	AnnuallyPlan AnnuallyPlan `gorm:"foreignKey:APID"`
 }
 
 func init() {
-	configure.Connect()
-	db = configure.GetDB()
+	db, ctx = utils.GetDBctx()
 }
 
 //Annually Plan Functions
 
-func GetAnnuallyPs(username string) ([]*AnnuallyPlan, error) {
-	aps := make([]*AnnuallyPlan, 0)
-	query := `SELECT * FROM annuallyplans WHERE username=?`
-	rows, err := db.Query(query, username)
+func GetAnnuallyPs(userId int64) ([]AnnuallyPlan, error) {
+	ap, err := gorm.G[AnnuallyPlan](db).Where("user_id=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-	for rows.Next() {
-		ap := new(AnnuallyPlan)
-		if err := rows.Scan(&ap.APID, &ap.Progress, &ap.Status, &ap.Year, &ap.UserName); err != nil {
-			return nil, err
-		}
-		aps = append(aps, ap)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return aps, err
+	return ap, nil
+
 }
 
-func GetAnnuallyPId(username string, year int) int {
-	var id int = 0
-	var s int = 0
-	query := `SELECT annuallyPId,status FROM annuallyplans WHERE username=? and year=?`
-	row := db.QueryRow(query, username, year)
-	err := row.Scan(&id, &s)
+func GetAnnuallyPId(userId int64, year int) int {
+	id := 0
+	ap, err := gorm.G[AnnuallyPlan](db).Where("user_id=? and year=?", userId, year).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
-	if s == 0 && id != 0 {
-		query := `UPDATE annuallyplans SET status = 1 WHERE username=? and year=?`
-		_, err := db.Exec(query, username, year)
-		if err != nil {
-			fmt.Printf("Error while activate annuallyplan: ", err)
-		}
-	}
+	id = id + ap[0].APID
 	return id
 }
 
-func AddAnnuallyP(username string, year int) bool {
-	status := true
-	query := `INSERT INTO annuallyplans(progress,status,year,username) VALUES (0,1,?,?)`
-	_, err := db.Exec(query, year, username)
+func AddAnnuallyP(userId int64, year int) bool {
+	ap, err := gorm.G[AnnuallyPlan](db).Where("year = ? and user_id=?", year, userId).Find(ctx)
 	if err != nil {
-		status = false
+		fmt.Printf("Error while fetch data:", err)
 	}
-	return status
+	if len(ap) == 0 {
+		gorm.G[AnnuallyPlan](db).Create(ctx, &AnnuallyPlan{
+			Progress: 0,
+			Status:   true,
+			UserID:   userId,
+			Year:     year,
+		})
+		return true
+	}
+	return false
 
 }
 
 //Annually Goal Function
 
 func GetAnnuallyGIdByMonthlyGId(id int) int {
-	var annuallyGId int
-	query := `SELECT annuallyGId FROM monthlygoals WHERE monthlyGId=?`
-	row := db.QueryRow(query, id)
-	err := row.Scan(&annuallyGId)
+	mg, err := gorm.G[MonthlyGoal](db).Where("mg_id=?", id).Select("ag_id").Find(ctx)
 	if err != nil {
 		return -1
 	}
-	return annuallyGId
+	return mg[0].AGID
 }
 
-func GetAnnuallyGs(id int) ([]*AnnuallyGoal, error) {
-	ags := make([]*AnnuallyGoal, 0)
-	query := `SELECT * FROM annuallygoals WHERE annuallyPId=?`
-	rows, err := db.Query(query, id)
+func GetAnnuallyGs(id int) ([]AnnuallyGoal, error) {
+	ag, err := gorm.G[AnnuallyGoal](db).Where("ap_id=?", id).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-	for rows.Next() {
-		ag := new(AnnuallyGoal)
-		if err := rows.Scan(&ag.AGID, &ag.Desc, &ag.Title, &ag.Priority, &ag.Progress, &ag.Status, &ag.APID); err != nil {
-			return nil, err
-		}
-		ags = append(ags, ag)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return ags, err
+	return ag, err
 
 }
 
-func GetAnnuallyGById(annuallyGId int) (*AnnuallyGoal, error) {
-	annuallyGoal := &AnnuallyGoal{}
-	query := `SELECT * FROM annuallyGoals WHERE annuallyGId=?`
-	row := db.QueryRow(query, annuallyGId)
-	err := row.Scan(&annuallyGoal.AGID, &annuallyGoal.Title, &annuallyGoal.Desc, &annuallyGoal.Priority, &annuallyGoal.Progress,
-		&annuallyGoal.Status, &annuallyGoal.APID)
-	return annuallyGoal, err
+func GetAnnuallyGById(annuallyGId int) (AnnuallyGoal, error) {
+	ag, err := gorm.G[AnnuallyGoal](db).Where("ag_id=?", annuallyGId).Find(ctx)
+	if err != nil {
+		return AnnuallyGoal{AGID: annuallyGId}, err
+	}
+	return ag[0], err
 }
 
 func AddAnnuallyG(annuallyGoal *AnnuallyGoal) bool {
-	status := true
-	query := `INSERT INTO annuallyGoals(title,description,priority,progress,status,annuallyPId) VALUES (?,?,?,0,1,?)`
-	_, err := db.Exec(query, annuallyGoal.Title, annuallyGoal.Desc, annuallyGoal.Priority, annuallyGoal.APID)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[AnnuallyGoal](db).Create(ctx, annuallyGoal)
+	return true
 }
 
 func UpdateAnnuallyG(annuallyGoal *AnnuallyGoal) bool {
-	status := true
-	query := `UPDATE annuallyGoals SET title=?, description=?, priority=?, progress=?, status=?, annuallyPId=? WHERE annuallyGId=?`
-	_, err := db.Exec(query, annuallyGoal.Title, annuallyGoal.Desc, annuallyGoal.Priority, annuallyGoal.Progress, annuallyGoal.Status, annuallyGoal.APID, annuallyGoal.AGID)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[AnnuallyGoal](db).Where("ag_id=?", annuallyGoal.AGID).Updates(ctx, *annuallyGoal)
+	return true
 }
 
 func DeleteAnnuallyG(annuallyGId int) bool {
-	status := true
-	query := `DELETE FROM annuallyGoals WHERE annuallyGId=?`
-	_, err := db.Exec(query, annuallyGId)
-	if err != nil {
-		status = false
-	}
-	return status
+	gorm.G[AnnuallyGoal](db).Where("ag_id=?", annuallyGId).Delete(ctx)
+	return true
 }
 
 //Annually Report
 
-func GetAProgresses(annuallyPs []*AnnuallyPlan) (map[int]int, error) {
+func GetAProgresses(annuallyPs []AnnuallyPlan) (map[int]int, error) {
 	var progresses = make(map[int]int)
 	for _, annuallyP := range annuallyPs {
-		query := `SELECT progress FROM annuallygoals WHERE annuallyPId=?`
-		rows, err := db.Query(query, annuallyP.APID)
+		ag, err := gorm.G[AnnuallyGoal](db).Where("ap_id=?", annuallyP.APID).Select("progress").Find(ctx)
 		if err != nil {
 			return nil, err
 		}
-		defer rows.Close()
 		var progress int
 		counter := 0
-		for rows.Next() {
-			var p int
-			if err := rows.Scan(&p); err != nil {
-				return nil, err
-			}
+		for _, v := range ag {
+			p := v.Progress
 			progress = progress + p
 			counter++
 		}

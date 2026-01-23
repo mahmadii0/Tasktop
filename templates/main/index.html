@@ -1,21 +1,119 @@
-{{define "Title"}}Tasktop{{end}}
-{{define "Head"}}{{end}}
-{{define "Content"}}
-
-<div id="carouselExampleIndicators" class="carousel slide">
-    <div class="carousel-indicators">
-
-    </div>
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="/images/kk.jpg" class="d-block w-100" alt="...">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/css/index.css" />
+    
+</head> 
+<body>
+    <header>
+        <div class="menu-container">
+            <div class="logo-container">
+                <img src="/static/images/logo.png" alt="tasktop">
+                <h1>Tasktop</h1> 
+            </div>
+            
+            <ul class="menu">
+                <li class="menu-items login"><a href="/register" class="login">Login</a></li>
+                <li class="menu-items"><a href="How is your Plan" class="desc">How is your Plan</a></li>
+                <li class="menu-items"><a href="" class="aboutus">About us</a></li>
+            </ul>
         </div>
-        <div class="carousel-caption d-none d-md-block">
-            <h2>Finish your plans with Tasktop</h2>
-            <button type="button" class="btn btn-light">SIGN UP</button>
+    </header>
+    <section class="hero-sec">
+        <h2>Finish Your Plans With TASKTOP</h2>
+    </section>
+    <section class="desc-sec">
+        <br>
+        <h2 class="h2-title">How is your Plan?</h2>
+        <p class="stroke">_____________</p>
+        <br><br><br>
+        <div class="content-container">
+            <div class="items-container">
+                <p class="items">You can have plan for a <span>day</span>, <span>month</span> or <span>year</span></p>
+                <p class="items">You can relay a daily goal to a monthly goal</p>
+                <p class="items">You can relay a monthly goal to a annually goal</p>
+                <p class="items"><span>Also</span> you can have reports </p>                 
+            </div>
+            <img class="desc-vector" src="/static/images/note-vector.png" alt="">
         </div>
-    </div>
+    </section>
+    <section class="features-sec">
+        <h2 class="h2-title">Features</h2>
+        <p class="stroke">_______</p>
+        <br><br><br>
+        <div class="items-container">
+            <div class="ai-item items">
+                <img src="/static/images/svg/ai-solid-svgrepo-com.svg" alt="ai">
+                <h3 class="title-items">Ai Assistant</h3>
+                <p>An assistant who tells you how to prioritize your tasks.</p>
+            </div>
+            <div class="note-item items">
+                <img src="/static/images/svg/svg.svg" alt="notes">
+                <h3 class="title-items">Notes</h3>
+                <p>write daily notes and make sure they will be burned in the next day</p>
+            </div>
+            <div class="prgrss-item items">
+                <img src="/static/images/svg/progress.svg" alt="progress">
+                <h3 class="title-items">Progress</h3>
+                <p>See the progress of your goals every day or month and year</p>
+            </div>
+            <div class="report-item items">
+                <img src="/static/images/svg/service-report-svgrepo-com.svg" alt="progress">
+                <h3 class="title-items">Rreport</h3>
+                <p>Get the your performance report in day,month or year</p>
+            </div>
+        </div>
+    </section>
+    <section class="try-sec">
+        <div class="title-container">
 
-</div>
-
-{{end}}
+            <h2>Try It!</h2>
+            <p class="stroke">_______________</p>
+        </div>
+        <div class="texts-container">
+            <p class="try-desc">You can try it free and use everything free!</p>
+            <p class="try-desc">Finish your goals with Tasktop and enjoy it.</p>
+            <p class="try-desc">Your time and life is Important</p>
+            <br>
+            <button><a href="">Sign Up Now</a></button>
+        </div>
+    </section>
+    <section class="blog-sec">
+        <br>
+        <h2 class="h2-title">Blog</h2>
+        <p class="stroke">_______</p>
+        <br><br><br>
+        <div class="blog-container">
+            <div class="blog-item">
+                <img src="/static/images/20569.webp" alt="pic">
+                <h3>lorem</h3>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatum, optio?</p>
+                <button><a href="">Read</a></button>
+            </div>
+            <div class="blog-item">
+                <img src="/static/images/20569.webp" alt="pic">
+                <h3>lorem</h3>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatum, optio?</p>
+                <button><a href="">Read</a></button>
+            </div>
+            <div class="blog-item">
+                <img src="/static/images/20569.webp" alt="pic">
+                <h3>lorem</h3>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatum, optio?</p>
+                <button><a href="">Read</a></button>
+            </div>
+            <div class="blog-item">
+                <img src="/static/images/20569.webp" alt="pic">
+                <h3>lorem</h3>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatum, optio?</p>
+                <button><a href="">Read</a></button>
+            </div>   
+        </div>
+    </section>
+    <footer>
+        <p>Powered by <span>mahmadii0</span></p>
+    </footer>
+</body>
+</html>
