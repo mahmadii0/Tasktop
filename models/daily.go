@@ -13,8 +13,8 @@ type DailyPlan struct {
 	Progress int       `gorm:"not null" json:"progress"`
 	Status   bool      `gorm:"not null" json:"status"`
 	Date     time.Time `gorm:"type:date;not null" json:"date"`
-	UserID   int64     `gorm:"not null" json:"userId"` //Foregin-key
-	User     User      `gorm:"foreignKey:UserID"`
+	UserID   int64     `gorm:"not null;index" json:"userId"` //Foregin-key
+	User     User      `gorm:"foreignKey:UserID;references:ID"`
 }
 type DailyGoal struct {
 	DGID  int    `gorm:"primaryKey;autoIncrement" json:"DGId"`
@@ -32,7 +32,7 @@ type DailyGoal struct {
 //Daily Plan Functions
 
 func GetDailyPs(userId int64) ([]DailyPlan, error) {
-	dp, err := gorm.G[DailyPlan](db).Where("userId=?", userId).Find(ctx)
+	dp, err := gorm.G[DailyPlan](db).Where("user_id=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func GetDailyPs(userId int64) ([]DailyPlan, error) {
 
 func GetDailyPId(userId int64, date string) int {
 	id := 0
-	ap, err := gorm.G[DailyPlan](db).Where("userId=? and date=?", userId, date).Find(ctx)
+	ap, err := gorm.G[DailyPlan](db).Where("user_id=? and date=?", userId, date).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -95,7 +95,7 @@ func AddDailyP(userId int64, date string) bool {
 
 func GetDailyGStatuses(id int) ([]bool, error) {
 	statuses := make([]bool, 0)
-	dg, err := gorm.G[DailyGoal](db).Where("dailyPId=?", id).Select("status").Find(ctx)
+	dg, err := gorm.G[DailyGoal](db).Where("dp_id=?", id).Select("status").Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func GetDailyGStatuses(id int) ([]bool, error) {
 	return statuses, nil
 }
 func GetDailyGs(id int) ([]DailyGoal, error) {
-	dg, err := gorm.G[DailyGoal](db).Where("dailyPId=?", id).Find(ctx)
+	dg, err := gorm.G[DailyGoal](db).Where("dp_id=?", id).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func GetDailyGs(id int) ([]DailyGoal, error) {
 }
 
 func GetDailyGById(dailyGId int) (DailyGoal, error) {
-	dg, err := gorm.G[DailyGoal](db).Where("DailyGId=?", dailyGId).Find(ctx)
+	dg, err := gorm.G[DailyGoal](db).Where("dg_id=?", dailyGId).Find(ctx)
 	if err != nil {
 		return dg[0], err
 	}
@@ -127,11 +127,11 @@ func AddDailyG(dailyGoal *DailyGoal) bool {
 }
 
 func UpdateDailyG(dailyGoal *DailyGoal) bool {
-	gorm.G[DailyGoal](db).Where("dailyGId=?", dailyGoal.DGID).Updates(ctx, *dailyGoal)
+	gorm.G[DailyGoal](db).Where("dg_id=?", dailyGoal.DGID).Updates(ctx, *dailyGoal)
 	return true
 }
 
 func DeleteDailyG(dailyGId int) bool {
-	gorm.G[DailyGoal](db).Where("dailyGId=?", dailyGId).Delete(ctx)
+	gorm.G[DailyGoal](db).Where("dg_id=?", dailyGId).Delete(ctx)
 	return true
 }

@@ -13,8 +13,8 @@ type AnnuallyPlan struct {
 	Progress int   `gorm:"not null" json:"progress"`
 	Status   bool  `gorm:"not null" json:"status"`
 	Year     int   `gorm:"not null" json:"year"`
-	UserID   int64 `gorm:"not null" json:"userId"` //Foregin-key
-	User     User  `gorm:"foreignKey:UserID"`
+	UserID   int64 `gorm:"not null;index" json:"userId"` //Foregin-key
+	User     User  `gorm:"foreignKey:UserID;references:ID"`
 }
 type AnnuallyGoal struct {
 	AGID         int          `gorm:"primaryKey;autoIncrement" json:"AGId"`
@@ -34,7 +34,7 @@ func init() {
 //Annually Plan Functions
 
 func GetAnnuallyPs(userId int64) ([]AnnuallyPlan, error) {
-	ap, err := gorm.G[AnnuallyPlan](db).Where("userId=?", userId).Find(ctx)
+	ap, err := gorm.G[AnnuallyPlan](db).Where("user_id=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func GetAnnuallyPs(userId int64) ([]AnnuallyPlan, error) {
 
 func GetAnnuallyPId(userId int64, year int) int {
 	id := 0
-	ap, err := gorm.G[AnnuallyPlan](db).Where("userId=? and year=?", userId, year).Find(ctx)
+	ap, err := gorm.G[AnnuallyPlan](db).Where("user_id=? and year=?", userId, year).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -53,7 +53,7 @@ func GetAnnuallyPId(userId int64, year int) int {
 }
 
 func AddAnnuallyP(userId int64, year int) bool {
-	ap, err := gorm.G[AnnuallyPlan](db).Where("year = ? and userId=?", year, userId).Find(ctx)
+	ap, err := gorm.G[AnnuallyPlan](db).Where("year = ? and user_id=?", year, userId).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -73,7 +73,7 @@ func AddAnnuallyP(userId int64, year int) bool {
 //Annually Goal Function
 
 func GetAnnuallyGIdByMonthlyGId(id int) int {
-	mg, err := gorm.G[MonthlyGoal](db).Where("monthlyGId=?", id).Select("annuallyGId").Find(ctx)
+	mg, err := gorm.G[MonthlyGoal](db).Where("mg_id=?", id).Select("ag_id").Find(ctx)
 	if err != nil {
 		return -1
 	}
@@ -81,7 +81,7 @@ func GetAnnuallyGIdByMonthlyGId(id int) int {
 }
 
 func GetAnnuallyGs(id int) ([]AnnuallyGoal, error) {
-	ag, err := gorm.G[AnnuallyGoal](db).Where("annuallyPId=?", id).Find(ctx)
+	ag, err := gorm.G[AnnuallyGoal](db).Where("ap_id=?", id).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func GetAnnuallyGs(id int) ([]AnnuallyGoal, error) {
 }
 
 func GetAnnuallyGById(annuallyGId int) (AnnuallyGoal, error) {
-	ag, err := gorm.G[AnnuallyGoal](db).Where("annuallyGId=?", annuallyGId).Find(ctx)
+	ag, err := gorm.G[AnnuallyGoal](db).Where("ag_id=?", annuallyGId).Find(ctx)
 	if err != nil {
 		return AnnuallyGoal{AGID: annuallyGId}, err
 	}
@@ -103,12 +103,12 @@ func AddAnnuallyG(annuallyGoal *AnnuallyGoal) bool {
 }
 
 func UpdateAnnuallyG(annuallyGoal *AnnuallyGoal) bool {
-	gorm.G[AnnuallyGoal](db).Where("annuallyGId=?", annuallyGoal.AGID).Updates(ctx, *annuallyGoal)
+	gorm.G[AnnuallyGoal](db).Where("ag_id=?", annuallyGoal.AGID).Updates(ctx, *annuallyGoal)
 	return true
 }
 
 func DeleteAnnuallyG(annuallyGId int) bool {
-	gorm.G[AnnuallyGoal](db).Where("annuallyGId=?", annuallyGId).Delete(ctx)
+	gorm.G[AnnuallyGoal](db).Where("ag_id=?", annuallyGId).Delete(ctx)
 	return true
 }
 
@@ -117,7 +117,7 @@ func DeleteAnnuallyG(annuallyGId int) bool {
 func GetAProgresses(annuallyPs []AnnuallyPlan) (map[int]int, error) {
 	var progresses = make(map[int]int)
 	for _, annuallyP := range annuallyPs {
-		ag, err := gorm.G[AnnuallyGoal](db).Where("annuallyPId=?", annuallyP.APID).Select("progress").Find(ctx)
+		ag, err := gorm.G[AnnuallyGoal](db).Where("ap_id=?", annuallyP.APID).Select("progress").Find(ctx)
 		if err != nil {
 			return nil, err
 		}

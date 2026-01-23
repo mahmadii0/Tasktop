@@ -8,7 +8,7 @@ import (
 )
 
 type User struct {
-	UserID       int64  `gorm:"primaryKey;autoIncrement" json:"userId"`
+	ID           int64  `gorm:"primaryKey;autoIncrement" json:"userId"`
 	UserName     string `gorm:"size:100;" json:"username"`
 	FullName     string `gorm:"not null;size:150" json:"name"`
 	Email        string `gorm:"unique;not null;size:250" json:"email"`
@@ -39,7 +39,10 @@ func init() {
 //User
 
 func AddUser(user *User) bool {
-	gorm.G[User](db).Create(ctx, user)
+	result := gorm.G[User](db).Create(ctx, user)
+	if result != nil {
+		return false
+	}
 	return true
 }
 
@@ -65,16 +68,16 @@ func GetEmailBySessionToken(sessionToken string) string {
 
 func GetUserIdBySessionToken(sessionToken string) int64 {
 	var userId int64
-	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("username").Find(ctx)
+	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("user_name").Find(ctx)
 	if err != nil {
 		return 0
 	}
-	userId = u[0].UserID
+	userId = u[0].ID
 	return userId
 }
 
 func CompareCsrfToken(email string, csrf string) bool {
-	u, err := gorm.G[User](db).Where("email=?", email).Select("csrf_token").Find(ctx)
+	u, err := gorm.G[User](db).Where("email=?", email).Select("csrf").Find(ctx)
 	if err != nil {
 		return false
 	}
@@ -98,27 +101,33 @@ func GetPassHashByEmail(email string) (string, error) {
 
 func GetUserByUserName(username string) (*User, error) {
 	var user User
-	u, err := gorm.G[User](db).Where("username=?", username).Select("username,fullname,email,phone").Find(ctx)
+	u, err := gorm.G[User](db).Where("user_name=?", username).Select("user_name,full_name,email,phone").Find(ctx)
 	if err != nil {
 		return nil, err
+	}
+	if len(u) == 0 {
+		return &user, err
 	}
 	user = u[0]
 	return &user, err
 }
 
 func UpdateUser(user *User) bool {
-	gorm.G[User](db).Where("username=?", user.UserName).Updates(ctx, User{FullName: user.FullName, Email: user.Email, Phone: user.Phone})
+	gorm.G[User](db).Where("user_name=?", user.UserName).Updates(ctx, User{FullName: user.FullName, Email: user.Email, Phone: user.Phone})
 	return true
 }
 
 func DeleteUser(username int) bool {
-	gorm.G[User](db).Where("username = ?", username).Delete(ctx)
+	gorm.G[User](db).Where("user_name = ?", username).Delete(ctx)
 	return true
 }
 
 //Questions
 
-func AddQuestions(username string, questions *SecurityQuestions) bool {
-	gorm.G[SecurityQuestions](db).Create(ctx, questions)
+func AddQuestions(questions *SecurityQuestions) bool {
+	result := gorm.G[SecurityQuestions](db).Create(ctx, questions)
+	if result != nil {
+		return false
+	}
 	return true
 }

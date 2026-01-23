@@ -81,6 +81,7 @@ func Connect() {
 }
 
 func GetDBctx() (*gorm.DB, context.Context) {
+	Connect()
 	return db, ctx
 }
 

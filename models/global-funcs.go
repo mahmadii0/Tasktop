@@ -11,15 +11,15 @@ func CheckStatus(typee string, id int) bool {
 	switch typee {
 	case "daily":
 		db.Model(&DailyGoal{}).
-			Where("dailyGId = ?", id).
+			Where("dg_id = ?", id).
 			Update("status", gorm.Expr("CASE WHEN status = 1 THEN 0 ELSE 1 END"))
 	case "monthly":
 		db.Model(&MonthlyGoal{}).
-			Where("monthlyGId = ?", id).
+			Where("mg_id = ?", id).
 			Update("status", gorm.Expr("CASE WHEN status = 1 THEN 0 ELSE 1 END"))
 	case "annually":
 		db.Model(&AnnuallyGoal{}).
-			Where("annuallyGId = ?", id).
+			Where("ag_id = ?", id).
 			Update("status", gorm.Expr("CASE WHEN status = 1 THEN 0 ELSE 1 END"))
 	}
 	return Status
@@ -33,7 +33,7 @@ func SetProgress(typee string, id int) bool {
 		if monthlyGId == -1 {
 			Status = false
 		}
-		dg, err := gorm.G[DailyGoal](db).Where("monthlyGId = ?", id).Select("status").Find(ctx)
+		dg, err := gorm.G[DailyGoal](db).Where("mg_id = ?", id).Select("status").Find(ctx)
 		if err != nil {
 			Status = false
 		}
@@ -49,14 +49,14 @@ func SetProgress(typee string, id int) bool {
 			counter++
 		}
 		result := (doneCounter / counter) * 100
-		gorm.G[MonthlyGoal](db).Where("monthlyGId=?", id).Update(ctx, "progress", result)
+		gorm.G[MonthlyGoal](db).Where("mg_id=?", id).Update(ctx, "progress", result)
 
 	case "annually":
 		annuallyGId := GetAnnuallyGIdByMonthlyGId(id)
 		if annuallyGId == -1 {
 			Status = false
 		}
-		mg, err := gorm.G[MonthlyGoal](db).Where("annuallyGId = ?", id).Select("status").Find(ctx)
+		mg, err := gorm.G[MonthlyGoal](db).Where("ag_id = ?", id).Select("status").Find(ctx)
 		if err != nil {
 			Status = false
 		}
@@ -72,7 +72,7 @@ func SetProgress(typee string, id int) bool {
 			counter++
 		}
 		result := (doneCounter / counter) * 100
-		gorm.G[AnnuallyGoal](db).Where("annuallyGId=?", id).Update(ctx, "progress", result)
+		gorm.G[AnnuallyGoal](db).Where("ag_id=?", id).Update(ctx, "progress", result)
 	}
 	return Status
 }

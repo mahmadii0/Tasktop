@@ -13,8 +13,8 @@ type MonthlyPlan struct {
 	Progress int       `gorm:"not null" json:"progress"`
 	Status   bool      `gorm:"not null" json:"status"`
 	Date     time.Time `gorm:"type:date;not null" json:"date"`
-	UserID   int64     `gorm:"not null" json:"userId"` //Foregin-key
-	User     User      `gorm:"foreignKey:UserID"`
+	UserID   int64     `gorm:"not null;index" json:"userId"` //Foregin-key
+	User     User      `gorm:"foreignKey:UserID;references:ID"`
 }
 type MonthlyGoal struct {
 	MGID         int          `gorm:"primaryKey;autoIncrement" json:"MGId"`
@@ -32,7 +32,7 @@ type MonthlyGoal struct {
 //Monthly Plan Function
 
 func GetMonthlyPs(userId int64) ([]MonthlyPlan, error) {
-	mp, err := gorm.G[MonthlyPlan](db).Where("userId=?", userId).Find(ctx)
+	mp, err := gorm.G[MonthlyPlan](db).Where("user_id=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func GetMonthlyPs(userId int64) ([]MonthlyPlan, error) {
 
 func GetMonthlyPId(userId int64, date string) int {
 	id := 0
-	ap, err := gorm.G[MonthlyPlan](db).Where("userId=? and date=?", userId, date).Find(ctx)
+	ap, err := gorm.G[MonthlyPlan](db).Where("user_id=? and date=?", userId, date).Find(ctx)
 	if err != nil {
 		fmt.Printf("Error while fetch data:", err)
 	}
@@ -97,7 +97,7 @@ func AddMonthlyP(userId int64, date string) bool {
 func GetMProgresses(monthlyPs []MonthlyPlan) (map[string]int, error) {
 	var progresses = make(map[string]int)
 	for _, monthlyP := range monthlyPs {
-		ag, err := gorm.G[MonthlyGoal](db).Where("monthlyPId=?", monthlyP.MPID).Select("progress").Find(ctx)
+		ag, err := gorm.G[MonthlyGoal](db).Where("mp_id=?", monthlyP.MPID).Select("progress").Find(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -116,7 +116,7 @@ func GetMProgresses(monthlyPs []MonthlyPlan) (map[string]int, error) {
 }
 
 func GetMonthlyGIdByDailyGId(id int) int {
-	dg, err := gorm.G[DailyGoal](db).Where("dailyGId=?", id).Select("monthlyGId").Find(ctx)
+	dg, err := gorm.G[DailyGoal](db).Where("dg_id=?", id).Select("mg_id").Find(ctx)
 	if err != nil {
 		return -1
 	}
@@ -124,7 +124,7 @@ func GetMonthlyGIdByDailyGId(id int) int {
 }
 
 func GetMonthlyGs(id int) ([]MonthlyGoal, error) {
-	mg, err := gorm.G[MonthlyGoal](db).Where("monthlyPId=?", id).Find(ctx)
+	mg, err := gorm.G[MonthlyGoal](db).Where("mp_id=?", id).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func GetMonthlyGs(id int) ([]MonthlyGoal, error) {
 }
 
 func GetMonthlyGById(monthlyGId int) (MonthlyGoal, error) {
-	mg, err := gorm.G[MonthlyGoal](db).Where("monthlyGId=?", monthlyGId).Find(ctx)
+	mg, err := gorm.G[MonthlyGoal](db).Where("mg_id=?", monthlyGId).Find(ctx)
 	if err != nil {
 		return mg[0], err
 	}
@@ -148,11 +148,11 @@ func AddMonthlyG(monthlyGoal *MonthlyGoal) bool {
 }
 
 func UpdateMonthlyG(monthlyGoal *MonthlyGoal) bool {
-	gorm.G[MonthlyGoal](db).Where("monthlyGId=?", monthlyGoal.MGID).Updates(ctx, *monthlyGoal)
+	gorm.G[MonthlyGoal](db).Where("mg_id=?", monthlyGoal.MGID).Updates(ctx, *monthlyGoal)
 	return true
 }
 
 func DeleteMonthlyG(monthlyGId int) bool {
-	gorm.G[MonthlyGoal](db).Where("monthlyGId=?", monthlyGId).Delete(ctx)
+	gorm.G[MonthlyGoal](db).Where("mg_id=?", monthlyGId).Delete(ctx)
 	return true
 }

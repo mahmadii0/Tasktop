@@ -6,8 +6,8 @@ type Note struct {
 	NoteId   int    `gorm:"primaryKey;autoIncrement" json:"noteId"`
 	Title    string `json:"title;size:200"`
 	NoteText string `json:"noteText;size:2000"`
-	UserID   int64  `gorm:"not null" json:"userId"`
-	User     User   `gorm:"foreignKey:UserID"`
+	UserID   int64  `gorm:"not null;index" json:"userId"`
+	User     User   `gorm:"foreignKey:UserID;references:ID"`
 }
 
 func DeleteAllNotes() bool {
@@ -21,13 +21,13 @@ func AddNote(note *Note) bool {
 }
 
 func DeleteNote(noteId int) bool {
-	gorm.G[Note](db).Where("noteId=?", noteId).Delete(ctx)
+	gorm.G[Note](db).Where("note_id=?", noteId).Delete(ctx)
 	return true
 
 }
 
 func GetNotes(userId int64) ([]Note, error) {
-	n, err := gorm.G[Note](db).Where("userId=?", userId).Find(ctx)
+	n, err := gorm.G[Note](db).Where("user_id=?", userId).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
