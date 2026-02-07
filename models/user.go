@@ -8,14 +8,12 @@ import (
 )
 
 type User struct {
-	ID           int64  `gorm:"primaryKey;autoIncrement" json:"userId"`
-	UserName     string `gorm:"size:100;" json:"username"`
-	FullName     string `gorm:"not null;size:150" json:"name"`
-	Email        string `gorm:"unique;not null;size:250" json:"email"`
-	Phone        string `gorm:"unique;not null;size:13" json:"phone"`
-	Password     string `gorm:"not null;size:400" json:"password"`
-	SessionToken string `gorm:"size:64"`
-	CSRF         string `gorm:"size:64"`
+	ID       int64  `gorm:"primaryKey;autoIncrement" json:"userId"`
+	UserName string `gorm:"size:100;" json:"username"`
+	FullName string `gorm:"not null;size:150" json:"name"`
+	Email    string `gorm:"unique;not null;size:250" json:"email"`
+	Phone    string `gorm:"unique;not null;size:13" json:"phone"`
+	Password string `gorm:"not null;size:400" json:"password"`
 }
 
 type SecurityQuestions struct {
@@ -46,16 +44,6 @@ func AddUser(user *User) bool {
 	return true
 }
 
-func SetTokens(sessionToken string, csrfToken string, email string) bool {
-	gorm.G[User](db).Where("email=?", email).Updates(ctx, User{CSRF: csrfToken, SessionToken: sessionToken})
-	return true
-}
-
-func ClearTokens(email string) bool {
-	gorm.G[User](db).Where("email=?", email).Updates(ctx, User{CSRF: "", SessionToken: ""})
-	return true
-}
-
 func GetEmailBySessionToken(sessionToken string) string {
 	var email string
 	u, err := gorm.G[User](db).Where("session_token=?", sessionToken).Select("email").Find(ctx)
@@ -74,19 +62,6 @@ func GetUserIdBySessionToken(sessionToken string) int64 {
 	}
 	userId = u[0].ID
 	return userId
-}
-
-func CompareCsrfToken(email string, csrf string) bool {
-	u, err := gorm.G[User](db).Where("email=?", email).Select("csrf").Find(ctx)
-	if err != nil {
-		return false
-	}
-	csrfDb := ""
-	csrfDb = u[0].CSRF
-	if csrfDb != csrf {
-		return false
-	}
-	return true
 }
 
 func GetPassHashByEmail(email string) (int64, string, error) {
@@ -125,9 +100,12 @@ func DeleteUser(username int) bool {
 }
 
 func UserFromId(id int64) *User {
-	u, err := gorm.G[User](db).Where("id=?", id).Select("id").Find(ctx)
+	u, err := gorm.G[User](db).Where("id=?", id).Select("id", "user_name", "full_name", "email", "phone").Find(ctx)
 	if err != nil {
 		return nil
+	}
+	if len(u) == 0 {
+		return &User{}
 	}
 	return &u[0]
 }

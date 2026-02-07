@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Tasktop/middlewares"
 	"Tasktop/models"
 	"Tasktop/utils"
 	"encoding/json"
@@ -15,8 +16,22 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+type DashboardData struct {
+	User *models.User
+}
+
 func DashHandler(w http.ResponseWriter, r *http.Request) {
-	TemplateRender(w, "/dashboard/dashboard", nil)
+	user, err := middlewares.GetUserFromRequest(r)
+	if err != nil {
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
+
+	data := DashboardData{
+		User: user,
+	}
+
+	TemplateRender(w, "/dashboard/dashboard", data)
 }
 
 //Read Goal(single)

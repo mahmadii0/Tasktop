@@ -13,6 +13,46 @@ import (
 
 var AuthError = errors.New("Unauthorized")
 
+// GetUserFromRequest extracts user information from JWT token
+func GetUserFromRequest(r *http.Request) (*models.User, error) {
+	tokenStr, err := r.Cookie("auth")
+	if err != nil || tokenStr.Value == "" {
+		return nil, AuthError
+	}
+
+	jwtSecret := os.Getenv("SECRETJWT")
+	if jwtSecret == "" {
+		return nil, fmt.Errorf("JWT secret not configured")
+	}
+
+	token, err := jwt.Parse(tokenStr.Value, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(jwtSecret), nil
+	})
+	if err != nil {
+		return nil, AuthError
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, AuthError
+	}
+
+	userIdFloat, ok := claims["userId"].(float64)
+	if !ok {
+		return nil, AuthError
+	}
+	userId := int64(userIdFloat)
+	user := models.UserFromId(userId)
+	if user.ID == 0 {
+		return nil, AuthError
+	}
+
+	return user, nil
+}
+
 func Authorize(r *http.Request) error {
 	tokenStr, err := r.Cookie("auth")
 	if err != nil || tokenStr.Value == "" {

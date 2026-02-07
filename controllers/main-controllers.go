@@ -34,7 +34,15 @@ func TemplateRender(w http.ResponseWriter, templ string, data interface{}) {
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
-	TemplateRender(w, "/main/index", nil)
+	tmpl, err := template.ParseFiles("templates/main/index.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
