@@ -6,7 +6,8 @@ const state = {
     tasks: [],
     notes: [],
     currentMonth: new Date(),
-    currentView: 'dashboard'
+    currentView: 'dashboard',
+    selectedDate: new Date()
 };
 
 // Initialize on DOM load
@@ -23,7 +24,7 @@ function initializeApp() {
     updateStats();
     renderTasks();
     renderNotes();
-    
+
     // Add gradient definition to progress ring
     addProgressGradient();
 }
@@ -41,7 +42,7 @@ function setupEventListeners() {
     // Profile dropdown
     const profileDropdown = document.getElementById('profile-dropdown');
     const profileBtn = profileDropdown.querySelector('.profile-btn');
-    
+
     profileBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         profileDropdown.classList.toggle('active');
@@ -92,18 +93,18 @@ function setupEventListeners() {
 
 function handleNavigation(e) {
     e.preventDefault();
-    
+
     // Remove active from all nav items
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
-    
+
     // Add active to clicked item
     this.classList.add('active');
-    
+
     // Get view name
     const viewName = this.getAttribute('data-view');
-    
+
     // Update view
     switchView(viewName);
 }
@@ -113,417 +114,364 @@ function switchView(viewName) {
     document.querySelectorAll('.view').forEach(view => {
         view.classList.remove('active');
     });
-    
+
     // Show selected view
-    const targetView = document.getElementById(`${viewName}-view`);
-    if (targetView) {
-        targetView.classList.add('active');
+    const selectedView = document.getElementById(`${viewName}-view`);
+    if (selectedView) {
+        selectedView.classList.add('active');
     }
-    
-    // Update page title
-    const titles = {
-        'dashboard': 'Dashboard',
-        'daily': 'Daily Tasks',
-        'monthly': 'Monthly Goals',
-        'yearly': 'Yearly Plan',
-        'notes': 'My Notes',
-        'ai': 'AI Assistant'
-    };
-    
-    document.getElementById('page-title').textContent = titles[viewName] || 'Dashboard';
+
     state.currentView = viewName;
 }
 
 // ============================================
-// DATE & CALENDAR
+// DATE & TIME
 // ============================================
 
 function updateCurrentDate() {
-    const now = new Date();
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    };
-    
-    const dateStr = now.toLocaleDateString('en-US', options);
-    document.getElementById('current-date').textContent = dateStr;
+    const dateElement = document.getElementById('current-date');
+    if (!dateElement) return;
+
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const currentDate = new Date().toLocaleDateString('en-US', options);
+    dateElement.textContent = currentDate;
 }
+
+
+// ============================================
+// CALENDAR WIDGET
+// ============================================
 
 function generateCalendar() {
+    const calendarGrid = document.getElementById('calendar-grid');
+    const currentMonthElement = document.getElementById('current-month');
+
+    if (!calendarGrid) return;
+
     const year = state.currentMonth.getFullYear();
     const month = state.currentMonth.getMonth();
-    
-    // Update calendar title
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-    document.getElementById('calendar-month-text').textContent = `${monthNames[month]} ${year}`;
-    
-    // Get first day and number of days
+
+    // Update month display
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+
+    // Clear calendar
+    calendarGrid.innerHTML = '';
+
+    // Get first day of month and number of days
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const daysInPrevMonth = new Date(year, month, 0).getDate();
-    
-    const calendarDays = document.getElementById('calendar-days');
-    calendarDays.innerHTML = '';
-    
+
+    // Add empty cells for days before month starts
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyDay);
+    }
+
+    // Add days of month
     const today = new Date();
-    const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
-    
-    // Previous month days
-    for (let i = firstDay - 1; i >= 0; i--) {
-        const day = daysInPrevMonth - i;
-        const dayElement = createDayElement(day, true, false);
-        calendarDays.appendChild(dayElement);
-    }
-    
-    // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = isCurrentMonth && day === today.getDate();
-        const hasTasks = hasTasksOnDay(year, month, day);
-        const dayElement = createDayElement(day, false, isToday, hasTasks);
-        calendarDays.appendChild(dayElement);
-    }
-    
-    // Next month days
-    const totalCells = calendarDays.children.length;
-    const remainingCells = 42 - totalCells; // 6 rows × 7 days
-    
-    for (let day = 1; day <= remainingCells; day++) {
-        const dayElement = createDayElement(day, true, false);
-        calendarDays.appendChild(dayElement);
-    }
-}
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
 
-function createDayElement(day, isOtherMonth, isToday, hasTasks = false) {
-    const dayElement = document.createElement('div');
-    dayElement.className = 'calendar-day';
-    dayElement.textContent = day;
-    
-    if (isOtherMonth) {
-        dayElement.classList.add('other-month');
-    }
-    
-    if (isToday) {
-        dayElement.classList.add('today');
-    }
-    
-    if (hasTasks) {
-        dayElement.classList.add('has-tasks');
-    }
-    
-    return dayElement;
-}
+        // Highlight today
+        if (year === today.getFullYear() &&
+            month === today.getMonth() &&
+            day === today.getDate()) {
+            dayElement.classList.add('today');
+        }
 
-function hasTasksOnDay(year, month, day) {
-    // Check if any tasks exist for this day
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return state.tasks.some(task => task.date === dateStr);
+        // Check if there are tasks on this day
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const hasTasks = state.tasks.some(task => task.date === dateStr);
+
+        if (hasTasks) {
+            dayElement.classList.add('has-tasks');
+        }
+
+        calendarGrid.appendChild(dayElement);
+    }
 }
 
 // ============================================
-// TASKS MANAGEMENT
+// TASKS
 // ============================================
-
-function addNewTask() {
-    const title = prompt('Enter task title:');
-    if (!title) return;
-    
-    const priority = prompt('Enter priority (high/medium/low):', 'medium');
-    const date = new Date().toISOString().split('T')[0];
-    
-    const task = {
-        id: Date.now(),
-        title: escapeHtml(title),
-        priority: priority || 'medium',
-        date: date,
-        completed: false,
-        type: 'daily'
-    };
-    
-    state.tasks.push(task);
-    saveData();
-    renderTasks();
-    updateProgress();
-    updateStats();
-}
 
 function renderTasks() {
     const tasksList = document.getElementById('tasks-list');
-    const dailyTasksList = document.getElementById('daily-tasks-list');
-    
     if (!tasksList) return;
-    
+
+    // Try to fetch tasks from server endpoint, fall back to local state on error
+    fetch('/dashboard/daily-goals')
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            // Accept either an array or an object with a `tasks` property
+            const tasksFromServer = Array.isArray(data) ? data : (data.tasks || []);
+            if (tasksFromServer && tasksFromServer.length) {
+                state.tasks = tasksFromServer;
+                // Persist fetched tasks locally so UI remains consistent
+                saveData();
+            }
+        })
+        .catch(err => {
+            console.error('Failed to fetch tasks from /dashboard/daily-goals, using local data:', err);
+        })
+        .finally(() => {
+            renderTasksFromState();
+        });
+}
+
+function renderTasksFromState() {
+    const tasksList = document.getElementById('tasks-list');
+    const dailyTasksList = document.getElementById('daily-tasks-list');
+    if (!tasksList) return;
+
     const today = new Date().toISOString().split('T')[0];
     const todayTasks = state.tasks.filter(task => task.date === today);
-    
-    // Render dashboard tasks
-    tasksList.innerHTML = todayTasks.length === 0 
+
+    // Render dashboard tasks (always show today)
+    tasksList.innerHTML = todayTasks.length === 0
         ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No tasks for today. Add one to get started!</p>'
         : '';
-    
+
     todayTasks.forEach(task => {
         tasksList.appendChild(createTaskElement(task));
     });
-    
-    // Render daily view tasks
+
+    // Render daily view tasks based on selected date
     if (dailyTasksList) {
-        dailyTasksList.innerHTML = state.tasks.length === 0
-            ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No tasks yet.</p>'
-            : '';
-        
-        state.tasks.forEach(task => {
-            dailyTasksList.appendChild(createTaskElement(task));
-        });
+        if (typeof renderTasksForDate === 'function') {
+            renderTasksForDate(state.selectedDate);
+        }
     }
 }
 
 function createTaskElement(task) {
-    const taskItem = document.createElement('div');
-    taskItem.className = 'task-item';
-    taskItem.innerHTML = `
-        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-task-id="${task.id}">
-        <div class="task-content">
-            <div class="task-title">${task.title}</div>
+    const taskElement = document.createElement('div');
+    taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+    taskElement.setAttribute('data-task-id', task.id);
+
+    const priorityClass = `priority-${task.priority}`;
+    const priorityText = task.priority.charAt(0).toUpperCase() + task.priority.slice(1);
+
+    taskElement.innerHTML = `
+        <div class="task-checkbox">
+            <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                   onchange="toggleTask('${task.id}')">
+        </div>
+        <div class="task-details">
+            <div class="task-content">
+                <h4 class="task-title">${escapeHtml(task.title)}</h4>
+                ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
+            </div>
             <div class="task-meta">
-                <span class="task-priority priority-${task.priority}">${task.priority.toUpperCase()}</span>
-                <span>📅 ${formatDate(task.date)}</span>
+                <span class="task-priority ${priorityClass}">${priorityText}</span>
+                <span class="task-date">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    ${formatTaskDate(task.date)}
+                </span>
             </div>
         </div>
+        <div class="task-actions">
+            <button class="task-action-btn" onclick="deleteTask('${task.id}')" title="Delete">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            </button>
+        </div>
     `;
-    
-    const checkbox = taskItem.querySelector('.task-checkbox');
-    checkbox.addEventListener('change', function() {
-        toggleTaskComplete(task.id);
-    });
-    
-    return taskItem;
+
+    return taskElement;
 }
 
-function toggleTaskComplete(taskId) {
+function formatTaskDate(dateStr) {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (dateStr === today.toISOString().split('T')[0]) {
+        return 'Today';
+    } else if (dateStr === tomorrow.toISOString().split('T')[0]) {
+        return 'Tomorrow';
+    } else {
+        const options = { month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    }
+}
+
+function addNewTask() {
+    const title = prompt('Enter task title:');
+    if (!title) return;
+
+    const description = prompt('Enter task description (optional):') || '';
+    const priority = prompt('Enter priority (low/medium/high):', 'medium') || 'medium';
+    const dateInput = prompt('Enter date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+
+    const task = {
+        id: Date.now().toString(),
+        title,
+        description,
+        priority: ['low', 'medium', 'high'].includes(priority.toLowerCase()) ? priority.toLowerCase() : 'medium',
+        date: dateInput || new Date().toISOString().split('T')[0],
+        completed: false
+    };
+
+    state.tasks.push(task);
+    saveData();
+    renderTasks();
+    updateStats();
+    updateProgress();
+}
+
+function toggleTask(taskId) {
     const task = state.tasks.find(t => t.id === taskId);
     if (task) {
         task.completed = !task.completed;
         saveData();
         renderTasks();
-        updateProgress();
         updateStats();
+        updateProgress();
     }
 }
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+function deleteTask(taskId) {
+    if (confirm('Are you sure you want to delete this task?')) {
+        state.tasks = state.tasks.filter(t => t.id !== taskId);
+        saveData();
+        renderTasks();
+        updateStats();
+        updateProgress();
+    }
 }
 
 // ============================================
-// PROGRESS TRACKING
+// STATS
+// ============================================
+
+function updateStats() {
+    const totalTasks = state.tasks.length;
+    const completedTasks = state.tasks.filter(t => t.completed).length;
+    const pendingTasks = totalTasks - completedTasks;
+
+    document.getElementById('total-tasks').textContent = totalTasks;
+    document.getElementById('completed-tasks').textContent = completedTasks;
+    document.getElementById('pending-tasks').textContent = pendingTasks;
+}
+
+// ============================================
+// PROGRESS
 // ============================================
 
 function updateProgress() {
-    const today = new Date().toISOString().split('T')[0];
-    const todayTasks = state.tasks.filter(task => task.date === today);
-    const completedTasks = todayTasks.filter(task => task.completed);
-    
-    const total = todayTasks.length;
-    const completed = completedTasks.length;
-    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
-    // Update progress ring
-    const circle = document.getElementById('progress-circle');
-    const radius = 60;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (percentage / 100) * circumference;
-    
-    circle.style.strokeDasharray = `${circumference} ${circumference}`;
-    circle.style.strokeDashoffset = offset;
-    
-    // Update text
+    const totalTasks = state.tasks.length;
+    const completedTasks = state.tasks.filter(t => t.completed).length;
+    const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
     document.getElementById('progress-percentage').textContent = `${percentage}%`;
-    document.getElementById('completed-tasks').textContent = completed;
-    document.getElementById('total-tasks').textContent = total;
+    document.getElementById('completed-count').textContent = completedTasks;
+    document.getElementById('total-count').textContent = totalTasks;
+
+    // Update progress ring
+    const circle = document.querySelector('.progress-ring-fill');
+    if (circle) {
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (percentage / 100) * circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = offset;
+    }
 }
 
 function addProgressGradient() {
     const svg = document.querySelector('.progress-ring');
+    if (!svg || document.getElementById('progressGradient')) return;
+
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-    
     gradient.setAttribute('id', 'progressGradient');
-    gradient.setAttribute('x1', '0%');
-    gradient.setAttribute('y1', '0%');
-    gradient.setAttribute('x2', '100%');
-    gradient.setAttribute('y2', '100%');
-    
-    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    stop1.setAttribute('offset', '0%');
-    stop1.setAttribute('style', 'stop-color:#5046e5;stop-opacity:1');
-    
-    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    stop2.setAttribute('offset', '100%');
-    stop2.setAttribute('style', 'stop-color:#7189FF;stop-opacity:1');
-    
-    gradient.appendChild(stop1);
-    gradient.appendChild(stop2);
+    gradient.innerHTML = `
+        <stop offset="0%" stop-color="#5046e5" />
+        <stop offset="100%" stop-color="#7189FF" />
+    `;
     defs.appendChild(gradient);
     svg.insertBefore(defs, svg.firstChild);
 }
 
-function updateStats() {
-    const total = state.tasks.length;
-    const completed = state.tasks.filter(task => task.completed).length;
-    const pending = total - completed;
-    
-    document.getElementById('total-tasks-count').textContent = total;
-    document.getElementById('completed-tasks-count').textContent = completed;
-    document.getElementById('pending-tasks-count').textContent = pending;
-}
-
 // ============================================
-// MONTHLY GOALS
+// NOTES
 // ============================================
 
-function addNewGoal() {
-    const title = prompt('Enter goal title:');
-    if (!title) return;
-    
-    const goalsList = document.getElementById('monthly-goals-list');
-    
-    const goalItem = document.createElement('div');
-    goalItem.className = 'goal-item';
-    goalItem.innerHTML = `
-        <div class="goal-header">
-            <h3 class="goal-title">${escapeHtml(title)}</h3>
-            <div>
-                <button class="btn-secondary btn-sm decrease-progress">−</button>
-                <button class="btn-primary btn-sm increase-progress">+</button>
+function renderNotes() {
+    const notesList = document.getElementById('notes-list');
+    if (!notesList) return;
+
+    notesList.innerHTML = state.notes.length === 0
+        ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No notes yet. Create your first note!</p>'
+        : '';
+
+    state.notes.forEach(note => {
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note-item';
+        noteElement.innerHTML = `
+            <h4 class="note-title">${escapeHtml(note.title)}</h4>
+            <p class="note-content">${escapeHtml(note.content)}</p>
+            <div class="note-meta">
+                <span class="note-date">${new Date(note.date).toLocaleDateString()}</span>
+                <button class="note-delete" onclick="deleteNote('${note.id}')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
             </div>
-        </div>
-        <div class="goal-progress">
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 0%"></div>
-            </div>
-            <div class="progress-label">Progress: <span class="progress-value">0%</span></div>
-        </div>
-    `;
-    
-    goalItem.setAttribute('data-progress', '0');
-    
-    // Add event listeners for progress buttons
-    goalItem.querySelector('.increase-progress').addEventListener('click', () => {
-        updateGoalProgress(goalItem, 10);
+        `;
+        notesList.appendChild(noteElement);
     });
-    
-    goalItem.querySelector('.decrease-progress').addEventListener('click', () => {
-        updateGoalProgress(goalItem, -10);
-    });
-    
-    goalsList.appendChild(goalItem);
 }
-
-function updateGoalProgress(goalItem, change) {
-    let current = parseInt(goalItem.getAttribute('data-progress')) || 0;
-    current = Math.max(0, Math.min(100, current + change));
-    
-    goalItem.setAttribute('data-progress', current);
-    goalItem.querySelector('.progress-bar').style.width = `${current}%`;
-    goalItem.querySelector('.progress-value').textContent = `${current}%`;
-}
-
-// ============================================
-// NOTES MANAGEMENT
-// ============================================
 
 function handleNoteSubmit(e) {
     e.preventDefault();
-    
+
     const title = document.getElementById('note-title').value;
     const content = document.getElementById('note-content').value;
-    const category = document.getElementById('note-category').value;
-    
+
+    if (!title || !content) return;
+
     const note = {
-        id: Date.now(),
-        title: escapeHtml(title),
-        content: escapeHtml(content),
-        category: category,
+        id: Date.now().toString(),
+        title,
+        content,
         date: new Date().toISOString()
     };
-    
-    state.notes.push(note);
+
+    state.notes.unshift(note);
     saveData();
     renderNotes();
-    
-    // Reset form
-    e.target.reset();
-}
 
-function renderNotes() {
-    const notesContainer = document.getElementById('notes-container');
-    if (!notesContainer) return;
-    
-    notesContainer.innerHTML = state.notes.length === 0
-        ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem; grid-column: 1/-1;">No notes yet. Create your first note!</p>'
-        : '';
-    
-    state.notes.forEach(note => {
-        notesContainer.appendChild(createNoteElement(note));
-    });
-}
-
-function createNoteElement(note) {
-    const noteDiv = document.createElement('div');
-    noteDiv.className = `note ${note.category}`;
-    
-    const timeAgo = getTimeAgo(new Date(note.date));
-    
-    noteDiv.innerHTML = `
-        <div class="note-header">
-            <h4 class="note-title">${note.title}</h4>
-            <button class="note-delete" data-note-id="${note.id}">✕</button>
-        </div>
-        <p class="note-content">${note.content}</p>
-        <div class="note-footer">
-            <span class="note-category ${note.category}">${note.category}</span>
-            <span>${timeAgo}</span>
-        </div>
-    `;
-    
-    noteDiv.querySelector('.note-delete').addEventListener('click', function() {
-        deleteNote(note.id);
-    });
-    
-    return noteDiv;
+    // Clear form
+    document.getElementById('note-title').value = '';
+    document.getElementById('note-content').value = '';
 }
 
 function deleteNote(noteId) {
     if (confirm('Are you sure you want to delete this note?')) {
-        state.notes = state.notes.filter(note => note.id !== noteId);
+        state.notes = state.notes.filter(n => n.id !== noteId);
         saveData();
         renderNotes();
     }
-}
-
-function getTimeAgo(date) {
-    const seconds = Math.floor((new Date() - date) / 1000);
-    
-    const intervals = {
-        year: 31536000,
-        month: 2592000,
-        week: 604800,
-        day: 86400,
-        hour: 3600,
-        minute: 60
-    };
-    
-    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
-        const interval = Math.floor(seconds / secondsInUnit);
-        if (interval >= 1) {
-            return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
-        }
-    }
-    
-    return 'just now';
 }
 
 // ============================================
@@ -532,37 +480,36 @@ function getTimeAgo(date) {
 
 function handleAIChat(e) {
     e.preventDefault();
-    
+
     const input = document.getElementById('ai-input');
     const message = input.value.trim();
-    
+
     if (!message) return;
-    
-    const messagesContainer = document.getElementById('ai-messages');
-    
+
     // Add user message
-    addChatMessage(messagesContainer, message, true);
-    
+    addChatMessage(message, 'user');
+
     // Clear input
     input.value = '';
-    
+
     // Simulate AI response
     setTimeout(() => {
         const response = generateAIResponse(message);
-        addChatMessage(messagesContainer, response, false);
+        addChatMessage(response, 'ai');
     }, 1000);
 }
 
-function addChatMessage(container, text, isUser) {
+function addChatMessage(text, sender) {
+    const container = document.getElementById('chat-messages');
     const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${isUser ? 'user' : 'ai'}`;
-    
-    const avatar = isUser 
-        ? 'https://ui-avatars.com/api/?name=John+Doe&background=5046e5&color=fff'
-        : 'https://ui-avatars.com/api/?name=AI&background=7189FF&color=fff';
-    
+    messageDiv.className = `chat-message ${sender}`;
+
+    const avatar = sender === 'user'
+        ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=User'
+        : 'https://api.dicebear.com/7.x/bottts/svg?seed=AI';
+
     const now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    
+
     messageDiv.innerHTML = `
         <img src="${avatar}" alt="Avatar" class="message-avatar">
         <div class="message-content">
@@ -570,7 +517,7 @@ function addChatMessage(container, text, isUser) {
             <span class="message-time">${now}</span>
         </div>
     `;
-    
+
     container.appendChild(messageDiv);
     container.scrollTop = container.scrollHeight;
 }
@@ -583,15 +530,15 @@ function generateAIResponse(message) {
         'priority': 'I recommend focusing on high-priority tasks first. Would you like me to list them?',
         'default': 'I understand. Is there anything specific you need help with regarding your tasks or planning?'
     };
-    
+
     const lowerMessage = message.toLowerCase();
-    
+
     for (const [key, response] of Object.entries(responses)) {
         if (lowerMessage.includes(key)) {
             return response;
         }
     }
-    
+
     return responses.default;
 }
 
@@ -615,17 +562,25 @@ function closeProgressModal() {
 
 function saveProgress() {
     const value = parseInt(document.getElementById('progress-input').value);
-    
+
     if (currentTargetTask && value >= 0 && value <= 100) {
         currentTargetTask.setAttribute('data-progress', value);
         const progressBar = currentTargetTask.querySelector('.progress-bar');
         const progressLabel = currentTargetTask.querySelector('.progress-value');
-        
+
         if (progressBar) progressBar.style.width = `${value}%`;
         if (progressLabel) progressLabel.textContent = `${value}%`;
     }
-    
+
     closeProgressModal();
+}
+
+// ============================================
+// MONTHLY GOALS (Placeholder)
+// ============================================
+
+function addNewGoal() {
+    alert('Monthly goals feature coming soon!');
 }
 
 // ============================================
@@ -640,11 +595,11 @@ function saveData() {
 function loadSavedData() {
     const savedTasks = localStorage.getItem('taskflow_tasks');
     const savedNotes = localStorage.getItem('taskflow_notes');
-    
+
     if (savedTasks) {
         state.tasks = JSON.parse(savedTasks);
     }
-    
+
     if (savedNotes) {
         state.notes = JSON.parse(savedNotes);
     }
@@ -664,5 +619,3 @@ function escapeHtml(text) {
     };
     return text.replace(/[&<>"']/g, m => map[m]);
 }
-
-

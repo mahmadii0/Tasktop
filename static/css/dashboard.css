@@ -879,6 +879,131 @@ body {
 }
 
 /* ============================================
+   LINEAR CALENDAR
+============================================ */
+.linear-calendar-container {
+    position: relative;
+    margin-bottom: 2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    overflow: hidden;
+}
+
+.calendar-scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--dark-bg);
+    border: 1px solid var(--border-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 10;
+    color: var(--text-secondary);
+}
+
+.calendar-scroll-btn:hover {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: var(--white);
+}
+
+.calendar-scroll-btn.prev {
+    left: 0.5rem;
+}
+
+.calendar-scroll-btn.next {
+    right: 0.5rem;
+}
+
+.linear-calendar {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0 3rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.linear-calendar::-webkit-scrollbar {
+    display: none;
+}
+
+.calendar-day-item {
+    min-width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0.75rem;
+    background: var(--dark-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.calendar-day-item:hover {
+    background: var(--border-color);
+    border-color: var(--primary-blue);
+}
+
+.calendar-day-item.selected {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.calendar-day-item.selected .day-name,
+.calendar-day-item.selected .day-number,
+.calendar-day-item.selected .day-month {
+    color: var(--white);
+}
+
+.calendar-day-item.today {
+    border-color: var(--accent-blue);
+}
+
+.day-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.day-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.day-month {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.day-indicator {
+    position: absolute;
+    bottom: 6px;
+    width: 6px;
+    height: 6px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+}
+
+.calendar-day-item.selected .day-indicator {
+    background: var(--white);
+}
+
+/* ============================================
    GOALS LIST
 ============================================ */
 .goals-list {
